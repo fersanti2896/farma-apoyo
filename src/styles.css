@@ -1,1 +1,13 @@
-/* You can add global styles to this file, and also import other style files */
+@import "tailwindcss";
+
+.style-input {
+    @apply mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-300 placeholder:text-gray-400 transition
+}
+
+.class-tooltip {
+    @apply absolute z-10 w-44 p-2 text-sm text-white bg-gray-800 rounded-lg shadow-lg left-1/2 -translate-x-1/2 top-full mt-2 hidden peer-focus:block peer-hover:block group-hover:block sm:block
+}
+
+.class-button {
+    @apply w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 transition
+}

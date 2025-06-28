@@ -1,0 +1,66 @@
+<shared-loading-page *ngIf="isLoading"></shared-loading-page>
+
+<div class="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+  
+  <div class="flex flex-col md:flex-row bg-white rounded-xl shadow-lg overflow-hidden max-w-4xl w-full">
+    
+    <!-- Panel izquierdo -->
+    <div class="bg-blue-600 text-white p-8 md:w-1/2">
+      <h2 class="uppercase tracking-widest text-3xl text-center font-semibold">
+        SISTEMA INTEGRAL DE CONTROL
+      </h2>
+      <div class="bg-blue-500 p-4 rounded-lg mt-6 flex justify-center items-center">
+        <img src="assets/logos/niro.webp" class="w-40 h-40 object-contain" />
+      </div>
+    </div>
+
+    <!-- Panel derecho -->
+    <div class="p-8 md:w-1/2">
+      <h3 class="text-3xl text-center font-bold mb-2">Iniciar Sesión</h3>
+      <p class="text-sm text-gray-600 mb-6">
+        Estamos aquí para ayudarte y nos encantaría conectarnos contigo.
+      </p>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-4">
+        
+        <!-- Usuario -->
+        <div>
+          <label for="username" class="block text-sm font-medium text-gray-700">Usuario</label>
+          <input id="username" formControlName="username" type="text" placeholder="Ingresa tu usuario" class="style-input" />
+          <span *ngIf="isValidField('username')" class="text-sm text-red-600 mb-20">
+            El username es requerido.
+          </span>
+        </div>
+
+        <!-- Contraseña con tooltip -->
+        <div>
+          <div class="flex justify-between items-center relative group">
+            <label for="password" class="block text-sm font-medium text-gray-700">Contraseña</label>
+
+            <!-- Botón tooltip -->
+            <div class="relative">
+              <button type="button" (click)="toggleTooltip()" class="text-sm text-blue-600 hover:underline focus:outline-none peer" aria-describedby="tooltip">
+                ¿Olvidaste tu contraseña?
+              </button>
+
+              <!-- Tooltip -->
+              <div *ngIf="showTooltip" id="tooltip" class="class-tooltip">
+                Solicita tu restablecimiento de tu contraseña al administrador.
+              </div>
+            </div>
+          </div>
+
+          <input id="password" formControlName="password" type="password" placeholder="Ingresa tu contraseña" class="style-input" />
+          <span *ngIf="isValidField('password')" class="text-sm text-red-600 mb-20">
+            La contraseña es requerido.
+          </span>
+        </div>
+
+        <!-- Botón -->
+        <button type="submit" class="class-button">
+          Iniciar Sesión
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
