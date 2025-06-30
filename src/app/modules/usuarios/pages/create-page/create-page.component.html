@@ -1,0 +1,78 @@
+<shared-loading-page *ngIf="isLoading"></shared-loading-page>
+
+<div class="flex justify-between items-center mb-8 mt-4">
+  <button mat-stroked-button class="btn-info w-36" (click)="goBack()">
+    ← Regresar
+  </button>
+</div>
+
+<h2 class="text-2xl text-center md:w-full mb-10">Alta de Usuario</h2>
+
+<form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="grid grid-cols-1 md:grid-cols-3 gap-2">
+  <mat-form-field appearance="fill" class="h-17 mat-input-sm">
+    <mat-label>Nombre(s)</mat-label>
+    <input matInput formControlName="firstName" required />
+    <mat-error *ngIf="isValidField('firstName')">
+      El Nombre es obligatorio
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="h-17 mat-input-sm">
+    <mat-label>Apellido Paterno</mat-label>
+    <input matInput formControlName="lastName" required />
+    <mat-error *ngIf="isValidField('lastName')">
+      El Apellido Paterno es obligatorio
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="h-17 mat-input-sm">
+    <mat-label>Apellido Materno</mat-label>
+    <input matInput formControlName="mLastName" />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="h-17 mat-input-sm">
+    <mat-label>Email</mat-label>
+    <input matInput type="email" formControlName="email" />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="h-17 mat-input-sm">
+    <mat-label>Usuario</mat-label>
+    <input matInput formControlName="username" required />
+    <mat-error *ngIf="isValidField('username')">
+      El Username es obligatorio
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="h-17 mat-input-sm">
+    <mat-label>Contraseña</mat-label>
+    <input matInput type="password" formControlName="passwordHash" required />
+    <mat-error *ngIf="isValidField('passwordHash')">
+      La Contraseña es obligatorio
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="h-17 mat-input-sm">
+    <mat-label>Límite de crédito</mat-label>
+    <span matPrefix>$&nbsp;</span>
+    <input matInput type="number" formControlName="creditLimit" required />
+    <mat-error *ngIf="isValidField('creditLimit')">
+      Se debe definir el limite de crédito
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="h-17 mat-input-sm">
+    <mat-label>Rol</mat-label>
+    <mat-select formControlName="roleId" required>
+      <mat-option *ngFor="let role of roles" [value]="role.id">{{ role.name }}</mat-option>
+    </mat-select>
+    <mat-error *ngIf="isValidField('roleId')">
+      Se debe seleccionar un rol.
+    </mat-error>
+  </mat-form-field>
+
+  <div class="md:col-span-3 flex justify-center mt-10">
+    <button mat-raised-button class="btn-success" type="submit">
+      Crear Usuario
+    </button>
+  </div>
+</form>

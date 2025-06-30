@@ -11,3 +11,57 @@
 .class-button {
     @apply w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 transition
 }
+
+.btn-confirm-modal {
+    @apply bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded
+}
+
+.btn-cancel-modal {
+    @apply bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded
+}
+
+.btn-success {
+    @apply hover:bg-green-500 text-green-700 font-semibold hover:text-white py-1.5 px-4 border border-green-500 hover:border-transparent rounded
+}
+
+.btn-info {
+    @apply hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-1 px-4 border border-blue-500 hover:border-transparent rounded
+}
+
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+::ng-deep .mat-input-sm .mat-form-field-wrapper {
+  padding-bottom: 0.5rem; 
+}
+
+::ng-deep .mat-input-sm .mat-form-field-flex {
+  height: 2.25rem; 
+  align-items: center;
+}
+
+::ng-deep .mat-input-sm .mat-form-field-infix {
+  padding: 0 0.5rem;
+  min-height: 1.5rem;
+}
+
+::ng-deep .mat-header-cell {
+  background-color: #f3f4f6; 
+  color: #1f2937; 
+  font-weight: 600;
+  border-bottom: 1px solid #d1d5db;
+}
+
+::ng-deep .mat-cell {
+  border-bottom: 1px solid #e5e7eb;
+  color: #374151;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+::ng-deep .mat-row:hover {
+  background-color: #f9fafb;
+}
+
+

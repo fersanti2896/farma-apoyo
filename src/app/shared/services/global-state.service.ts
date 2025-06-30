@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { User } from '../../dashboard/interfaces/user.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -9,7 +10,7 @@ export class GlobalStateService {
   private userSubject = new BehaviorSubject<any | null>(null);
   
   token$: Observable<string | null> = this.tokenSubject.asObservable();
-  user$: Observable<any | null> = this.userSubject.asObservable();
+  user$: Observable<User | null> = this.userSubject.asObservable();
 
   getToken(): string | null {
     return this.tokenSubject.getValue();

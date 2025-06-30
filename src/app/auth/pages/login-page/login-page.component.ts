@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { LoginRequest } from '../../interfaces/auth.interface';
 import { ValidatorsService } from '../../../shared/services';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'auth-login-page',
@@ -20,7 +21,8 @@ export class LoginPageComponent {
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
-    private validatorsService: ValidatorsService
+    private validatorsService: ValidatorsService,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -42,23 +44,28 @@ export class LoginPageComponent {
     }
 
     const { username, password } = this.loginForm.value;
-    const loginReques: LoginRequest = {
-      Username: username,
-      Password: password
+
+    const loginRequest: LoginRequest = {
+      username,
+      password
     }
 
     this.isLoading = true;
 
-    this.authService.login( loginReques ).subscribe({
-      next: res => {
-        localStorage.setItem('refresh_token', res.result?.Token!);
+    this.authService.login( loginRequest ).subscribe({
+      next: (response) => {
+        if(response.result) {
+          localStorage.setItem('refresh_token', response.result.refreshToken);
+                  
+          this.isLoading = false;
+          this.loginForm.reset();
+          this.router.navigate(['/sic/inicio']);
+        }
         
-        this.isLoading = false;
-        this.loginForm.reset();
       },
-      error: err => {
+      error: (err) => {
         this.isLoading = false;
-        console.error(err);
+        this.snackBar.open('Usuario o Contraseña incorrectos.', 'Cerrar', { duration: 3000 });
         this.loginForm.reset();
       }
     });

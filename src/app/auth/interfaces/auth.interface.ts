@@ -1,17 +1,17 @@
 
 export interface LoginRequest {
-    Username: string;
-    Password: string;
+  username: string;
+  password: string;
 }
 
 export interface LoginDTO {
-    UserId: number;
-    Username: string;
-    Token: string;
-    RefreshToken: string;
-    FullName: string;
-    RoleId: number;
-    RoleDescription: string;
+  userId: number;
+  username: string;
+  token: string;
+  refreshToken: string;
+  fullName: string;
+  roleId: number;
+  roleDescription: string;
 }
 
 export interface ApiResponse<T> {
@@ -20,4 +20,19 @@ export interface ApiResponse<T> {
     code: number;
     message: string;
   } | null;
+}
+
+export interface RefreshTokenRequest {
+  refreshToken: string;
+}
+
+export interface UsersDTO {
+  userId: number;
+  firstName: string;
+  lastName: string;
+  mLastName: string;
+  username: string;
+  status: number;
+  descriptionStatus: string;
+  role: string;
 }

@@ -1,0 +1,56 @@
+<shared-loading-page *ngIf="isLoading"></shared-loading-page>
+
+<div class="flex justify-between items-center mb-8 mt-4">
+  <button mat-stroked-button class="btn-info w-36" (click)="goBack()">
+    ← Regresar
+  </button>
+</div>
+
+<h2 class="text-2xl text-center md:w-full mb-10">Alta de Proveedor</h2>
+
+<form [formGroup]="supplierForm" (ngSubmit)="onSubmit()" class="grid grid-cols-1 md:grid-cols-3 gap-2">
+  <mat-form-field appearance="fill" class="h-17 mat-input-sm">
+    <mat-label>Nombre del Proveedor</mat-label>
+    <input matInput formControlName="businessName" required />
+    <mat-error *ngIf="isValidField('businessName')">
+        La Razón Social es obligatorio
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="h-17 mat-input-sm">
+    <mat-label>Nombre de Contacto</mat-label>
+    <input matInput formControlName="contactName" required />
+    <mat-error *ngIf="isValidField('contactName')">
+        Contacto es obligatorio
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="h-17 mat-input-sm">
+    <mat-label>Télefono</mat-label>
+    <input matInput formControlName="phone" />
+    <mat-error *ngIf="isValidField('phone')">
+      El Teléfono es obligatorio
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="h-30 mat-input-sm">
+    <mat-label>Dirección</mat-label>
+    <input matInput formControlName="address" />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="mat-input-sm">
+    <mat-label>Condiciones de Pago</mat-label>
+    <textarea matInput formControlName="notes" formControlName="paymentTerms" placeholder="Condiciones de Pago"></textarea>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="mat-input-sm">
+    <mat-label>Comentarios</mat-label>
+    <textarea matInput formControlName="notes" placeholder="Comentarios"></textarea>
+  </mat-form-field>
+
+  <div class="md:col-span-3 flex justify-center mt-10">
+    <button mat-raised-button class="btn-success" type="submit">
+      Registrar Proveedor
+    </button>
+  </div>
+</form>
