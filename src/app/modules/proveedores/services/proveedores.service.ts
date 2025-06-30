@@ -27,7 +27,7 @@ export class ProveedoresService {
   }
 
   createSupplier( data: CreateSupplierRequest ): Observable<ApiResponse<ReplyResponse>> {
-    return this.http.post<ApiResponse<ReplyResponse>>(`${ this.api }/Supplier/CreateSupplier`, data);
+    return this.http.post<ApiResponse<ReplyResponse>>(`${ this.api }/Supplier/CreateSupplier`, data, { headers: this.getHeaders() });
   }
 
   private getHeaders(): HttpHeaders {

@@ -1,0 +1,39 @@
+import { Injectable } from '@angular/core';
+import { environment } from '../../../enviroments/enviroment';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { GlobalStateService } from '../../../shared/services';
+import { Observable } from 'rxjs';
+import { ApiResponse } from '../../../auth/interfaces/auth.interface';
+import { CreateWarehouseRequest, EntrySummaryDTO } from '../../interfaces/entrey-sumarry.interface';
+import { ReplyResponse } from '../../interfaces/reply.interface';
+import { ProductBySupplierDTO, ProductsBySupplierRequest } from '../../interfaces/product.interface';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ShoppingService {
+  private api = environment.apiUrl;
+
+  constructor(
+    private http: HttpClient,
+    private globalStateService: GlobalStateService
+  ) { }
+
+  listWarehouse(): Observable<ApiResponse<EntrySummaryDTO[]>> {
+    return this.http.get<ApiResponse<EntrySummaryDTO[]>>(`${ this.api }/Supplier/GetEntryList`, { headers: this.getHeaders() });
+  }
+
+  createWarehouse( data: CreateWarehouseRequest ): Observable<ApiResponse<ReplyResponse>> {
+    return this.http.post<ApiResponse<ReplyResponse>>(`${ this.api }/Warehouse/CreateFullEntry`, data, { headers: this.getHeaders() });
+  }
+
+  getProductsBySupplierId( data: ProductsBySupplierRequest ): Observable<ApiResponse<ProductBySupplierDTO>> {
+    return this.http.post<ApiResponse<ProductBySupplierDTO>>(`${ this.api }/Warehouse/GetProductsBySupplierId`, data, { headers: this.getHeaders() });
+  }
+
+  private getHeaders(): HttpHeaders {
+    const token = this.globalStateService.getToken();
+
+    return new HttpHeaders().set('Authorization', `Bearer ${token}`);
+  }
+}

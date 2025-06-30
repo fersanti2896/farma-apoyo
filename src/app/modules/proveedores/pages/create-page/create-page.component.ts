@@ -72,7 +72,7 @@ export class CreatePageComponent {
           
           setTimeout(() => {
             this.router.navigate(['/sic/inicio/proveedores'])
-          }, 1000);
+          }, 100);
         }
         
       },

@@ -17,7 +17,7 @@ import { StatusRequest } from '../../../interfaces/reply.interface';
   templateUrl: './list-page.component.html'
 })
 export class ListPageComponent {
-public displayedColumns: string[] = ['businessName', 'contactName', 'phone', 'address', 'descriptionStatus', 'actions'];
+  public displayedColumns: string[] = ['businessName', 'contactName', 'phone', 'address', 'descriptionStatus', 'actions'];
   public dataSource = new MatTableDataSource<SupplierDTO>();
   public isLoading: boolean = false;
 

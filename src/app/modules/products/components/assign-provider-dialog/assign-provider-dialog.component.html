@@ -1,0 +1,39 @@
+<shared-loading-page *ngIf="isLoading"></shared-loading-page>
+
+<h2 mat-dialog-title class="text-center text-2xl">Asignar Proveedor</h2>
+
+<mat-dialog-content class="flex flex-col items-center mt-4">
+  <form [formGroup]="relationForm" (ngSubmit)="onSubmit()" class="w-full flex flex-col gap-6">
+
+    <div class="flex flex-col md:flex-row gap-4">
+      <!-- Proveedor -->
+      <mat-form-field appearance="fill" class="flex-1">
+        <mat-label>Proveedor</mat-label>
+        <mat-select formControlName="supplierId" required>
+          <mat-option *ngFor="let s of suppliers" [value]="s.supplierId">
+            {{ s.businessName }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="isValidField('supplierId')">
+          El proveedor es obligatorio.
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Precio de Compra -->
+      <mat-form-field appearance="fill" class="flex-1">
+        <mat-label>Precio de Compra</mat-label>
+        <input matInput type="number" formControlName="unitPrice" required />
+        <mat-error *ngIf="isValidField('unitPrice')">
+          El precio es obligatorio.
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <mat-dialog-actions align="center">
+      <button mat-button mat-dialog-close class="btn-cancel-modal mr-2">Cancelar</button>
+      <button mat-flat-button class="btn-confirm-modal" type="submit">
+        Guardar
+      </button>
+    </mat-dialog-actions>
+  </form>
+</mat-dialog-content>
