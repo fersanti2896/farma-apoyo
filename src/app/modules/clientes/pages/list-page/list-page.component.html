@@ -1,67 +1,68 @@
+
 <shared-loading-page *ngIf="isLoading"></shared-loading-page>
 <div class="flex justify-between items-center mb-4 w-full">
   <!-- Campo de búsqueda a la izquierda -->
   <div class="w-full md:w-1/3">
     <mat-form-field class="h-17">
       <mat-label>Buscar</mat-label>
-      <input matInput (keyup)="applyFilter($event)" placeholder="Buscar proveedor" #input />
+      <input matInput (keyup)="applyFilter($event)" placeholder="Buscar cliente" #input />
     </mat-form-field>
   </div>
 
   <!-- Botón al extremo derecho -->
   <div class="">
     <button mat-raised-button class="btn-success" [routerLink]="['crear']">
-      Alta Proveedor
+      Alta Cliente
     </button>
   </div>
 </div>
 
-<h2 class="text-2xl text-center md:w-full mb-4 -mt-8">Proveedores</h2>
+<h2 class="text-2xl text-center md:w-full mb-4 -mt-8">Clientes</h2>
 
 <div class="mat-elevation-z8">
   <table mat-table [dataSource]="dataSource" matSort>
     <!-- ID Column -->
-    <ng-container matColumnDef="id">
+    <ng-container matColumnDef="clientId">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
-      <td mat-cell *matCellDef="let supplier"> {{ supplier.supplierId }}</td>
+      <td mat-cell *matCellDef="let client"> {{ client.clientId }}</td>
     </ng-container>
 
     <!-- BusinessName Column -->
     <ng-container matColumnDef="businessName">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Razón Social </th>
-      <td mat-cell *matCellDef="let supplier"> {{ supplier.businessName }} </td>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Cliente </th>
+      <td mat-cell *matCellDef="let client"> {{ client.businessName }} </td>
     </ng-container>
 
     <!-- ContactName Column -->
     <ng-container matColumnDef="contactName">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Contacto </th>
-      <td mat-cell *matCellDef="let supplier"> {{ supplier.contactName }} </td>
-    </ng-container>
-
-    <!-- Phone Column -->
-    <ng-container matColumnDef="phone">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Teléfono </th>
-      <td mat-cell *matCellDef="let supplier"> {{ supplier.phone }} </td>
+      <td mat-cell *matCellDef="let client"> {{ client.contactName }} </td>
     </ng-container>
 
      <!-- Address Column -->
     <ng-container matColumnDef="address">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Dirección </th>
-      <td mat-cell *matCellDef="let supplier"> {{ supplier.address }} </td>
+      <td mat-cell *matCellDef="let client"> {{ client.address }} </td>
+    </ng-container>
+
+        <!-- Phone Column -->
+    <ng-container matColumnDef="phoneNumber">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Teléfono </th>
+      <td mat-cell *matCellDef="let client"> {{ client.phoneNumber }} </td>
     </ng-container>
 
     <!-- Status Column -->
-    <ng-container matColumnDef="descriptionStatus">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Estatus </th>
-      <td mat-cell *matCellDef="let supplier"> {{ supplier.descriptionStatus }} </td>
+    <ng-container matColumnDef="creditLimit">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Crédito </th>
+      <td mat-cell *matCellDef="let client"> {{ client.creditLimit | currency }}
     </ng-container>
 
     <!-- Actions Column -->
     <ng-container matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef> Acciones </th>
-      <td mat-cell *matCellDef="let supplier">
-        <button mat-icon-button color="warn" aria-label="Bloquear/Desbloquear usuario" (click)="openConfirmDialog(supplier)">
-          <mat-icon>{{ supplier.status === 1 ? 'lock' : 'lock_open' }}</mat-icon>
+      <td mat-cell *matCellDef="let client">
+        <button mat-icon-button  aria-label="Bloquear/Desbloquear cliente">
+          <mat-icon>lock</mat-icon>
         </button>
       </td>
     </ng-container>
@@ -74,5 +75,5 @@
     </tr>
   </table>
 
-  <mat-paginator [pageSizeOptions]="[5, 10, 25]" aria-label="Selector de página"></mat-paginator>
+  <mat-paginator [pageSizeOptions]="[25, 30, 50]" aria-label="Selector de página"></mat-paginator>
 </div>

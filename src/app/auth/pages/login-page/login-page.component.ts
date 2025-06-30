@@ -59,7 +59,7 @@ export class LoginPageComponent {
                   
           this.isLoading = false;
           this.loginForm.reset();
-          this.router.navigate(['/sic/inicio']);
+          this.router.navigate(['/sic/inicio/stock']);
         }
         
       },

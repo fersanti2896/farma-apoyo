@@ -1,0 +1,71 @@
+<shared-loading-page *ngIf="isLoading"></shared-loading-page>
+
+<div class="flex justify-between items-center mb-8 mt-4">
+  <button mat-stroked-button class="btn-info w-36" (click)="goBack()">
+    ← Regresar
+  </button>
+</div>
+
+<h2 class="text-2xl text-center md:w-full mb-10">Alta de Cliente</h2>
+
+<form [formGroup]="clientForm" (ngSubmit)="onSubmit()" class="grid grid-cols-1 md:grid-cols-3 gap-2">
+  <mat-form-field appearance="fill" class="h-17 mat-input-sm">
+    <mat-label>Nombre del Cliente</mat-label>
+    <input matInput formControlName="businessName" required />
+    <mat-error *ngIf="isValidField('businessName')">
+        La Razón Social es obligatorio
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="h-17 mat-input-sm">
+    <mat-label>Nombre de Contacto</mat-label>
+    <input matInput formControlName="contactName" required />
+    <mat-error *ngIf="isValidField('contactName')">
+        Contacto es obligatorio
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="h-17 mat-input-sm">
+    <mat-label>Télefono</mat-label>
+    <input matInput formControlName="phone" />
+    <mat-error *ngIf="isValidField('phone')">
+      El Teléfono es obligatorio
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="h-17 mat-input-sm">
+    <mat-label>Dirección</mat-label>
+    <input matInput formControlName="address" />
+    <mat-error *ngIf="isValidField('address')">
+      La dirección es obligatoria
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="h-17 mat-input-sm">
+    <mat-label>Email</mat-label>
+    <input matInput formControlName="email" />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="h-17 mat-input-sm">
+    <mat-label>Límite de crédito</mat-label>
+    <span matPrefix>$&nbsp;</span>
+    <input matInput type="number" formControlName="creditLimit" required />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="h-17 mat-input-sm">
+    <mat-label>Días de Crédito</mat-label>
+    <span matPrefix>$&nbsp;</span>
+    <input matInput type="number" formControlName="paymentDays" required />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="h-17 mat-input-sm">
+    <mat-label>Comentarios</mat-label>
+    <textarea matInput formControlName="notes" placeholder="Comentarios"></textarea>
+  </mat-form-field>
+
+  <div class="md:col-span-3 flex justify-center mt-10">
+    <button mat-raised-button class="btn-success" type="submit">
+      Registrar Cliente
+    </button>
+  </div>
+</form>

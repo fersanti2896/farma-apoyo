@@ -11,6 +11,8 @@ const routes: Routes = [
       { path: 'proveedores', loadChildren: () => import('../modules/proveedores/proveedores.module').then(m => m.ProveedoresModule) },
       { path: 'productos', loadChildren: () => import('../modules/products/products.module').then(m => m.ProductsModule) },
       { path: 'compras', loadChildren: () => import('../modules/shopping/shopping.module').then(m => m.ShoppingModule) },
+      { path: 'stock', loadChildren: () => import('../modules/inventory/inventory.module').then(m => m.InventoryModule) },
+      { path: 'clientes', loadChildren: () => import('../modules/clientes/clientes.module').then(m => m.ClientesModule) },
       { path: '**', redirectTo: 'list' },
     ] 
   }

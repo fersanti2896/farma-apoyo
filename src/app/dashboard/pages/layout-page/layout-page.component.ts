@@ -16,10 +16,11 @@ export class LayoutPageComponent {
   public user!: User;
 
   public sidebarItems = [
+    { label: 'Inventario', icon: 'inventory', url: '/sic/inicio/stock' },
     { label: 'Usuarios', icon: 'account_circle', url: '/sic/inicio/usuarios' },
     { label: 'Proveedores', icon: 'diversity_3', url: '/sic/inicio/proveedores' },
+    { label: 'Clientes', icon: 'groups', url: '/sic/inicio/clientes' },
     { label: 'Productos', icon: 'list_alt', url: '/sic/inicio/productos' },
-    { label: 'Inventario', icon: 'inventory', url: '/sic/inicio/inventario' },
     { label: 'Compras', icon: 'content_paste', url: '/sic/inicio/compras' },
   ];
 
