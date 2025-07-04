@@ -32,8 +32,18 @@
     @apply hover:bg-amber-500 text-amber-400 font-semibold hover:text-white py-1 px-4 border border-amber-500 hover:border-transparent rounded
 }
 
+.btn-cancel {
+    @apply hover:bg-red-500 text-red-400 font-semibold hover:text-white py-1 px-4 border border-red-500 hover:border-transparent rounded
+}
 
-html, body { height: 100%; }
+.item-submenu {
+    @apply w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white
+}
+
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 ::ng-deep .mat-input-sm .mat-form-field-wrapper {

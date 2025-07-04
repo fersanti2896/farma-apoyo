@@ -26,7 +26,6 @@ export interface ProductsBySupplierRequest {
 }
 
 export interface ProductBySupplierDTO {
-  productProviderId: number;
   productId: number;
   productName: string;
 }

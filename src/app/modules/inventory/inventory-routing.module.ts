@@ -6,9 +6,7 @@ import { ListPageComponent } from './pages/list-page/list-page.component';
 const routes: Routes = [
   {
     path: '',
-    component: ListPageComponent,
-    // canActivate: [RoleGuard],
-    // data: { roles: ['Administrador', 'Administrativo', 'Almacén'] }
+    component: ListPageComponent
   }
 ];
 

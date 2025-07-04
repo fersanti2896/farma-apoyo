@@ -27,8 +27,8 @@ export class ShoppingService {
     return this.http.post<ApiResponse<ReplyResponse>>(`${ this.api }/Warehouse/CreateFullEntry`, data, { headers: this.getHeaders() });
   }
 
-  getProductsBySupplierId( data: ProductsBySupplierRequest ): Observable<ApiResponse<ProductBySupplierDTO>> {
-    return this.http.post<ApiResponse<ProductBySupplierDTO>>(`${ this.api }/Warehouse/GetProductsBySupplierId`, data, { headers: this.getHeaders() });
+  getProducts( data: ProductsBySupplierRequest ): Observable<ApiResponse<ProductBySupplierDTO>> {
+    return this.http.post<ApiResponse<ProductBySupplierDTO>>(`${ this.api }/Warehouse/GetProducts`, data, { headers: this.getHeaders() });
   }
 
   private getHeaders(): HttpHeaders {

@@ -10,9 +10,11 @@ export interface EntrySummaryDTO {
 }
 
 export interface ProductsDetailsDTO {
-    productProviderId: number;
+    productId: number;
     quantity: number;
     unitPrice: number;
+    expirationDate: string;
+    lot: string;
 }
 
 export interface CreateWarehouseRequest {

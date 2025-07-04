@@ -1,32 +1,68 @@
-
 <h2 mat-dialog-title class="text-center text-2xl">Asignar Proveedor</h2>
 
 <mat-dialog-content [formGroup]="form">
   <div class="flex flex-col md:flex-row gap-4">
     <mat-form-field appearance="fill" class="flex-1">
       <mat-label>Producto</mat-label>
-      <mat-select formControlName="productProviderId">
-        <mat-option *ngFor="let product of products" [value]="product.productProviderId">
+      <input
+        type="text"
+        matInput
+        [formControl]="productControl"
+        [matAutocomplete]="auto"
+        required
+      />
+      <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayProductFn">
+        <mat-option *ngFor="let product of filteredProducts | async" [value]="product">
           {{ product.productName }}
         </mat-option>
-      </mat-select>
+      </mat-autocomplete>
     </mat-form-field>
   </div>
-  
+
   <div class="flex flex-col md:flex-row gap-4">
-    <mat-form-field appearance="fill" class="flex-1">
+    <mat-form-field appearance="fill" class="flex-1 md:-mt-1">
       <mat-label>Cantidad</mat-label>
       <input matInput type="number" formControlName="quantity">
+
+      <mat-error *ngIf="isValidField('quantity')">
+        La cantidad es requerido.
+      </mat-error>
     </mat-form-field>
 
-    <mat-form-field appearance="fill" class="flex-1">
+    <mat-form-field appearance="fill" class="flex-1 md:-mt-1 -mt-3">
       <mat-label>Precio Unitario</mat-label>
       <input matInput type="number" formControlName="unitPrice">
+
+      <mat-error *ngIf="isValidField('unitPrice')">
+        El precio unitario es requerido.
+      </mat-error>
     </mat-form-field>
-  </div>  
+  </div>
+
+  <div class="flex flex-col md:flex-row gap-4">
+    <mat-form-field appearance="fill" class="flex-1 md:mt-1">
+      <mat-label>Lote</mat-label>
+      <input matInput type="text" formControlName="lot">
+
+      <mat-error *ngIf="isValidField('lot')">
+        El lote es requerido.
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="flex-1 md:mt-1 -mt-3">
+      <mat-label>Fecha de Caducidad</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="expirationDate">
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+
+      <mat-error *ngIf="isValidField('lot')">
+        La fecha de caducidad es requerido.
+      </mat-error>
+    </mat-form-field>
+  </div>
 </mat-dialog-content>
 
 <mat-dialog-actions align="center">
-  <button mat-flat-button class="btn-success" (click)="onSave()" [disabled]="form.invalid">Agregar</button>
+  <button mat-flat-button class="btn-success" (click)="onSave()">Agregar</button>
   <button mat-button class="h-9 btn-warn ml-4" (click)="onCancel()">Cancelar</button>
 </mat-dialog-actions>

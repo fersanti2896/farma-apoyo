@@ -1,3 +1,5 @@
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import { Component, ViewChild } from '@angular/core';
 import { StockDTO } from '../../../interfaces/stock.interface';
 import { MatTableDataSource } from '@angular/material/table';
@@ -56,5 +58,27 @@ export class ListPageComponent {
       },
       error: () => this.isLoading = false,
     });
+  }
+
+  exportToPDF(): void {
+    const doc = new jsPDF();
+
+    const columns = ['ID', 'Producto', 'Descripción', 'Stock', 'Última Entrada'];
+    const rows = this.dataSource.data.map(entry => [
+      entry.inventoryId,
+      entry.productName,
+      entry.description,
+      `${entry.currentStock} piezas`,
+      new Date(entry.lastUpdateDate).toLocaleDateString()
+    ]);
+
+    doc.text('Stock Disponible', 14, 10);
+    autoTable(doc, {
+      head: [columns],
+      body: rows,
+      startY: 20,
+    });
+
+    doc.save('StockDisponible.pdf');
   }
 }

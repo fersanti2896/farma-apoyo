@@ -11,6 +11,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 import { LoadingPageComponent } from './components/loading-page/loading-page.component';
 import { ConfirmationDialogComponent } from './components/confirmation-dialog/confirmation-dialog.component';
@@ -32,7 +33,8 @@ import { ConfirmationDialogComponent } from './components/confirmation-dialog/co
     MatIconModule,
     MatSelectModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    MatAutocompleteModule
   ],
   exports: [
     LoadingPageComponent,
@@ -47,7 +49,8 @@ import { ConfirmationDialogComponent } from './components/confirmation-dialog/co
     MatIconModule,
     MatSelectModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    MatAutocompleteModule
   ]
 })
 export class SharedModule { }

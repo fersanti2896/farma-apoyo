@@ -83,7 +83,7 @@ export class CreatePageComponent {
           
           setTimeout(() => {
             this.router.navigate(['/sic/inicio/usuarios'])
-          }, 1000);
+          }, 100);
         }
         
       },
