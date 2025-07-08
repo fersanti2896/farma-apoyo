@@ -27,10 +27,6 @@ export class ProductService {
     return this.http.post<ApiResponse<ReplyResponse>>(`${ this.api }/Warehouse/CreateProduct`, data, { headers: this.getHeaders() });
   }
 
-  createProductProvider( data: CreateProductProviderRequest ): Observable<ApiResponse<ReplyResponse>> {
-    return this.http.post<ApiResponse<ReplyResponse>>(`${ this.api }/Warehouse/CreateProductProvider`, data, { headers: this.getHeaders() });
-  }
-
   editProduct( data: UpdateProductRequest ): Observable<ApiResponse<ReplyResponse>> {
     return this.http.post<ApiResponse<ReplyResponse>>(`${ this.api }/Warehouse/UpdateProduct`, data, { headers: this.getHeaders() });
   }
