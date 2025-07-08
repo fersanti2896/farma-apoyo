@@ -5,10 +5,16 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
+import { jsPDF } from 'jspdf';
+import * as XLSX from 'xlsx';
+import * as FileSaver from 'file-saver';
+import autoTable from 'jspdf-autotable';
+
 import { SupplierDTO } from '../../../interfaces/supplier.interface';
 import { ProveedoresService } from '../../services/proveedores.service';
 import { ConfirmationDialogComponent } from '../../../../shared/components/confirmation-dialog/confirmation-dialog.component';
 import { StatusRequest } from '../../../interfaces/reply.interface';
+
 
 
 @Component({
@@ -93,5 +99,88 @@ export class ListPageComponent {
         this.snackBar.open('Error al actualizar el estado del proveedor.', 'Cerrar', { duration: 3000 });
       }
     });
+  }
+
+  exportToPDF(): void {
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+
+    const formatter = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', minimumFractionDigits: 2} );
+
+    const logoImg = new Image();
+    logoImg.src = 'assets/logos/inventory.png';
+
+    logoImg.onload = () => {
+      const date = new Date().toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' });
+
+      doc.addImage(logoImg, 'PNG', 10, 10, 30, 30);
+      doc.setFontSize(16);
+      doc.setFont('helvetica', 'bold');
+      doc.text('FARMA APOYO', pageWidth / 2, 20, { align: 'center' });
+
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'normal');
+      doc.text('Proveedores', pageWidth / 2, 28, { align: 'center' });
+
+
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Fecha: ${date}`, pageWidth - 14, 28, { align: 'right' });
+
+      const columns = ['Nombre', 'Contacto', 'Teléfono', 'Dirección'];
+      const rows = this.dataSource.data.map(entry => [
+        entry.businessName,
+        entry.contactName,
+        entry.phone,
+        entry.address
+      ]);
+
+      autoTable(doc, {
+        head: [columns],
+        body: rows,
+        startY: 45,
+        margin: { bottom: 30 },
+        styles: { fontSize: 10 },
+        headStyles: { halign: 'center' },
+        columnStyles: {
+          0: { halign: 'center' }, // ID
+          3: { halign: 'center' }, // Fecha de Registro
+          4: { halign: 'center' }, // Fecha de Pago
+        },
+        didDrawPage: (data) => {
+          const str = `Página ${doc.getNumberOfPages()}`;
+
+          doc.setFontSize(10);
+          doc.text(str, pageWidth / 2, doc.internal.pageSize.getHeight() - 10, {
+            align: 'center'
+          });
+        }
+      });
+
+      doc.save(`Proveedores_${date}.pdf`);
+    };
+  }
+
+  exportToExcel(): void {
+    const date = new Date().toLocaleDateString('es-MX', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+
+    const dataToExport = this.dataSource.data.map(entry => ({
+      Nombre: entry.businessName,
+      Contacto: entry.contactName,
+      Telefono: entry.phone,
+      Dirección: entry.address
+    }));
+
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(dataToExport, { cellDates: true });
+    const sheetName = 'Proveedores';
+    const workbook: XLSX.WorkBook = { Sheets: { [sheetName]: worksheet }, SheetNames: [sheetName] };
+    const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const blobData: Blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+
+    FileSaver.saveAs(blobData, `Proveedores_${date}.xlsx`);
   }
 }

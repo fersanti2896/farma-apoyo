@@ -7,7 +7,9 @@ import { FormGroup, ValidationErrors } from '@angular/forms';
 export class ValidatorsService {
   public emailPattern: string = "^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$";
   public passwordPatter: string = "^(?=.*[a-zA-Z])(?=.*\\d).{8,}$";
-
+  public phonePatter: string = "^\\d{10}$";
+  public zipCodePatter: string = "^['\"]?(\\d{5})['\"]?$";
+  
   constructor() { }
 
   public isValidField = ( form: FormGroup, field: string ) => {

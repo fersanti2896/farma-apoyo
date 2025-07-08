@@ -1,4 +1,4 @@
-import jsPDF from 'jspdf';
+import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { Component, ViewChild } from '@angular/core';
 import { StockDTO } from '../../../interfaces/stock.interface';
@@ -62,23 +62,54 @@ export class ListPageComponent {
 
   exportToPDF(): void {
     const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
 
-    const columns = ['ID', 'Producto', 'Descripción', 'Stock', 'Última Entrada'];
-    const rows = this.dataSource.data.map(entry => [
-      entry.inventoryId,
-      entry.productName,
-      entry.description,
-      `${entry.currentStock} piezas`,
-      new Date(entry.lastUpdateDate).toLocaleDateString()
-    ]);
+    const logoImg = new Image();
+    logoImg.src = 'assets/logos/inventory.png';
 
-    doc.text('Stock Disponible', 14, 10);
-    autoTable(doc, {
-      head: [columns],
-      body: rows,
-      startY: 20,
-    });
+    logoImg.onload = () => {
+      const date = new Date().toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' });
 
-    doc.save('StockDisponible.pdf');
+      doc.addImage(logoImg, 'PNG', 10, 10, 30, 30);
+      doc.setFontSize(16);
+      doc.setFont('helvetica', 'bold');
+      doc.text('FARMA APOYO', pageWidth / 2, 20, { align: 'center' });
+
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'normal');
+      doc.text('Stock Disponible', pageWidth / 2, 28, { align: 'center' });
+
+
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Fecha: ${date}`, pageWidth - 14, 28, { align: 'right' });
+
+      const columns = ['ID', 'Producto', 'Descripción', 'Stock', 'Última Entrada'];
+      const rows = this.dataSource.data.map(entry => [
+        entry.inventoryId,
+        entry.productName,
+        entry.description,
+        `${entry.currentStock} piezas`,
+        new Date(entry.lastUpdateDate).toLocaleDateString()
+      ]);
+
+      autoTable(doc, {
+        head: [columns],
+        body: rows,
+        startY: 45,
+        margin: { bottom: 30 },
+        styles: { fontSize: 10 },
+        didDrawPage: (data) => {
+          const str = `Página ${doc.getNumberOfPages()}`;
+
+          doc.setFontSize(10);
+          doc.text(str, pageWidth / 2, doc.internal.pageSize.getHeight() - 10, {
+            align: 'center'
+          });
+        }
+      });
+
+      doc.save(`StockDisponible_${date}.pdf`);
+    };
   }
 }

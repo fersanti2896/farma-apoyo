@@ -5,6 +5,7 @@ export interface ProductDTO {
     barcode: string;
     unit: string;
     price: number;
+    description: string;
 }
 
 export interface CreateProductRequest {
@@ -13,6 +14,10 @@ export interface CreateProductRequest {
   barcode: string;
   unit: string;
   price: number;
+}
+
+export interface UpdateProductRequest extends CreateProductRequest {
+  productId: number;
 }
 
 export interface CreateProductProviderRequest {

@@ -6,7 +6,7 @@
   </button>
 </div>
 
-<h2 class="text-2xl text-center md:w-full mb-10">Alta de Cliente</h2>
+<h2 class="text-2xl text-center md:w-full mb-5 -mt-4">{{ isEditMode ? 'Actualizar Cliente' : 'Alta de Cliente' }}</h2>
 
 <form [formGroup]="clientForm" (ngSubmit)="onSubmit()" class="grid grid-cols-1 md:grid-cols-3 gap-2">
   <mat-form-field appearance="fill" class="h-17 mat-input-sm">
@@ -27,18 +27,81 @@
 
   <mat-form-field appearance="fill" class="h-17 mat-input-sm">
     <mat-label>Télefono</mat-label>
-    <input matInput formControlName="phone" />
+    <input matInput formControlName="phone" type="tel" maxlength="10" />
     <mat-error *ngIf="isValidField('phone')">
       El Teléfono es obligatorio
     </mat-error>
   </mat-form-field>
 
   <mat-form-field appearance="fill" class="h-17 mat-input-sm">
-    <mat-label>Dirección</mat-label>
-    <input matInput formControlName="address" />
-    <mat-error *ngIf="isValidField('address')">
-      La dirección es obligatoria
+    <mat-label>Código Postal</mat-label>
+    <input matInput formControlName="zipCode" type="text" (input)="onZipCodeInput()" maxlength="5" />
+    <mat-error *ngIf="isValidField('zipCode')">
+      El CP es obligatorio
     </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="h-17 mat-input-sm">
+    <mat-label>Estado</mat-label>
+    <input type="text" matInput [formControl]="stateControl" [matAutocomplete]="autoState" required />
+    <mat-autocomplete #autoState="matAutocomplete" [displayWith]="displayFn" (optionSelected)="onStateSelected($event.option.value)">
+      <mat-option *ngFor="let state of filteredStates | async" [value]="state" >
+        {{ state.d_estado }}
+      </mat-option>
+    </mat-autocomplete>
+
+    <mat-error *ngIf="isValidField('state')">
+      El Estado es requerido.
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="h-17 mat-input-sm">
+    <mat-label>Municipio</mat-label>
+    <input type="text" matInput [formControl]="municipalityControl" [matAutocomplete]="autoMunicipality" required />
+    <mat-autocomplete #autoMunicipality="matAutocomplete" [displayWith]="displayFnMun" (optionSelected)="onMunicipalitySelected($event.option.value)">
+      <mat-option *ngFor="let municipality of filteredMunicipality | async" [value]="municipality">
+        {{ municipality.d_mnpio }}
+      </mat-option>
+    </mat-autocomplete>
+
+    <mat-error *ngIf="isValidField('municipality')">
+      El Municipio es requerido.
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="h-17 mat-input-sm">
+    <mat-label>Colonia</mat-label>
+    <input type="text" matInput [formControl]="coloniaControl" [matAutocomplete]="autoColonia" required />
+    <mat-autocomplete #autoColonia="matAutocomplete" [displayWith]="displayFnCol" (optionSelected)="onColoniaSelected($event.option.value)">
+      <mat-option *ngFor="let colonia of filteredColonia | async" [value]="colonia">
+        {{ colonia.d_asenta }}
+      </mat-option>
+    </mat-autocomplete>
+
+    <mat-error *ngIf="isValidField('colonia')">
+      El Municipio es requerido.
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="h-17 mat-input-sm">
+    <mat-label>Calle</mat-label>
+    <input matInput formControlName="street" />
+    <mat-error *ngIf="isValidField('street')">
+      La Calle es requerido.
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="h-17 mat-input-sm">
+    <mat-label>Número Exterior</mat-label>
+    <input matInput formControlName="outsideNumber" />
+    <mat-error *ngIf="isValidField('outsideNumber')">
+      Número Ext es requerido.
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="h-17 mat-input-sm">
+    <mat-label>Número Interior</mat-label>
+    <input matInput formControlName="interiorNumber" />
   </mat-form-field>
 
   <mat-form-field appearance="fill" class="h-17 mat-input-sm">
@@ -48,14 +111,35 @@
 
   <mat-form-field appearance="fill" class="h-17 mat-input-sm">
     <mat-label>Límite de crédito</mat-label>
-    <span matPrefix>$&nbsp;</span>
-    <input matInput type="number" formControlName="creditLimit" required />
+    <span matPrefix> &nbsp;$&nbsp;</span>
+    <input matInput type="number" formControlName="creditLimit" />
+
+    <mat-error *ngIf="isValidField('creditLimit')">
+      El Crédito es requerido.
+    </mat-error>
   </mat-form-field>
 
   <mat-form-field appearance="fill" class="h-17 mat-input-sm">
     <mat-label>Días de Crédito</mat-label>
-    <span matPrefix>$&nbsp;</span>
-    <input matInput type="number" formControlName="paymentDays" required />
+    <input matInput type="number" formControlName="paymentDays" />
+
+    <mat-error *ngIf="isValidField('paymentDays')">
+      Días de Crédito es requerido.
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="h-17">
+    <mat-label>Usuario Asignado</mat-label>
+    <input type="text" matInput [formControl]="userControl" [matAutocomplete]="autoUser" required />
+    <mat-autocomplete #autoUser="matAutocomplete" [displayWith]="displayFnUser" (optionSelected)="onUserSelected($event.option.value)">
+      <mat-option *ngFor="let user of filteredUser | async" [value]="user">
+        {{ user.firstName }} {{ user.lastName }} {{ user.mLastName }}
+      </mat-option>
+    </mat-autocomplete>
+
+    <mat-error *ngIf="isValidField('userId')">
+      El Usuario es requerido.
+    </mat-error>
   </mat-form-field>
 
   <mat-form-field appearance="fill" class="h-17 mat-input-sm">
@@ -65,7 +149,7 @@
 
   <div class="md:col-span-3 flex justify-center mt-10">
     <button mat-raised-button class="btn-success" type="submit">
-      Registrar Cliente
+      {{ isEditMode ? 'Actualizar Cliente' : 'Registrar Cliente' }}
     </button>
   </div>
 </form>

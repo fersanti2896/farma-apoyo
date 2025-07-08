@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Location } from '@angular/common';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { ProductService } from '../../services/product.service';
 import { ValidatorsService } from '../../../../shared/services';
-import { CreateProductRequest } from '../../../interfaces/product.interface';
+import { CreateProductRequest, ProductDTO, UpdateProductRequest } from '../../../interfaces/product.interface';
 
 @Component({
   selector: 'modules-products-create-page',
@@ -16,6 +16,8 @@ import { CreateProductRequest } from '../../../interfaces/product.interface';
 export class CreatePageComponent {
   public isLoading: boolean = false;
   public productForm!: FormGroup;
+  public isEditMode = false;
+  private productId: number | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -23,7 +25,8 @@ export class CreatePageComponent {
     private router: Router,
     private validatorsService: ValidatorsService,
     private snackBar: MatSnackBar,
-    private location: Location
+    private location: Location,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
@@ -34,6 +37,23 @@ export class CreatePageComponent {
       unit: [''],
       price: ['', Validators.required]
     });
+
+    const product = history.state['product'] as ProductDTO;
+
+    console.log({ product });
+
+    if (product && product.productId) {
+      this.isEditMode = true;
+      this.productId = product.productId;
+
+      this.productForm.patchValue({
+        productName: product.productName,
+        description: product.description,
+        barcode: product.barcode,
+        unit: product.unit,
+        price: product.price
+      });
+    }
   }
 
   isValidField = ( field: string ) => {
@@ -48,28 +68,38 @@ export class CreatePageComponent {
     }
 
     const { productName, description, barcode, unit, price } = this.productForm.value;
-    
-    const data: CreateProductRequest = { productName, description, barcode, unit, price }
+
+    const data: CreateProductRequest | UpdateProductRequest = {
+      productName,
+      description,
+      barcode,
+      unit,
+      price,
+      ...(this.isEditMode ? { productId: this.productId! } : {})
+    };
 
     this.isLoading = true;
 
-    this.productService.createProduct( data ).subscribe({
+    const request$ = this.isEditMode
+      ? this.productService.editProduct(data as UpdateProductRequest)
+      : this.productService.createProduct(data as CreateProductRequest);
+
+    request$.subscribe({
       next: (response) => {
-        if(response.result) {
-          this.snackBar.open(`Producto creado correctamente`, 'Cerrar', { duration: 300, });
+        if (response.result) {
+          const msg = this.isEditMode ? 'Producto actualizado correctamente' : 'Producto creado correctamente';
+          this.snackBar.open(msg, 'Cerrar', { duration: 300 });
           this.productForm.reset();
           this.isLoading = false;
-          
+
           setTimeout(() => {
-            this.router.navigate(['/sic/inicio/productos'])
+            this.router.navigate(['/sic/inicio/productos']);
           }, 100);
         }
-        
       },
-      error: (err) => {
+      error: () => {
         this.isLoading = false;
-        this.snackBar.open('Error al crear producto.', 'Cerrar', { duration: 3000 });
-        this.productForm.reset();
+        this.snackBar.open('Error al guardar producto.', 'Cerrar', { duration: 3000 });
       }
     });
   }

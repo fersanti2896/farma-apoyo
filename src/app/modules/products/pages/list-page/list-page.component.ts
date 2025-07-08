@@ -5,9 +5,14 @@ import { MatSort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
+import { jsPDF } from 'jspdf';
+import * as XLSX from 'xlsx';
+import * as FileSaver from 'file-saver';
+import autoTable from 'jspdf-autotable';
+
 import { ProductDTO } from '../../../interfaces/product.interface';
 import { ProductService } from '../../services/product.service';
-import { AssignProviderDialogComponent } from '../../components/assign-provider-dialog/assign-provider-dialog.component';
+import { Router } from '@angular/router';
 @Component({
   selector: 'modules-products-list-page',
   standalone: false,
@@ -24,7 +29,8 @@ export class ListPageComponent {
   constructor(
     private productsService: ProductService,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -59,16 +65,99 @@ export class ListPageComponent {
     });
   }
 
-  openAssignProviderDialog(product: ProductDTO) {
-    const dialogRef = this.dialog.open(AssignProviderDialogComponent, {
-      width: '400px',
-      data: { productId: product.productId }
+  editProduct(product: ProductDTO) {
+    this.router.navigate(['/sic/inicio/productos/editar'], {
+      state: { product }
     });
+  }
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.loadGetProducts();
+  exportToPDF(): void {
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+
+    const formatter = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', minimumFractionDigits: 2} );
+
+    const logoImg = new Image();
+    logoImg.src = 'assets/logos/inventory.png';
+
+    logoImg.onload = () => {
+      const date = new Date().toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' });
+
+      doc.addImage(logoImg, 'PNG', 10, 10, 30, 30);
+      doc.setFontSize(16);
+      doc.setFont('helvetica', 'bold');
+      doc.text('FARMA APOYO', pageWidth / 2, 20, { align: 'center' });
+
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'normal');
+      doc.text('Productos', pageWidth / 2, 28, { align: 'center' });
+
+
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Fecha: ${date}`, pageWidth - 14, 28, { align: 'right' });
+
+      const columns = ['ID', 'Nombre', 'Precio', 'Código de Barras', 'Unidad'];
+      const rows = this.dataSource.data.map(entry => [
+        entry.productId,
+        entry.productName,
+        formatter.format(entry.price),
+        entry.barcode,
+        entry.unit
+      ]);
+
+      autoTable(doc, {
+        head: [columns],
+        body: rows,
+        startY: 45,
+        margin: { bottom: 30 },
+        styles: { fontSize: 10 },
+        headStyles: { halign: 'center' },
+        columnStyles: {
+          0: { halign: 'center' }
+        },
+        didDrawPage: (data) => {
+          const str = `Página ${doc.getNumberOfPages()}`;
+
+          doc.setFontSize(10);
+          doc.text(str, pageWidth / 2, doc.internal.pageSize.getHeight() - 10, {
+            align: 'center'
+          });
+        }
+      });
+
+      doc.save(`Productos_${date}.pdf`);
+    };
+  }
+
+  exportToExcel(): void {
+    const date = new Date().toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' });
+
+    const dataToExport = this.dataSource.data.map(entry => ({
+      ID: entry.productId,
+      Nombre: entry.productName,
+      Precio: entry.price,
+      CodigoBarras: entry.barcode,
+      Unidad: entry.unit
+    }));
+
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(dataToExport, { cellDates: true });
+    const range = XLSX.utils.decode_range(worksheet['!ref'] || '');
+    
+    for (let R = 1; R <= range.e.r; ++R) {
+      const montoCell = worksheet[XLSX.utils.encode_cell({ r: R, c: 2 })];
+
+      if (montoCell) {
+        montoCell.t = 'n';
+        montoCell.z = '"$"#,##0.00';
       }
-    });
+    }
+
+    const sheetName = 'Productos';
+    const workbook: XLSX.WorkBook = { Sheets: { [sheetName]: worksheet }, SheetNames: [sheetName] };
+    const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const blobData: Blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+
+    FileSaver.saveAs(blobData, `Productos_${date}.xlsx`);
   }
 }

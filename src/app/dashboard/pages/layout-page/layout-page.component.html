@@ -36,9 +36,9 @@
                     <p class="text-sm font-medium text-gray-900 truncate dark:text-gray-300">{{ user.username }}</p>
                   </div>
                   <ul class="py-1">
-                    <li><a routerLink="/" class="item-submenu" (click)="closeUserMenu()">Cuenta</a>
+                    <li><a routerLink="/" class="item-submenu">Cuenta</a>
                     <li>
-                      <button (click)="logout(); closeUserMenu()" class="item-submenu">
+                      <button (click)="logout(); closeUserMenu()" class="item-submenu ">
                         Cerrar Sesión
                       </button>
                     </li>
@@ -114,8 +114,8 @@
       <a (click)="logout()"
          class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
       >
-        <span class="material-icons me-3">logout</span>
-        <span class="ms-3">Cerrar Sesión</span>
+        <span class="material-icons me-3 cursor-pointer">logout</span>
+        <span class="ms-3 cursor-pointer">Cerrar Sesión</span>
       </a>
     </div>
   </div>

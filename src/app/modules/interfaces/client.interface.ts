@@ -9,6 +9,18 @@ export interface CreateClientRequest {
     notes: string;
     paymentDays: number;    
     creditLimit: number;
+    cve_CodigoPostal: string;
+    cve_Estado: string;
+    cve_Municipio: string;
+    cve_Colonia: string;
+    street: string;
+    extNbr: string;
+    innerNbr: string;
+    userId: number;
+}
+
+export interface UpdateClientRequest extends CreateClientRequest {
+    clientId: number;
 }
 
 export interface ClientDTO {
@@ -18,6 +30,18 @@ export interface ClientDTO {
     address: string;
     phoneNumber: string;
     rfc: string;
-    email: string;
+    email: string | null;
     creditLimit: number;
+    notes: string | null;
+    paymentDays: number;
+    cve_CodigoPostal: string;
+    cve_Estado: string;
+    cve_Municipio: string;
+    cve_Colonia: string;
+    street: string;
+    extNbr: string;
+    innerNbr: string | null;
+    userId: number;
+    status: number;
+    descriptionStatus: string;
 }
