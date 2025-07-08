@@ -31,6 +31,7 @@
 
     <mat-form-field appearance="fill" class="flex-1 md:-mt-1 -mt-3">
       <mat-label>Precio Unitario</mat-label>
+      <span matPrefix> &nbsp;$&nbsp;</span>
       <input matInput type="number" formControlName="unitPrice">
 
       <mat-error *ngIf="isValidField('unitPrice')">

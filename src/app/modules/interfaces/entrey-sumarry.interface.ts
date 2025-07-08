@@ -29,3 +29,24 @@ export interface CreateWarehouseRequest {
 export interface ProductView extends ProductsDetailsDTO {
   productName: string;
 }
+
+export interface FullEntryByIdRequest {
+    entryId: number;
+}
+
+export interface ProductsEntryDetailsDTO extends ProductsDetailsDTO {
+    productName: string;
+    subTotal: number;
+}
+
+export interface DetailsEntryResponse {
+    entryId: number;
+    supplierId: number;
+    businessName: string;
+    invoiceNumber: string;
+    entryDate: string;
+    expectedPaymentDate: string;
+    totalAmount: number;
+    observations: string;
+    productsDetails: ProductsEntryDetailsDTO[]
+}

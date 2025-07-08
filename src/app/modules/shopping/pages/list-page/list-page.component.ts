@@ -10,9 +10,9 @@ import * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
 import autoTable from 'jspdf-autotable';
 
-import { EntrySummaryDTO } from '../../../interfaces/entrey-sumarry.interface';
+import { EntrySummaryDTO, FullEntryByIdRequest } from '../../../interfaces/entrey-sumarry.interface';
 import { ShoppingService } from '../../services/shopping.service';
-
+import { EntryDialogsComponent } from '../../components/entry-dialogs/entry-dialogs.component';
 
 @Component({
   selector: 'modules-shopping-list-page',
@@ -55,13 +55,32 @@ export class ListPageComponent {
 
     this.shoppingService.listWarehouse().subscribe({
       next: (response) => {
-        if (response.result) {
+        if (response.result)
           this.dataSource.data = response.result;
-          console.log(this.dataSource.data)
-        }
+        
         this.isLoading = false;
       },
       error: () => this.isLoading = false,
+    });
+  }
+
+  openConfirmDialog(client: EntrySummaryDTO): void {
+    const data: FullEntryByIdRequest = {
+      entryId: client.entryId
+    }
+
+    this.shoppingService.detailsFullEntryById( data ).subscribe({
+      next: (response) => {
+        if (response.result) {
+          this.dialog.open(EntryDialogsComponent, {
+            width: '80vw',
+            data: response.result
+          });
+        }
+      },
+      error: () => {
+        this.snackBar.open('Error al obtener detalles de la nota de pedido', 'Cerrar', { duration: 3000 });
+      }
     });
   }
 

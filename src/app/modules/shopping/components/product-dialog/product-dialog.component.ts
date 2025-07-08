@@ -1,8 +1,8 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Observable, map, startWith } from 'rxjs';
-import { ProductBySupplierDTO } from '../../../interfaces/product.interface';
+import { ProductDTO } from '../../../interfaces/product.interface';
 import { ValidatorsService } from '../../../../shared/services';
 
 @Component({
@@ -12,21 +12,21 @@ import { ValidatorsService } from '../../../../shared/services';
 })
 export class ProductDialogComponent {
   public form!: FormGroup;
-  public products: ProductBySupplierDTO[];
-  public productControl = new FormControl<ProductBySupplierDTO | null>(null, Validators.required);
-  public filteredProducts!: Observable<ProductBySupplierDTO[]>;
+  public products: ProductDTO[];
+  public productControl = new FormControl<ProductDTO | null>(null, Validators.required);
+  public filteredProducts!: Observable<ProductDTO[]>;
 
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<ProductDialogComponent>,
     private validatorsService: ValidatorsService,
-    @Inject(MAT_DIALOG_DATA) public data: ProductBySupplierDTO[]
+    @Inject(MAT_DIALOG_DATA) public data: ProductDTO[]
   ) {
     this.products = data;
     this.form = this.fb.group({
       productId: [null, Validators.required],
-      quantity: [1, [Validators.required, Validators.min(1)]],
-      unitPrice: [0, [Validators.required, Validators.min(0.01)]],
+      quantity: [null, [Validators.required, Validators.min(1)]],
+      unitPrice: [null, [Validators.required, Validators.min(0.01)]],
       lot: ['', [ Validators.required ]],
       expirationDate: [null, [ Validators.required ]]
     });
@@ -59,7 +59,7 @@ export class ProductDialogComponent {
     });
   }
 
-  displayProductFn(product: ProductBySupplierDTO): string {
+  displayProductFn(product: ProductDTO): string {
     return product?.productName ?? '';
   }
 

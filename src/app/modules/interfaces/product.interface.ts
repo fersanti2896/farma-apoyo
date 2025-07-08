@@ -30,7 +30,7 @@ export interface ProductsBySupplierRequest {
   supplierId: number;
 }
 
-export interface ProductBySupplierDTO {
+export interface ProductDTO {
   productId: number;
   productName: string;
 }

@@ -3,8 +3,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Location } from '@angular/common';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { map, Observable, startWith } from 'rxjs';
 import { Router } from '@angular/router';
+import { map, Observable, startWith } from 'rxjs';
 
 import { ShoppingService } from '../../services/shopping.service';
 import { ProveedoresService } from '../../../proveedores/services/proveedores.service';
@@ -12,6 +12,7 @@ import { SupplierDTO } from '../../../interfaces/supplier.interface';
 import { CreateWarehouseRequest, ProductView } from '../../../interfaces/entrey-sumarry.interface';
 import { ProductDialogComponent } from '../../components/product-dialog/product-dialog.component';
 import { ValidatorsService } from '../../../../shared/services';
+import { ProductService } from '../../../products/services/product.service';
 
 @Component({
   selector: 'modules-shopping-create-page',
@@ -31,6 +32,7 @@ export class CreatePageComponent {
     private fb: FormBuilder,
     private shoppingService: ShoppingService,
     private proveedoresService: ProveedoresService,
+    private productsService: ProductService,
     private dialog: MatDialog,
     private location: Location,
     private snackBar: MatSnackBar,
@@ -78,10 +80,7 @@ export class CreatePageComponent {
   }
 
   openProductDialog(): void {
-    const supplierId = this.form.get('supplierId')?.value;
-    if (!supplierId) return;
-
-    this.shoppingService.getProducts({ supplierId }).subscribe({
+    this.productsService.listProducts().subscribe({
       next: (response) => {
         const productList = response.result;
 

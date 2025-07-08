@@ -7,13 +7,15 @@ import { CreatePageComponent } from './pages/create-page/create-page.component';
 import { SharedModule } from '../../shared/shared.module';
 import { ProductDialogComponent } from './components/product-dialog/product-dialog.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { EntryDialogsComponent } from './components/entry-dialogs/entry-dialogs.component';
 
 
 @NgModule({
   declarations: [
     ListPageComponent,
     CreatePageComponent,
-    ProductDialogComponent
+    ProductDialogComponent,
+    EntryDialogsComponent
   ],
   imports: [
     CommonModule,

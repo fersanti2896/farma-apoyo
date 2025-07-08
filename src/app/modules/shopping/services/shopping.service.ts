@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
-import { environment } from '../../../enviroments/enviroment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { GlobalStateService } from '../../../shared/services';
 import { Observable } from 'rxjs';
+
+import { environment } from '../../../enviroments/enviroment';
+import { GlobalStateService } from '../../../shared/services';
 import { ApiResponse } from '../../../auth/interfaces/auth.interface';
-import { CreateWarehouseRequest, EntrySummaryDTO } from '../../interfaces/entrey-sumarry.interface';
+import { CreateWarehouseRequest, DetailsEntryResponse, EntrySummaryDTO, FullEntryByIdRequest } from '../../interfaces/entrey-sumarry.interface';
 import { ReplyResponse } from '../../interfaces/reply.interface';
-import { ProductBySupplierDTO, ProductsBySupplierRequest } from '../../interfaces/product.interface';
+import { ProductDTO } from '../../interfaces/product.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -27,9 +28,9 @@ export class ShoppingService {
     return this.http.post<ApiResponse<ReplyResponse>>(`${ this.api }/Warehouse/CreateFullEntry`, data, { headers: this.getHeaders() });
   }
 
-  getProducts( data: ProductsBySupplierRequest ): Observable<ApiResponse<ProductBySupplierDTO>> {
-    return this.http.post<ApiResponse<ProductBySupplierDTO>>(`${ this.api }/Warehouse/GetProducts`, data, { headers: this.getHeaders() });
-  }
+  detailsFullEntryById( data: FullEntryByIdRequest ): Observable<ApiResponse<DetailsEntryResponse>> {
+    return this.http.post<ApiResponse<DetailsEntryResponse>>(`${ this.api }/Warehouse/FullEntryById`, data, { headers: this.getHeaders() });
+  }  
 
   private getHeaders(): HttpHeaders {
     const token = this.globalStateService.getToken();
