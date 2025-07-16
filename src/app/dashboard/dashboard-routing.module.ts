@@ -48,6 +48,11 @@ const routes: Routes = [
         canActivate: [ AuthGuard ],
         data: { roles: [1, 2, 4] } 
       },
+      { path: 'entregas', 
+        loadChildren: () => import('../modules/deliveries/deliveries.module').then(m => m.DeliveriesModule),
+        canActivate: [ AuthGuard ],
+        data: { roles: [1, 2, 3] } 
+      },
       { path: '**', redirectTo: 'list' },
     ] 
   }

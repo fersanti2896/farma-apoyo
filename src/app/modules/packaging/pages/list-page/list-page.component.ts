@@ -8,7 +8,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
-import { SaleDTO, UpdateSaleStatusRequest } from '../../../interfaces/sale.interface';
+import { SaleDTO, SalesByStatusRequest, UpdateSaleStatusRequest } from '../../../interfaces/sale.interface';
 import { PackagingService } from '../../services/packaging.service';
 import { GlobalStateService } from '../../../../shared/services';
 import { TicketDialogComponent } from '../../components/ticket-dialog/ticket-dialog.component';
@@ -68,7 +68,11 @@ export class ListPageComponent {
   loadSales(): void {
     this.isLoading = true;
 
-    this.packingService.listSales().subscribe({
+    const data: SalesByStatusRequest = {
+      saleStatusId: 2
+    }
+
+    this.packingService.listSales( data ).subscribe({
       next: (response) => {
         if (response.result) {
           let filteredStock = response.result;
@@ -118,15 +122,19 @@ export class ListPageComponent {
           comments: comment?.trim() || ''
         };
 
+        this.isLoading = true;
         this.packingService.updateSaleStatus(request).subscribe({
           next: (response) => {
             if (response.result) {
               this.snackBar.open('Estatus actualizado a Empaquetado', 'Cerrar', { duration: 3000 });
               this.loadSales();
             }
+
+            this.isLoading = false;
           },
           error: () => {
             this.snackBar.open('Error al actualizar estatus', 'Cerrar', { duration: 3000 });
+            this.isLoading = false;
           }
         });
       }

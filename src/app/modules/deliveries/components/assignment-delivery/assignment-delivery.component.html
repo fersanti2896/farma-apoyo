@@ -1,0 +1,30 @@
+<h2 mat-dialog-title class="text-2xl text-center">Asignar Ticket: #{{ saleId }}</h2>
+
+<mat-dialog-content [formGroup]="assigmentForm" class="flex flex-col items-center">
+  <mat-form-field appearance="fill" class="w-full">
+    <mat-label>Usuario Asignado</mat-label>
+    <input
+      type="text"
+      matInput
+      [formControl]="userControl"
+      [matAutocomplete]="autoUser"
+      required
+    />
+    <mat-autocomplete
+      #autoUser="matAutocomplete"
+      [displayWith]="displayFnUser"
+      (optionSelected)="onUserSelected($event.option.value)"
+    >
+      <mat-option *ngFor="let user of filteredUser | async" [value]="user">
+        {{ user.firstName }} {{ user.lastName }} {{ user.mLastName }}
+      </mat-option>
+    </mat-autocomplete>
+
+    <mat-error *ngIf="isValidField('userId')">Usuario Asignado es requerido</mat-error>
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="center">
+  <button mat-raised-button class="btn-success" (click)="confirm()">Aceptar</button>
+  <button mat-button class="h-9 btn-cancel ml-4" (click)="cancel()">Cancelar</button>
+</mat-dialog-actions>

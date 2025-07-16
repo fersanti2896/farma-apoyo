@@ -104,7 +104,7 @@ export class TicketDialogComponent {
       y += 5;
 
       doc.setFont('courier', 'bold');
-      doc.setFontSize(9);
+      doc.setFontSize(12);
       doc.text('TOTAL:', 5, y);
       doc.text(formatter.format(this.sale.totalAmount), pageWidth - 5, y, { align: 'right' });
       y += 4;

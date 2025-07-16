@@ -79,7 +79,7 @@ export class LayoutPageComponent implements OnInit {
           { label: 'Inventario', icon: 'inventory', url: '/sic/inicio/stock', roles: [1, 2, 4, 5] },
           { label: 'Compras', icon: 'shopping_cart', url: '/sic/inicio/compras', roles: [1, 2, 4] },
           { label: 'Surtido', icon: 'trolley', url: '/sic/inicio/surtido', roles: [1, 2, 4] },
-          { label: 'Entregas', icon: 'outbox', url: '/sic/inicio/entregas', roles: [1, 2, 4] },
+          { label: 'Entregas', icon: 'outbox', url: '/sic/inicio/entregas', roles: [1, 2, 3] },
         ]
       },
       {

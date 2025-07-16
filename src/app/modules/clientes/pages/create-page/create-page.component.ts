@@ -311,59 +311,6 @@ export class CreatePageComponent implements OnInit {
     });
   }
 
-  // onSubmit() {
-  //   if (this.clientForm.invalid) {
-  //     this.clientForm.markAllAsTouched();
-
-  //     return;
-  //   }
-  //   const { businessName, contactName, phone, address, email, paymentDays, creditLimit, notes,
-  //           street, outsideNumber, interiorNumber, zipCode, state, municipality, colonia, userId
-  //   } = this.clientForm.value;
-    
-  //   const data: CreateClientRequest = {
-  //     businessName,
-  //     contactName,
-  //     phoneNumber: phone,
-  //     email,
-  //     rfc: '',
-  //     address,
-  //     paymentDays,
-  //     creditLimit,
-  //     notes,
-  //     cve_CodigoPostal: zipCode,
-  //     cve_Estado: state,
-  //     cve_Municipio: municipality,
-  //     cve_Colonia: colonia,
-  //     street,
-  //     extNbr: outsideNumber,
-  //     innerNbr: interiorNumber,
-  //     userId 
-  //   }
-
-  //   this.isLoading = false;
-
-  //   this.clientsService.createClient( data ).subscribe({
-  //     next: (response) => {
-  //       if(response.result) {
-  //         this.snackBar.open(`Cliente creado correctamente`, 'Cerrar', { duration: 300, });
-  //         this.clientForm.reset();
-  //         this.isLoading = false;
-          
-  //         setTimeout(() => {
-  //           this.router.navigate(['/sic/inicio/clientes'])
-  //         }, 100);
-  //       }
-        
-  //     },
-  //     error: (err) => {
-  //       this.isLoading = false;
-  //       this.snackBar.open('Error al crear cliente.', 'Cerrar', { duration: 3000 });
-  //       this.clientForm.reset();
-  //     }
-  //   });
-  // }
-
   onSubmit() {
     if (this.clientForm.invalid) {
       this.clientForm.markAllAsTouched();

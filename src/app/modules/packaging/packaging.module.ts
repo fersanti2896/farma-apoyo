@@ -19,6 +19,9 @@ import { UpdateStatusDialogComponent } from './components/update-status-dialog/u
     PackagingRoutingModule,
     SharedModule, 
     ReactiveFormsModule
+  ],
+  exports: [
+    TicketDialogComponent
   ]
 })
 export class PackagingModule { }

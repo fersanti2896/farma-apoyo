@@ -14,6 +14,8 @@ export interface SaleDTO {
     statusName: string;
     totalAmount: number;
     saleDate: string;
+    vendedor: string;
+    repartidor: string;
 }
 
 export interface DetailsSaleDTO {
@@ -27,6 +29,10 @@ export interface DetailsSaleDTO {
     createDate: string;
     vendedor: string;
 
+}
+
+export interface SalesByStatusRequest {
+    saleStatusId: number;
 }
 
 export interface DetailSaleByIdRequest {
@@ -46,4 +52,14 @@ export interface UpdateSaleStatusRequest {
     saleId: number;
     saleStatusId: number;
     comments: string;
+}
+
+export interface AssignDeliveryUserRequest {
+    saleId: number;
+    deliveryUserId: number;
+}
+
+export interface SalesStatusDTO {
+    saleStatusId: number;
+    statusName: string;
 }

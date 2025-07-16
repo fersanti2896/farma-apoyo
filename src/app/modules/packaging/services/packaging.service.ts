@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { ApiResponse } from '../../../auth/interfaces/auth.interface';
 import { environment } from '../../../enviroments/enviroment';
 import { GlobalStateService } from '../../../shared/services';
-import { DetailSaleByIdRequest, DetailsSaleResponse, SaleDTO, UpdateSaleStatusRequest } from '../../interfaces/sale.interface';
+import { DetailSaleByIdRequest, DetailsSaleResponse, SaleDTO, SalesByStatusRequest, UpdateSaleStatusRequest } from '../../interfaces/sale.interface';
 import { ReplyResponse } from '../../interfaces/reply.interface';
 
 @Injectable({
@@ -19,8 +19,8 @@ export class PackagingService {
     private globalStateService: GlobalStateService
   ) { }
 
-  listSales(): Observable<ApiResponse<SaleDTO[]>> {
-    return this.http.get<ApiResponse<SaleDTO[]>>(`${ this.api }/Sales/GetAllSales`, { headers: this.getHeaders() });
+  listSales( data: SalesByStatusRequest ): Observable<ApiResponse<SaleDTO[]>> {
+    return this.http.post<ApiResponse<SaleDTO[]>>(`${ this.api }/Sales/GetAllSalesByStatus`, data,  { headers: this.getHeaders() });
   }
 
   postDetailSaleById( data: DetailSaleByIdRequest ): Observable<ApiResponse<DetailsSaleResponse>> {
