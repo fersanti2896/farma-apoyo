@@ -10,7 +10,9 @@ import { ClientByUserDTO } from '../../../interfaces/client.interface';
 import { ProductDialogComponent } from '../../components/product-dialog/product-dialog.component';
 import { ProductStockDTO } from '../../../interfaces/product.interface';
 import { SalesAlertDialogComponent } from '../../components/sales-alert-dialog/sales-alert-dialog.component';
-import { CreateSaleRequest } from '../../../interfaces/sale.interface';
+import { CreateSaleRequest, DetailSaleByIdRequest, SaleDTO } from '../../../interfaces/sale.interface';
+import { PackagingService } from '../../../packaging/services/packaging.service';
+import { TicketDialogComponent } from '../../../packaging/components/ticket-dialog/ticket-dialog.component';
 
 @Component({
   selector: 'modules-sales-pos-page',
@@ -33,6 +35,7 @@ export class PosPageComponent {
     private fb: FormBuilder, 
     private snackbar: MatSnackBar,
     private globalStateService: GlobalStateService,
+    private packingService: PackagingService,
     private salesService: SalesService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
@@ -240,10 +243,28 @@ export class PosPageComponent {
           return;
         }
 
+        const saleId = Number(response.result?.msg);
+
         this.snackbar.open('Venta registrada correctamente', 'Cerrar', {
           duration: 2500,
           panelClass: 'snack-success'
         });
+
+        const client = this.clientsByUser.find(c => c.clientId === +selectedClientId);
+
+        const sale: SaleDTO = {
+          saleId: saleId,
+          clientId: +selectedClientId,
+          businessName: client?.businessName ?? '',
+          saleStatusId: 2,
+          statusName: 'En proceso',
+          totalAmount: totalAmount,
+          saleDate: new Date().toISOString(),
+          vendedor: this.sellerName,
+          repartidor: '' // puedes llenarlo si lo asignas más adelante
+        };
+
+        this.openDetailsTicket(sale);
 
         this.resetForm();
       },
@@ -260,5 +281,27 @@ export class PosPageComponent {
     this.availableCredit = 0;
     this.isBlocked = 'Desconocido';
     this.isRegisterDisabled = true;
+  }
+
+  openDetailsTicket(sale: SaleDTO): void {
+    const request = { saleId: sale.saleId };
+
+    this.packingService.postDetailSaleById(request).subscribe({
+      next: (response) => {
+        if (response.result) {
+          this.dialog.open(TicketDialogComponent, {
+            width: '200px',
+            height: '70%',
+            data: {
+              sale: sale,             // Info general del ticket
+              details: response.result // Lista de productos vendidos
+            }
+          });
+        }
+      },
+      error: () => {
+        this.snackBar.open('Error al obtener detalles del ticket.', 'Cerrar', { duration: 3000 });
+      }
+    });
   }
 }

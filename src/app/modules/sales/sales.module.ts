@@ -7,6 +7,7 @@ import { PosPageComponent } from './pages/pos-page/pos-page.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ProductDialogComponent } from './components/product-dialog/product-dialog.component';
 import { SalesAlertDialogComponent } from './components/sales-alert-dialog/sales-alert-dialog.component';
+import { PackagingModule } from '../packaging/packaging.module';
 
 
 @NgModule({
@@ -19,7 +20,8 @@ import { SalesAlertDialogComponent } from './components/sales-alert-dialog/sales
     CommonModule,
     SalesRoutingModule,
     SharedModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    PackagingModule
   ]
 })
 export class SalesModule { }

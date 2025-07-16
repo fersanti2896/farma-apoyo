@@ -63,3 +63,22 @@ export interface SalesStatusDTO {
     saleStatusId: number;
     statusName: string;
 }
+
+export interface SalesPendingPaymentDTO {
+    saleId: number;
+    saleDate: string;
+    totalAmount: number;
+    amountPaid: number;
+    amountPending: number;
+    saleStatus: string;
+    paymentStatus: string;
+    clientId: number;
+    businessName: string;
+}
+
+export interface ApplyPaymentRequest {
+    saleId: number;
+    amount: number;
+    method: string;
+    comments: string;
+}

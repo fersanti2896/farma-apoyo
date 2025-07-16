@@ -5,9 +5,6 @@ import { MatSort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
-
 import { SaleDTO, SalesByStatusRequest, UpdateSaleStatusRequest } from '../../../interfaces/sale.interface';
 import { PackagingService } from '../../services/packaging.service';
 import { GlobalStateService } from '../../../../shared/services';

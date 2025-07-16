@@ -108,14 +108,16 @@ export class LayoutPageComponent implements OnInit {
         label: 'Cobranza',
         icon: 'request_quote',
         expanded: false,
-        roles: [1, 2, 3],
-        url: '/sic/inicio/cobranza'
+        roles: [1, 2],
+        children: [
+          { label: 'Cobranza', icon: 'currency_exchange', url: '/sic/inicio/cobranza', roles: [1, 2] },          
+        ]
       },
       {
         label: 'Finanzas',
         icon: 'account_balance_wallet',
         expanded: false,
-        roles: [1, 2, 3],
+        roles: [1, 2],
         url: '/sic/inicio/finanzas'
       }
     ];

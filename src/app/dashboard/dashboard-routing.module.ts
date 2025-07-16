@@ -53,6 +53,11 @@ const routes: Routes = [
         canActivate: [ AuthGuard ],
         data: { roles: [1, 2, 3] } 
       },
+      { path: 'cobranza', 
+        loadChildren: () => import('../modules/collection/collection.module').then(m => m.CollectionModule),
+        canActivate: [ AuthGuard ],
+        data: { roles: [1, 2] } 
+      },
       { path: '**', redirectTo: 'list' },
     ] 
   }
