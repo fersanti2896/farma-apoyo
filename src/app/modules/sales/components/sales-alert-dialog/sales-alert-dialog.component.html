@@ -1,0 +1,9 @@
+<h2 mat-dialog-title class="text-center">¡Aviso Importante!</h2>
+
+<mat-dialog-content>
+    <p class="text-center text-red-500">{{ data.message }}</p>
+    <!-- <p class="text-sm text-gray-600 mt-2">Por favor, notificar a administración.</p> -->
+</mat-dialog-content>
+<mat-dialog-actions align="center">
+    <button mat-button class="btn-info" (click)="dialogRef.close()">Aceptar</button>
+</mat-dialog-actions>

@@ -1,13 +1,16 @@
-import { jsPDF } from 'jspdf';
-import autoTable from 'jspdf-autotable';
 import { Component, ViewChild } from '@angular/core';
-import { StockDTO } from '../../../interfaces/stock.interface';
 import { MatTableDataSource } from '@angular/material/table';
-import { InventoryService } from '../../services/inventory.service';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
+
+import { StockDTO } from '../../../interfaces/stock.interface';
+import { InventoryService } from '../../services/inventory.service';
+import { GlobalStateService } from '../../../../shared/services';
 
 @Component({
   selector: 'modules-inventory-list-page',
@@ -15,21 +18,35 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   templateUrl: './list-page.component.html'
 })
 export class ListPageComponent {
-  public displayedColumns: string[] = ['inventoryId', 'productName', 'description', 'currentStock', 'lastUpdateDate'];
+  public displayedColumns: string[] = [];
   public dataSource = new MatTableDataSource<StockDTO>();
   public isLoading: boolean = false;
+  public rol: number = 0;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   constructor(
     private inventoryService: InventoryService,
+    private globalStateService: GlobalStateService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
     this.loadStock();
+
+    const { roleId } = this.globalStateService.getUser();
+    this.rol = roleId;
+
+    this.displayedColumns = [
+      'inventoryId',
+      'productName',
+      'description',
+      ...(this.rol !== 5 && this.rol !== 6 ? ['currentStock', 'apartado'] : []),
+      'stockReal',
+      'lastUpdateDate'
+    ];
   }
 
   ngAfterViewInit(): void {
@@ -51,8 +68,13 @@ export class ListPageComponent {
     this.inventoryService.listStock().subscribe({
       next: (response) => {
         if (response.result) {
-          this.dataSource.data = response.result;
-          console.log(this.dataSource.data)
+          let filteredStock = response.result;
+
+          if (this.rol === 5) {
+            filteredStock = filteredStock.filter(item => item.stockReal > 0);
+          }
+
+          this.dataSource.data = filteredStock;
         }
         this.isLoading = false;
       },

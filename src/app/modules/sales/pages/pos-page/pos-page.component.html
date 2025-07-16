@@ -1,0 +1,76 @@
+<shared-loading-page *ngIf="isLoading"></shared-loading-page>
+
+<div class="p-4 sm:p-6 md:p-8" [formGroup]="posForm">
+  <h1 class="text-xl sm:text-2xl font-bold text-center mb-6 sm:mb-8">PUNTO DE VENTA</h1>
+
+  <!-- Información del Vendedor y Cliente -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+    <div>
+      <p><strong>Vendedor:</strong> {{ sellerName }}</p>
+      <p><strong>Crédito Vendedor:</strong> ${{ availableCreditUser | number:'1.0-2' }}</p>
+    </div>
+    <div>
+      <label for="client"><strong>Cliente:</strong></label>
+      <select
+        id="client"
+        formControlName="selectedClientId"
+        (change)="onClientChange()"
+        class="w-full border rounded px-2 py-1 mt-1"
+      >
+        <option value="">Cliente</option>
+        <option *ngFor="let client of clientsByUser" [value]="client.clientId">
+          {{ client.businessName }}
+        </option>
+      </select>
+      <p class="mt-2"><strong>Crédito Disponible:</strong> ${{ availableCredit  | number:'1.0-2' }}</p>
+      <p class="mt-2"><strong>Estado:</strong> {{ isBlocked }} </p>
+    </div>
+  </div>
+
+  <!-- Botón para agregar producto -->
+  <div class="flex flex-col sm:flex-row sm:items-center mb-6 gap-3">
+    <button class="btn-info flex items-center gap-x-1 justify-center" (click)="openProductDialog()" [disabled]="isRegisterDisabled">
+      <mat-icon>add_shopping_cart</mat-icon> <span>Agregar Producto</span>
+    </button>
+  </div>
+
+  <!-- Tabla de productos -->
+  <div class="overflow-x-auto" formArrayName="products">
+    <table class="min-w-full table-auto border text-sm">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="px-2 sm:px-4 py-2">Producto</th>
+          <th class="px-2 sm:px-4 py-2">Cantidad</th>
+          <th class="px-2 sm:px-4 py-2">Precio Venta</th>
+          <th class="px-2 sm:px-4 py-2">Precio</th>
+          <th class="px-2 sm:px-4 py-2">Importe</th>
+          <th class="px-2 sm:px-4 py-2">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of products.controls; let i = index" [formGroupName]="i">
+          <td class="px-2 sm:px-4 py-2">{{ p.get('productName')?.value }}</td>
+          <td class="px-2 sm:px-4 py-2 text-center">{{ p.get('quantity')?.value }}</td>
+          <td class="px-2 sm:px-4 py-2 text-right">${{ p.get('defaultPrice')?.value | number:'1.2-2' }}</td>
+          <td class="px-2 sm:px-4 py-2 text-right">${{ p.get('customPrice')?.value | number:'1.2-2' }}</td>
+          <td class="px-2 sm:px-4 py-2 text-right">
+            ${{ p.get('quantity')?.value * p.get('customPrice')?.value | number:'1.2-2' }}
+          </td>
+          <td class="px-2 sm:px-4 py-2 text-center">
+            <button mat-icon-button class="cursor-pointer text-red-600 font-bold" (click)="removeProduct(i)">
+                <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Total y botón registrar -->
+  <div class="flex flex-col sm:flex-row justify-between items-center mt-8 gap-4">
+    <h2 class="text-lg font-bold">Total: MX${{ getTotal() | number:'1.2-2' }}</h2>
+    <button class="btn-success" (click)="registerSale()" [disabled]="isRegisterDisabled">
+      Registrar Compra
+    </button>
+  </div>
+</div>

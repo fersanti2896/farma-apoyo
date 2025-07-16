@@ -78,10 +78,10 @@ export class CreatePageComponent {
       next: (response) => {
         if(response.result) {
           this.snackBar.open(`Usuario creado correctamente`, 'Cerrar', { duration: 300, });
-          this.userForm.reset();
-          this.isLoading = false;
-          
+          this.userForm.reset();  
+
           setTimeout(() => {
+            this.isLoading = false; 
             this.router.navigate(['/sic/inicio/usuarios'])
           }, 100);
         }

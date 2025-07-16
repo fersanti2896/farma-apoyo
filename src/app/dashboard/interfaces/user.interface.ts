@@ -25,3 +25,9 @@ export interface CreateUserRequest {
     availableCredit: number;
     roleId: number;
 }
+
+export interface UserInfoCreditDTO {
+    userId: number;
+    creditLimit: number;
+    availableCredit: number;
+}

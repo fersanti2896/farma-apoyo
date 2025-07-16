@@ -1,0 +1,39 @@
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+
+import { ApiResponse } from '../../../auth/interfaces/auth.interface';
+import { environment } from '../../../enviroments/enviroment';
+import { GlobalStateService } from '../../../shared/services';
+import { DetailSaleByIdRequest, DetailsSaleResponse, SaleDTO, UpdateSaleStatusRequest } from '../../interfaces/sale.interface';
+import { ReplyResponse } from '../../interfaces/reply.interface';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class PackagingService {
+  private api = environment.apiUrl;
+
+  constructor(
+    private http: HttpClient,
+    private globalStateService: GlobalStateService
+  ) { }
+
+  listSales(): Observable<ApiResponse<SaleDTO[]>> {
+    return this.http.get<ApiResponse<SaleDTO[]>>(`${ this.api }/Sales/GetAllSales`, { headers: this.getHeaders() });
+  }
+
+  postDetailSaleById( data: DetailSaleByIdRequest ): Observable<ApiResponse<DetailsSaleResponse>> {
+    return this.http.post<ApiResponse<DetailsSaleResponse>>(`${ this.api }/Sales/DetailsSaleBySaleId`, data, { headers: this.getHeaders() });
+  }
+
+  updateSaleStatus( data: UpdateSaleStatusRequest ): Observable<ApiResponse<ReplyResponse>> {
+    return this.http.post<ApiResponse<ReplyResponse>>(`${ this.api }/Sales/UpdateSaleStatus`, data, { headers: this.getHeaders() });
+  }
+
+  private getHeaders(): HttpHeaders {
+    const token = this.globalStateService.getToken();
+
+    return new HttpHeaders().set('Authorization', `Bearer ${token}`);
+  }
+}

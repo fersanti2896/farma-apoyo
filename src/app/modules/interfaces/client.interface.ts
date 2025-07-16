@@ -45,3 +45,13 @@ export interface ClientDTO {
     status: number;
     descriptionStatus: string;
 }
+
+export interface ClientByUserDTO {
+    clientId: number;
+    contactName: string;
+    businessName: string;
+    creditLimit: number;
+    availableCredit: number;
+    paymentDays: number;
+    isBlocked: number;
+}

@@ -4,5 +4,7 @@ export interface StockDTO {
     productName: string;
     description: string;
     currentStock: number;
+    apartado: number;
+    stockReal: number;
     lastUpdateDate: string;
 }

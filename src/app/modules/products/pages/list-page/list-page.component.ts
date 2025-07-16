@@ -13,21 +13,24 @@ import autoTable from 'jspdf-autotable';
 import { ProductDTO } from '../../../interfaces/product.interface';
 import { ProductService } from '../../services/product.service';
 import { Router } from '@angular/router';
+import { GlobalStateService } from '../../../../shared/services';
 @Component({
   selector: 'modules-products-list-page',
   standalone: false,
   templateUrl: './list-page.component.html',
 })
 export class ListPageComponent {
-  public displayedColumns: string[] = ['productId', 'productName', 'price', 'barcode', 'unit', 'actions'];
+  public displayedColumns: string[] = [];
   public dataSource = new MatTableDataSource<ProductDTO>();
   public isLoading: boolean = false;
+  public rol: number = 0;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   constructor(
     private productsService: ProductService,
+    private globalStateService: GlobalStateService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
     private router: Router
@@ -35,6 +38,18 @@ export class ListPageComponent {
 
   ngOnInit(): void {
     this.loadGetProducts();
+
+    const { roleId } = this.globalStateService.getUser();
+    this.rol = roleId;
+
+    this.displayedColumns = [
+      'productId',
+      'productName',
+      'price',
+      'barcode',
+      'unit',
+      ...(this.rol !== 5 && this.rol !== 6 ? ['actions'] : [])
+    ];
   }
 
   ngAfterViewInit(): void {

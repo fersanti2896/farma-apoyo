@@ -34,3 +34,16 @@ export interface ProductDTO {
   productId: number;
   productName: string;
 }
+
+export interface ProductStockDTO {
+  productId: number;
+  productName: string;
+  price: number;
+  stockReal: number;
+}
+
+export interface ProductSale {
+  productId: number;
+  quantity: number;
+  unitPrice: number;  
+}
