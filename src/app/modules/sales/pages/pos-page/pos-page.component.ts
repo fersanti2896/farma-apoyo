@@ -10,7 +10,7 @@ import { ClientByUserDTO } from '../../../interfaces/client.interface';
 import { ProductDialogComponent } from '../../components/product-dialog/product-dialog.component';
 import { ProductStockDTO } from '../../../interfaces/product.interface';
 import { SalesAlertDialogComponent } from '../../components/sales-alert-dialog/sales-alert-dialog.component';
-import { CreateSaleRequest, DetailSaleByIdRequest, SaleDTO } from '../../../interfaces/sale.interface';
+import { CreateSaleRequest, SaleDTO } from '../../../interfaces/sale.interface';
 import { PackagingService } from '../../../packaging/services/packaging.service';
 import { TicketDialogComponent } from '../../../packaging/components/ticket-dialog/ticket-dialog.component';
 

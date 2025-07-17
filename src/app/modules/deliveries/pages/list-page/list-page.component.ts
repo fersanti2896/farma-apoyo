@@ -151,7 +151,7 @@ export class ListPageComponent implements OnInit {
 
     logoImg.onload = () => {
       const date = new Date().toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' });
-      doc.addImage(logoImg, 'PNG', 10, 10, 30, 30);
+      doc.addImage(logoImg, 'PNG', 10, 7, 36, 30);
       doc.setFontSize(16);
       doc.setFont('helvetica', 'bold');
       doc.text('FARMA APOYO', pageWidth / 2, 20, { align: 'center' });

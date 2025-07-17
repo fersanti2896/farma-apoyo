@@ -45,26 +45,26 @@ export class TicketDialogComponent {
     const dateStr = date.toLocaleDateString('es-MX');
 
     const pageWidth = doc.internal.pageSize.getWidth();
-    let y = 10;
+    let y = 6;
 
     const logo = new Image();
     logo.src = 'assets/logos/inventory.png';
 
     logo.onload = () => {
-      doc.addImage(logo, 'PNG', pageWidth / 2 - 8, y, 16, 16);
+      doc.addImage(logo, 'PNG', pageWidth / 2 - 12, y, 25, 18);
       y += 18;
 
       doc.setFontSize(10);
       doc.setFont('courier', 'bold');
-      doc.text('DISTRIBUIDORA', pageWidth / 2, y, { align: 'center' });
+      doc.text('DISTRIBUIDORA', pageWidth / 2, y+2, { align: 'center' });
       y += 4;
-      doc.text('FARMACÉUTICA', pageWidth / 2, y, { align: 'center' });
+      doc.text('FARMACÉUTICA', pageWidth / 2, y+2, { align: 'center' });
 
       y += 6;
       doc.setFont('courier', 'bold');
-      doc.text('VENDEDOR', pageWidth / 2, y, { align: 'center' });
+      doc.text('VENDEDOR', pageWidth / 2, y+2, { align: 'center' });
       y += 4;
-      doc.text(this.details[0].vendedor, pageWidth / 2, y, { align: 'center' });
+      doc.text(this.details[0].vendedor, pageWidth / 2, y+2, { align: 'center' });
 
       y += 6;
       doc.setDrawColor(150);
