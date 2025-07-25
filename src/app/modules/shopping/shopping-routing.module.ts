@@ -4,14 +4,9 @@ import { ListPageComponent } from './pages/list-page/list-page.component';
 import { CreatePageComponent } from './pages/create-page/create-page.component';
 
 const routes: Routes = [
-  {
-    path: '',
-    component: ListPageComponent
-  },
-  {
-    path: 'crear',
-    component: CreatePageComponent
-  }
+  { path: '', component: ListPageComponent },
+  { path: 'crear', component: CreatePageComponent },
+  { path: 'editar/:entryId', component: CreatePageComponent },
 ];
 
 @NgModule({

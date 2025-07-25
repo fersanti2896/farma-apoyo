@@ -1,11 +1,11 @@
 
 export interface ProductDTO {
-    productId: number;
-    productName: string;
-    barcode: string;
-    unit: string;
-    price: number;
-    description: string;
+  productId: number;
+  productName: string;
+  barcode: string;
+  unit: string;
+  price: number;
+  description: string;
 }
 
 export interface CreateProductRequest {
@@ -33,6 +33,7 @@ export interface ProductsBySupplierRequest {
 export interface ProductDTO {
   productId: number;
   productName: string;
+  status: number;
 }
 
 export interface ProductStockDTO {
@@ -46,4 +47,9 @@ export interface ProductSale {
   productId: number;
   quantity: number;
   unitPrice: number;  
+}
+
+export interface StatusProductRequest {
+  productId: number;
+  status: number;
 }

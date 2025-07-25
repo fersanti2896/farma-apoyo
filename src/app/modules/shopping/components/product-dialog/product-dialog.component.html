@@ -20,7 +20,7 @@
   </div>
 
   <div class="flex flex-col md:flex-row gap-4">
-    <mat-form-field appearance="fill" class="flex-1 md:-mt-1">
+    <mat-form-field appearance="fill" class="flex-1 md:mt-1">
       <mat-label>Cantidad</mat-label>
       <input matInput type="number" formControlName="quantity">
 
@@ -29,7 +29,7 @@
       </mat-error>
     </mat-form-field>
 
-    <mat-form-field appearance="fill" class="flex-1 md:-mt-1 -mt-3">
+    <!-- <mat-form-field appearance="fill" class="flex-1 md:-mt-1 -mt-3">
       <mat-label>Precio Unitario</mat-label>
       <span matPrefix> &nbsp;$&nbsp;</span>
       <input matInput type="number" formControlName="unitPrice">
@@ -37,11 +37,9 @@
       <mat-error *ngIf="isValidField('unitPrice')">
         El precio unitario es requerido.
       </mat-error>
-    </mat-form-field>
-  </div>
+    </mat-form-field> -->
 
-  <div class="flex flex-col md:flex-row gap-4">
-    <mat-form-field appearance="fill" class="flex-1 md:mt-1">
+    <mat-form-field appearance="fill" class="flex-1 md:mt-1 -mt-3">
       <mat-label>Lote</mat-label>
       <input matInput type="text" formControlName="lot">
 
@@ -49,8 +47,10 @@
         El lote es requerido.
       </mat-error>
     </mat-form-field>
+  </div>
 
-    <mat-form-field appearance="fill" class="flex-1 md:mt-1 -mt-3">
+  <div class="flex flex-col md:flex-row gap-4">
+    <mat-form-field appearance="fill" class="flex-1 md:mt-1 mt-2">
       <mat-label>Fecha de Caducidad</mat-label>
       <input matInput [matDatepicker]="picker" formControlName="expirationDate">
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>

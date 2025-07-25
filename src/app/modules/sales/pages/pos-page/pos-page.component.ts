@@ -149,7 +149,7 @@ export class PosPageComponent {
     this.salesService.getProductStock().subscribe({
       next: (response) => {
         const productList = response.result;
-        console.log(productList)
+        console.log('Productos: ', productList)
         const dialogRef = this.dialog.open(ProductDialogComponent, {
           width: '500px',
           data: productList

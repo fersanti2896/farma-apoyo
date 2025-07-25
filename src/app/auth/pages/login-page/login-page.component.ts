@@ -16,6 +16,7 @@ export class LoginPageComponent {
   public loginForm!: FormGroup;
   public showTooltip: boolean = false;
   public isLoading: boolean = false;
+  public hidePassword: boolean = true;
 
   constructor(
     private fb: FormBuilder,
@@ -56,10 +57,10 @@ export class LoginPageComponent {
       next: (response) => {
         if(response.result) {
           localStorage.setItem('refresh_token', response.result.refreshToken);
-                  
-          this.isLoading = false;
+          
           this.loginForm.reset();
           this.router.navigate(['/sic/inicio/stock']);
+          this.isLoading = false;
         }
         
       },
@@ -73,5 +74,9 @@ export class LoginPageComponent {
 
   toggleTooltip(): void {
     this.showTooltip = !this.showTooltip;
+  }
+
+  togglePasswordVisibility(): void {
+    this.hidePassword = !this.hidePassword;
   }
 }

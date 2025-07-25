@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Location } from '@angular/common';
@@ -9,7 +10,7 @@ import { map, Observable, startWith } from 'rxjs';
 import { ShoppingService } from '../../services/shopping.service';
 import { ProveedoresService } from '../../../proveedores/services/proveedores.service';
 import { SupplierDTO } from '../../../interfaces/supplier.interface';
-import { CreateWarehouseRequest, ProductView } from '../../../interfaces/entrey-sumarry.interface';
+import { CreateWarehouseRequest, ProductView, UpdateEntryPricesRequest } from '../../../interfaces/entrey-sumarry.interface';
 import { ProductDialogComponent } from '../../components/product-dialog/product-dialog.component';
 import { ValidatorsService } from '../../../../shared/services';
 import { ProductService } from '../../../products/services/product.service';
@@ -28,6 +29,9 @@ export class CreatePageComponent {
   public supplierControl = new FormControl<SupplierDTO | null>(null);
   public filteredSuppliers!: Observable<SupplierDTO[]>;
 
+  public isEditMode = false;
+  public entryIdToUpdate: number | null = null;
+
   constructor(
     private fb: FormBuilder,
     private shoppingService: ShoppingService,
@@ -37,18 +41,49 @@ export class CreatePageComponent {
     private location: Location,
     private snackBar: MatSnackBar,
     private router: Router,
-    private validatorsService: ValidatorsService
+    private validatorsService: ValidatorsService,
+    private route: ActivatedRoute 
   ) { }
 
   ngOnInit(): void {
+    const entryId = this.route.snapshot.paramMap.get('entryId');
+    if (entryId) {
+      this.isEditMode = true;
+      this.entryIdToUpdate = +entryId;
+    }
+
     this.form = this.fb.group({
-      supplierId: ['', [ Validators.required ] ],
-      invoiceNumber: ['', [ Validators.required ] ],
+      supplierId: this.isEditMode 
+        ? [{ value: '', disabled: true }, Validators.required]
+        : ['', Validators.required],
+        
+      invoiceNumber: this.isEditMode 
+        ? [{ value: '', disabled: true }, Validators.required]
+        : ['', Validators.required],
+
       expectedPaymentDate: [null],
       observations: ['']
     });
 
     this.loadSuppliers();
+
+    if (this.isEditMode && this.entryIdToUpdate) {
+      this.loadDataForEdit(this.entryIdToUpdate);
+    }
+
+    this.productDisplayedColumns = ['productName', 'quantity'];
+
+    if (this.isEditMode) {
+      this.productDisplayedColumns.push('unitPrice');
+    }
+
+    this.productDisplayedColumns.push('lot', 'expirationDate');
+
+    if (this.isEditMode) {
+      this.productDisplayedColumns.push('subtotal');
+    } else {
+      this.productDisplayedColumns.push('actions');
+    }
   }
 
   loadSuppliers(): void {
@@ -64,6 +99,47 @@ export class CreatePageComponent {
           );
         })
       );
+    });
+  }
+
+  loadDataForEdit(entryId: number): void {
+    this.isEditMode = true;
+    this.entryIdToUpdate = entryId;
+    this.isLoading = true;
+
+    this.shoppingService.detailsFullEntryById({ entryId }).subscribe({
+      next: (response) => {
+        console.log(response)
+        const result = response.result;
+        if (result) {
+          this.form.patchValue({
+            supplierId: result.supplierId,
+            invoiceNumber: result.invoiceNumber,
+            expectedPaymentDate: result.expectedPaymentDate,
+            observations: result.observations,
+          });
+
+          const supplier = this.suppliers.find(s => s.supplierId === result.supplierId);
+          if (supplier) this.supplierControl.setValue(supplier);
+
+          // Mapear a ProductView extendido con entryDetailId
+          this.products = result.productsDetails.map(p => ({
+            productId: p.productId,
+            quantity: p.quantity,
+            unitPrice: p.unitPrice,
+            expirationDate: p.expirationDate,
+            lot: p.lot,
+            productName: p.productName,
+            entryDetailId: p.entryDetailId,
+          }));
+
+          this.isLoading = false;
+        }
+      },
+      error: () => {
+        this.snackBar.open('Error al cargar la nota para edición.', 'Cerrar', { duration: 3000 });
+        this.isLoading = false;
+      }
     });
   }
 
@@ -126,52 +202,74 @@ export class CreatePageComponent {
   }
 
   onSubmit(): void {
-    if (this.form.invalid) {
+    if (this.form.invalid || this.products.length === 0) {
       this.form.markAllAsTouched();
-
       return;
     }
-    if (this.products.length === 0) {
-      this.snackBar.open('Debe agregar al menos un producto.', 'Cerrar', {
-        duration: 3000,
-        panelClass: 'snack-warn'
+
+    const { expectedPaymentDate, observations } = this.form.value;
+
+    this.isLoading = true;
+
+    if (this.isEditMode && this.entryIdToUpdate) {
+      const updatePayload: UpdateEntryPricesRequest = {
+        entryId: this.entryIdToUpdate,
+        expectedPaymentDate,
+        observations,
+        products: this.products.map(p => ({
+          entryDetailId: p.entryDetailId!,
+          unitPrice: p.unitPrice
+        }))
+      };
+
+      this.shoppingService.updateWarehouse(updatePayload).subscribe({
+        next: () => {
+          this.snackBar.open('Nota actualizada correctamente.', 'Cerrar', {
+            duration: 3000,
+            panelClass: 'snack-success'
+          });
+          this.router.navigate(['/sic/inicio/compras']);
+          this.isLoading = false;
+        },
+        error: () => {
+          this.snackBar.open('Error al actualizar la nota.', 'Cerrar', {
+            duration: 3000,
+            panelClass: 'snack-error'
+          });
+          this.isLoading = false;
+        }
       });
 
       return;
     }
 
-    const { supplierId, invoiceNumber, expectedPaymentDate, observations, price } = this.form.value;
-    const totalAmount = this.products.reduce((acc, item) => acc + (item.quantity * item.unitPrice), 0);
+    // flujo de creación
+    const { supplierId, invoiceNumber } = this.form.value;
+    // const totalAmount = this.getTotalAmount();
 
-    const payload: CreateWarehouseRequest = {
+    const createPayload: CreateWarehouseRequest = {
       supplierId,
       invoiceNumber,
       expectedPaymentDate,
       observations,
-      totalAmount: totalAmount,
+      totalAmount: 0,
       products: this.products.map(p => ({
         productId: p.productId,
         quantity: p.quantity,
-        unitPrice: p.unitPrice,
+        unitPrice: 0,
         lot: p.lot,
         expirationDate: p.expirationDate
       }))
     };
 
-    this.isLoading = true;
-
-    this.shoppingService.createWarehouse(payload).subscribe({
+    this.shoppingService.createWarehouse(createPayload).subscribe({
       next: () => {
         this.snackBar.open('Nota registrada correctamente.', 'Cerrar', {
           duration: 3000,
           panelClass: 'snack-success'
         });
-        this.onCancel();
+        this.router.navigate(['/sic/inicio/compras']);
         this.isLoading = false;
-
-        setTimeout(() => {
-          this.router.navigate(['/sic/inicio/compras'])
-        }, 100);
       },
       error: () => {
         this.snackBar.open('Error al registrar la nota.', 'Cerrar', {
@@ -181,6 +279,20 @@ export class CreatePageComponent {
         this.isLoading = false;
       }
     });
+  }
+
+  onPriceChange(event: Event, index: number): void {
+    const input = event.target as HTMLInputElement;
+    const value = parseFloat(input.value);
+
+    if (!isNaN(value) && value >= 0) {
+      this.products[index].unitPrice = value;
+      this.recalculateTotal();
+    }
+  }
+
+  recalculateTotal(): void {
+    this.products = [...this.products];
   }
 
   onCancel(): void {

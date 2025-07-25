@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../enviroments/enviroment';
 import { GlobalStateService } from '../../../shared/services';
 import { ApiResponse } from '../../../auth/interfaces/auth.interface';
-import { CreateWarehouseRequest, DetailsEntryResponse, EntrySummaryDTO, FullEntryByIdRequest } from '../../interfaces/entrey-sumarry.interface';
+import { CreateWarehouseRequest, DetailsEntryResponse, EntrySummaryDTO, FullEntryByIdRequest, UpdateEntryPricesRequest } from '../../interfaces/entrey-sumarry.interface';
 import { ReplyResponse } from '../../interfaces/reply.interface';
 import { ProductDTO } from '../../interfaces/product.interface';
 
@@ -30,7 +30,11 @@ export class ShoppingService {
 
   detailsFullEntryById( data: FullEntryByIdRequest ): Observable<ApiResponse<DetailsEntryResponse>> {
     return this.http.post<ApiResponse<DetailsEntryResponse>>(`${ this.api }/Warehouse/FullEntryById`, data, { headers: this.getHeaders() });
-  }  
+  }
+  
+  updateWarehouse( data: UpdateEntryPricesRequest ): Observable<ApiResponse<ReplyResponse>> {
+    return this.http.post<ApiResponse<ReplyResponse>>(`${ this.api }/Warehouse/UpdateFullEntry`, data, { headers: this.getHeaders() });
+  }
 
   private getHeaders(): HttpHeaders {
     const token = this.globalStateService.getToken();

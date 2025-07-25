@@ -26,7 +26,7 @@ export class ProductDialogComponent {
     this.form = this.fb.group({
       productId: [null, Validators.required],
       quantity: [null, [Validators.required, Validators.min(1)]],
-      unitPrice: [null, [Validators.required, Validators.min(0.01)]],
+      // unitPrice: [null, [Validators.required, Validators.min(0.01)]],
       lot: ['', [ Validators.required ]],
       expirationDate: [null, [ Validators.required ]]
     });

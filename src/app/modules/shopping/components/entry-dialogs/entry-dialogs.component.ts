@@ -1,21 +1,38 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
 import { DetailsEntryResponse } from '../../../interfaces/entrey-sumarry.interface';
+import { GlobalStateService } from '../../../../shared/services';
 
 @Component({
   selector: 'app-entry-dialogs',
   standalone: false,
   templateUrl: './entry-dialogs.component.html'
 })
-export class EntryDialogsComponent {
+export class EntryDialogsComponent implements OnInit {
+  public rol: number = 0;
+  public showPrices: boolean = false;
+  public displayedColumns: string[] = [];
+
   constructor(
     public dialogRef: MatDialogRef<EntryDialogsComponent>,
+    private globalStateService: GlobalStateService,
     @Inject(MAT_DIALOG_DATA) public data: DetailsEntryResponse
   ) {}
+
+  ngOnInit(): void {
+    const { roleId } = this.globalStateService.getUser();
+    this.rol = roleId;
+    this.showPrices = roleId === 1 || roleId === 2;
+
+    this.displayedColumns = ['productName', 'quantity', 'lot', 'expirationDate'];
+    if (this.showPrices) {
+      this.displayedColumns.push('unitPrice', 'subTotal');
+    }
+  }
 
   generatePDF(): void {
     const doc = new jsPDF();
@@ -39,7 +56,7 @@ export class EntryDialogsComponent {
       });
 
       // === ENCABEZADO ===
-      doc.addImage(logoImg, 'PNG', 10, 10, 30, 30);
+      doc.addImage(logoImg, 'PNG', 10, 7, 36, 30);
 
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(16);
@@ -69,18 +86,30 @@ export class EntryDialogsComponent {
       let rightY = 45;
       doc.text(`Fecha Registro: ${new Date(entry.entryDate).toLocaleDateString()}`, rightX, rightY);
       doc.text(`Fecha de Pago: ${new Date(entry.expectedPaymentDate).toLocaleDateString()}`, rightX, rightY += 8);
-      doc.text(`Monto Total: ${formatter.format(entry.totalAmount)}`, rightX, rightY += 8);
+      if (this.showPrices) {
+        doc.text(`Monto Total: ${formatter.format(entry.totalAmount)}`, rightX, rightY += 8);
+      }
 
       // === TABLA DE PRODUCTOS ===
-      const columns = ['Producto', 'Cantidad', 'Lote', 'Fecha Caducidad', 'Precio Unitario', 'Subtotal'];
-      const rows = entry.productsDetails.map(prod => [
+      let columns = ['Producto', 'Cantidad', 'Lote', 'Fecha Caducidad'];
+      let rows: any[][] = entry.productsDetails.map(prod => [
         prod.productName,
         prod.quantity,
         prod.lot || '-',
-        prod.expirationDate ? new Date(prod.expirationDate).toLocaleDateString() : '-',
-        formatter.format(prod.unitPrice),
-        formatter.format(prod.subTotal)
+        prod.expirationDate ? new Date(prod.expirationDate).toLocaleDateString() : '-'
       ]);
+
+      if (this.showPrices) {
+        columns.push('Precio Unitario', 'Subtotal');
+        rows = entry.productsDetails.map(prod => [
+          prod.productName,
+          prod.quantity,
+          prod.lot || '-',
+          prod.expirationDate ? new Date(prod.expirationDate).toLocaleDateString() : '-',
+          formatter.format(prod.unitPrice),
+          formatter.format(prod.subTotal)
+        ]);
+      }
 
       const tableY = Math.max(currentY, rightY) + 10;
 

@@ -101,7 +101,6 @@ export class ProductDialogComponent {
     this.dialogRef.close(result);
   }
 
-
   onCancel(): void {
     this.dialogRef.close();
   }

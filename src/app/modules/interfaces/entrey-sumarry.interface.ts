@@ -28,6 +28,7 @@ export interface CreateWarehouseRequest {
 
 export interface ProductView extends ProductsDetailsDTO {
   productName: string;
+  entryDetailId?: number;
 }
 
 export interface FullEntryByIdRequest {
@@ -35,6 +36,7 @@ export interface FullEntryByIdRequest {
 }
 
 export interface ProductsEntryDetailsDTO extends ProductsDetailsDTO {
+    entryDetailId: number;
     productName: string;
     subTotal: number;
 }
@@ -49,4 +51,16 @@ export interface DetailsEntryResponse {
     totalAmount: number;
     observations: string;
     productsDetails: ProductsEntryDetailsDTO[]
+}
+
+export interface UpdateEntryPriceDetailRequest {
+    entryDetailId: number;
+    unitPrice: number;
+}
+
+export interface UpdateEntryPricesRequest {
+    entryId: number;
+    expectedPaymentDate: string;
+    observations: string;
+    products: UpdateEntryPriceDetailRequest[]
 }

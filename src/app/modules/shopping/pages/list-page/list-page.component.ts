@@ -1,4 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -13,6 +14,7 @@ import autoTable from 'jspdf-autotable';
 import { EntrySummaryDTO, FullEntryByIdRequest } from '../../../interfaces/entrey-sumarry.interface';
 import { ShoppingService } from '../../services/shopping.service';
 import { EntryDialogsComponent } from '../../components/entry-dialogs/entry-dialogs.component';
+import { GlobalStateService } from '../../../../shared/services';
 
 @Component({
   selector: 'modules-shopping-list-page',
@@ -20,21 +22,35 @@ import { EntryDialogsComponent } from '../../components/entry-dialogs/entry-dial
   templateUrl: './list-page.component.html'
 })
 export class ListPageComponent {
-  public displayedColumns: string[] = ['entryId', 'businessName', 'invoiceNumber', 'entryDate', 'expectedPaymentDate', 'totalAmount', 'actions'];
+  public displayedColumns: string[] = [];
   public dataSource = new MatTableDataSource<EntrySummaryDTO>();
   public isLoading: boolean = false;
+  public rol: number = 0;
+  public showPrices: boolean = false;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   constructor(
+    private globalStateService: GlobalStateService,
     private shoppingService: ShoppingService,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar, 
+    private router: Router
   ) {}
 
   ngOnInit(): void {
     this.loadEntrySummary();
+
+    const { roleId } = this.globalStateService.getUser();
+    this.rol = roleId;
+    this.showPrices = roleId === 1 || roleId === 2;
+
+    this.displayedColumns = [
+      'entryId', 'businessName', 'invoiceNumber', 'entryDate', 'expectedPaymentDate', 
+      ...( this.showPrices ? ['totalAmount'] : [] ), 
+      'actions'
+    ];
   }
 
   ngAfterViewInit(): void {
@@ -84,6 +100,10 @@ export class ListPageComponent {
     });
   }
 
+  editEntry(entry: EntrySummaryDTO): void {
+    this.router.navigate(['/sic/inicio/compras/editar', entry.entryId]);
+  }
+
   exportToPDF(): void {
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
@@ -110,15 +130,22 @@ export class ListPageComponent {
       doc.setFont('helvetica', 'normal');
       doc.text(`Fecha: ${date}`, pageWidth - 14, 28, { align: 'right' });
 
-      const columns = ['ID', 'Proveedor', '# Pedido', 'Fecha de Registro', 'Fecha de Pago', 'Monto'];
-      const rows = this.dataSource.data.map(entry => [
-        entry.entryId,
-        entry.businessName,
-        entry.invoiceNumber,
-        new Date(entry.entryDate).toLocaleDateString(),
-        new Date(entry.expectedPaymentDate).toLocaleDateString(),
-        formatter.format(entry.totalAmount)
-      ]);
+      const columns = this.showPrices
+        ? ['ID', 'Proveedor', '# Pedido', 'Fecha de Registro', 'Fecha de Pago', 'Monto']
+        : ['ID', 'Proveedor', '# Pedido', 'Fecha de Registro', 'Fecha de Pago'];
+
+      const rows = this.dataSource.data.map(entry => {
+        const base = [
+          entry.entryId,
+          entry.businessName,
+          entry.invoiceNumber,
+          new Date(entry.entryDate).toLocaleDateString(),
+          new Date(entry.expectedPaymentDate).toLocaleDateString()
+        ];
+
+        return this.showPrices ? [...base, formatter.format(entry.totalAmount)] : base;
+      });
+
 
       autoTable(doc, {
         head: [columns],
@@ -153,29 +180,39 @@ export class ListPageComponent {
       year: 'numeric'
     });
 
-    const dataToExport = this.dataSource.data.map(entry => ({
-      ID: entry.entryId,
-      Proveedor: entry.businessName,
-      Pedido: entry.invoiceNumber,
-      FechaRegistro: new Date(entry.entryDate),
-      FechaPago: new Date(entry.expectedPaymentDate),
-      Monto: entry.totalAmount
-    }));
+    // Construir datos dinámicamente según showPrices
+    const dataToExport = this.dataSource.data.map(entry => {
+      const base: any = {
+        ID: entry.entryId,
+        Proveedor: entry.businessName,
+        Pedido: entry.invoiceNumber,
+        FechaRegistro: new Date(entry.entryDate),
+        FechaPago: new Date(entry.expectedPaymentDate),
+      };
+
+      if (this.showPrices) {
+        base.Monto = entry.totalAmount;
+      }
+
+      return base;
+    });
 
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(dataToExport, { cellDates: true });
 
     const range = XLSX.utils.decode_range(worksheet['!ref'] || '');
-    
     for (let R = 1; R <= range.e.r; ++R) {
-      const fechaRegCell = worksheet[XLSX.utils.encode_cell({ r: R, c: 3 })]; // D
-      const fechaPagCell = worksheet[XLSX.utils.encode_cell({ r: R, c: 4 })]; // E
-      const montoCell = worksheet[XLSX.utils.encode_cell({ r: R, c: 5 })]; // F
+      const fechaRegCell = worksheet[XLSX.utils.encode_cell({ r: R, c: 3 })]; // Columna D (FechaRegistro)
+      const fechaPagCell = worksheet[XLSX.utils.encode_cell({ r: R, c: 4 })]; // Columna E (FechaPago)
 
       if (fechaRegCell) fechaRegCell.z = 'dd/mm/yyyy';
       if (fechaPagCell) fechaPagCell.z = 'dd/mm/yyyy';
-      if (montoCell) {
-        montoCell.t = 'n';
-        montoCell.z = '"$"#,##0.00';
+
+      if (this.showPrices) {
+        const montoCell = worksheet[XLSX.utils.encode_cell({ r: R, c: 5 })]; // Columna F (Monto)
+        if (montoCell) {
+          montoCell.t = 'n';
+          montoCell.z = '"$"#,##0.00';
+        }
       }
     }
 

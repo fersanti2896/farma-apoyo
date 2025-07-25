@@ -4,7 +4,7 @@
   <p><strong>Proveedor:</strong> {{ data.businessName }}</p>
   <p><strong>Fecha Registro:</strong> {{ data.entryDate | date }}</p>
   <p><strong>Fecha de Pago:</strong> {{ data.expectedPaymentDate | date }}</p>
-  <p><strong>Monto Total:</strong> {{ data.totalAmount | currency:'$' }}</p>
+  <p *ngIf="showPrices"><strong>Monto Total:</strong> {{ data.totalAmount | currency:'$' }}</p>
   <p><strong>Observaciones:</strong> {{ data.observations }}</p>
 
   <table mat-table [dataSource]="data.productsDetails" class="mat-elevation-z8">
@@ -28,18 +28,18 @@
       <td mat-cell *matCellDef="let element">{{ element.expirationDate | date: 'mediumDate' }}</td>
     </ng-container>
 
-    <ng-container matColumnDef="unitPrice">
+    <ng-container *ngIf="showPrices" matColumnDef="unitPrice">
       <th mat-header-cell *matHeaderCellDef>Precio Unitario</th>
       <td mat-cell *matCellDef="let element">{{ element.unitPrice | currency:'$' }}</td>
     </ng-container>
 
-    <ng-container matColumnDef="subTotal">
+    <ng-container *ngIf="showPrices" matColumnDef="subTotal">
       <th mat-header-cell *matHeaderCellDef>Subtotal</th>
       <td mat-cell *matCellDef="let element">{{ element.subTotal | currency:'$' }}</td>
     </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="['productName', 'quantity', 'lot', 'expirationDate', 'unitPrice', 'subTotal']"></tr>
-    <tr mat-row *matRowDef="let row; columns: ['productName', 'quantity', 'lot', 'expirationDate', 'unitPrice', 'subTotal'];"></tr>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>  
   </table>
 </mat-dialog-content>
 <mat-dialog-actions align="end">

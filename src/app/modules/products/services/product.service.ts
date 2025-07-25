@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../enviroments/enviroment';
 import { GlobalStateService } from '../../../shared/services';
 import { ApiResponse } from '../../../auth/interfaces/auth.interface';
-import { CreateProductProviderRequest, CreateProductRequest, ProductDTO, UpdateProductRequest } from '../../interfaces/product.interface';
+import { CreateProductRequest, ProductDTO, StatusProductRequest, UpdateProductRequest } from '../../interfaces/product.interface';
 import { ReplyResponse } from '../../interfaces/reply.interface';
 
 @Injectable({
@@ -29,6 +29,10 @@ export class ProductService {
 
   editProduct( data: UpdateProductRequest ): Observable<ApiResponse<ReplyResponse>> {
     return this.http.post<ApiResponse<ReplyResponse>>(`${ this.api }/Warehouse/UpdateProduct`, data, { headers: this.getHeaders() });
+  }
+
+  activeProduct( data: StatusProductRequest ): Observable<ApiResponse<ReplyResponse>> {
+    return this.http.post<ApiResponse<ReplyResponse>>(`${ this.api }/Warehouse/DeactivateProduct`, data, { headers: this.getHeaders() });
   }
 
   private getHeaders(): HttpHeaders {

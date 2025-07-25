@@ -1,8 +1,9 @@
 import { Component, Inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { UsersDTO } from '../../../../auth/interfaces/auth.interface';
 import { map, Observable, startWith } from 'rxjs';
+
+import { UsersDTO } from '../../../../auth/interfaces/auth.interface';
 import { UserService } from '../../../usuarios/services/user.service';
 import { ValidatorsService } from '../../../../shared/services';
 
@@ -43,7 +44,7 @@ export class AssignmentDeliveryComponent {
 
   loadUser(): void {
     this.userService.listUsers().subscribe(response => {
-      this.users = response.result!.filter(user => user.status === 1 && (user.role === 'Vendedor' || user.role === 'Repartidor'));
+      this.users = response.result!.filter(user => user.status === 1);
 
       this.filteredUser = this.userControl.valueChanges.pipe(
         startWith(''),
@@ -68,13 +69,13 @@ export class AssignmentDeliveryComponent {
   confirm(): void {
     if (this.assigmentForm.invalid) {
       this.assigmentForm.markAllAsTouched();
+      
       return;
     }
 
     const userId = this.assigmentForm.get('userId')?.value;
     this.dialogRef.close(userId);
   }
-
 
   cancel(): void {
     this.dialogRef.close();

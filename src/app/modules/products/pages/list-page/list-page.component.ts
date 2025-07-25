@@ -1,4 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -10,10 +11,11 @@ import * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
 import autoTable from 'jspdf-autotable';
 
-import { ProductDTO } from '../../../interfaces/product.interface';
+import { ProductDTO, StatusProductRequest } from '../../../interfaces/product.interface';
 import { ProductService } from '../../services/product.service';
-import { Router } from '@angular/router';
 import { GlobalStateService } from '../../../../shared/services';
+import { ConfirmationDialogComponent } from '../../../../shared/components/confirmation-dialog/confirmation-dialog.component';
+
 @Component({
   selector: 'modules-products-list-page',
   standalone: false,
@@ -60,6 +62,7 @@ export class ListPageComponent {
   applyFilter(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
+    
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
@@ -83,6 +86,39 @@ export class ListPageComponent {
   editProduct(product: ProductDTO) {
     this.router.navigate(['/sic/inicio/productos/editar'], {
       state: { product }
+    });
+  }
+
+  openConfirmDialog(product: ProductDTO): void {
+    const newStatus = product.status === 1 ? 0 : 1;
+    const action = newStatus === 0 ? 'bloquear' : 'desbloquear';
+
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: {
+        message: `¿Estás seguro de que deseas ${action} al producto ${product.productName}?`
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === true) {
+        this.toggleProductStatus(product.productId, newStatus);
+      }
+    });
+  }
+
+  toggleProductStatus(productId: number, status: number): void {
+    const request: StatusProductRequest = { productId, status };
+
+    this.productsService.activeProduct( request ).subscribe({
+      next: () => {
+        this.snackBar.open(`Producto ${status === 1 ? 'activado' : 'desactivado'} correctamente.`, 'Cerrar', {
+          duration: 3000,
+        });
+        this.loadGetProducts();
+      },
+      error: () => {
+        this.snackBar.open('Error al actualizar el estado del producto.', 'Cerrar', { duration: 3000 });
+      }
     });
   }
 

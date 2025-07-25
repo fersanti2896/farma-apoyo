@@ -2,7 +2,6 @@ import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import { jsPDF } from 'jspdf';
-import autoTable from 'jspdf-autotable';
 
 import { DetailsSaleDTO, SaleDTO, TicketData } from '../../../interfaces/sale.interface';
 import { numeroALetras } from '../../../../shared/helpers/number-to-words.helper';

@@ -6,7 +6,9 @@
   </button>
 </div>
 
-<h2 class="text-2xl text-center md:w-full mb-10">Registrar Compra | Nota de Pedido</h2>
+<h2 class="text-2xl text-center md:w-full mb-10">
+  {{ isEditMode ? 'Editar Compra | Nota de Pedido' : 'Registrar Compra | Nota de Pedido' }}
+</h2>
 
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
   <div class="grid grid-cols-1 md:grid-cols-2 gap-1 mb-6">
@@ -52,7 +54,7 @@
   </div>
 
   <!-- Fila 3: Botón centrado -->
-  <div class="flex justify-center -mb-4 col-span-2">
+  <div class="flex justify-center -mb-4 col-span-2" *ngIf="!isEditMode">
     <button mat-raised-button class="btn-info" type="button" (click)="openProductDialog()">
       + Agregar Producto
     </button>
@@ -71,10 +73,22 @@
         <td mat-cell *matCellDef="let element">{{ element.quantity }}</td>
       </ng-container>
 
-      <ng-container matColumnDef="unitPrice">
+      <ng-container matColumnDef="unitPrice" *ngIf="isEditMode">
         <th mat-header-cell *matHeaderCellDef>Precio Unitario</th>
-        <td mat-cell *matCellDef="let element">{{ element.unitPrice | currency }}</td>
+        <td mat-cell *matCellDef="let element; let i = index">
+          <ng-container *ngIf="isEditMode; else readOnly">
+            <input  type="number"
+                    min="0"
+                    [value]="element.unitPrice"
+                    (input)="onPriceChange($event, i)"
+                    class="w-24 border rounded px-2 py-1" />
+          </ng-container>
+          <ng-template #readOnly>
+            {{ element.unitPrice | currency }}
+          </ng-template>
+        </td>
       </ng-container>
+
 
       <ng-container matColumnDef="lot">
         <th mat-header-cell *matHeaderCellDef>Lote</th>
@@ -86,7 +100,7 @@
         <td mat-cell *matCellDef="let element">{{ element.expirationDate | date: 'shortDate' }}</td>
       </ng-container>
 
-      <ng-container matColumnDef="subtotal">
+      <ng-container matColumnDef="subtotal" *ngIf="isEditMode">
         <th mat-header-cell *matHeaderCellDef>Subtotal</th>
         <td mat-cell *matCellDef="let element">{{ element.quantity * element.unitPrice | currency }}</td>
       </ng-container>
@@ -105,14 +119,16 @@
     </table>
 
     <!-- Total -->
-    <div class="flex justify-end mt-2 pr-4 col-span-2 text-lg font-semibold">
+    <div class="flex justify-end mt-2 pr-4 col-span-2 text-lg font-semibold" *ngIf="isEditMode">
       Total: {{ getTotalAmount() | currency }}
     </div>
   </div>
 
   <!-- Botones finales -->
   <div class="flex justify-center mt-10 col-span-2">
-    <button mat-raised-button class="h-10 btn-success" type="submit">Guardar Nota</button>
+    <button mat-raised-button class="h-10 btn-success" type="submit">
+      {{ isEditMode ? 'Actualizar Nota' : 'Guardar Nota' }}
+    </button>
     <button mat-stroked-button class="h-10 btn-warn ml-4" type="button" (click)="onCancel()">Cancelar</button>
   </div>
 </form>

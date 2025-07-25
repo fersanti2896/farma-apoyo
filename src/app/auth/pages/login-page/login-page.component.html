@@ -39,7 +39,7 @@
 
             <!-- Botón tooltip -->
             <div class="relative">
-              <button type="button" (click)="toggleTooltip()" class="text-sm text-blue-600 hover:underline focus:outline-none peer" aria-describedby="tooltip">
+              <button type="button" (click)="toggleTooltip()" class="text-sm text-blue-600 hover:underline focus:outline-none peer cursor-pointer" aria-describedby="tooltip">
                 ¿Olvidaste tu contraseña?
               </button>
 
@@ -50,7 +50,24 @@
             </div>
           </div>
 
-          <input id="password" formControlName="password" type="password" placeholder="Ingresa tu contraseña" class="style-input" />
+          <div class="relative">
+            <input 
+              id="password" 
+              formControlName="password" 
+              [type]="hidePassword ? 'password' : 'text'" 
+              placeholder="Ingresa tu contraseña" 
+              class="style-input pr-10 w-full" 
+            />
+
+            <!-- Botón ojo -->
+            <button 
+              type="button"
+              (click)="togglePasswordVisibility()" 
+              class="absolute right-2 top-1/2 transform -translate-y-3 text-gray-600 focus:outline-none cursor-pointer"
+            >
+              <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+          </div>
           <span *ngIf="isValidField('password')" class="text-sm text-red-600 mb-20">
             La contraseña es requerido.
           </span>

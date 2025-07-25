@@ -64,7 +64,7 @@
       </ng-container>
 
       <!-- Unit Column -->
-      <ng-container matColumnDef="totalAmount">
+      <ng-container *ngIf="showPrices" matColumnDef="totalAmount">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Monto </th>
         <td mat-cell *matCellDef="let entry"> {{ entry.totalAmount | currency }} </td>
       </ng-container>
@@ -75,6 +75,10 @@
           <td mat-cell *matCellDef="let entry">
               <button mat-icon-button class="cursor-pointer" (click)="openConfirmDialog(entry)">
                   <mat-icon>visibility</mat-icon>
+              </button>
+
+              <button mat-icon-button class="cursor-pointer" *ngIf="rol == 1 || rol == 2" (click)="editEntry(entry)">
+                  <mat-icon>edit</mat-icon>
               </button>
           </td>
       </ng-container>
