@@ -6,7 +6,7 @@ import { GlobalStateService } from '../../../shared/services';
 import { environment } from '../../../enviroments/enviroment';
 import { ApiResponse } from '../../../auth/interfaces/auth.interface';
 import { ReplyResponse } from '../../interfaces/reply.interface';
-import { AssignDeliveryUserRequest, SalesStatusDTO } from '../../interfaces/sale.interface';
+import { AssignDeliveryUserRequest, SaleDTO, SalesByStatusRequest, SalesStatusDTO } from '../../interfaces/sale.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +24,7 @@ export class DeliveriesService {
   }
 
   listSalesStatus(): Observable<ApiResponse<SalesStatusDTO[]>> {
-    return this.http.get<ApiResponse<SalesStatusDTO[]>>(`${ this.api }/Sales/AssignDeliveryUser`,  { headers: this.getHeaders() });
+    return this.http.get<ApiResponse<SalesStatusDTO[]>>(`${ this.api }/Sales/GetAllSalesStatus`,  { headers: this.getHeaders() });
   }
 
   private getHeaders(): HttpHeaders {

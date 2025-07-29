@@ -6,6 +6,7 @@ import { CollectionRoutingModule } from './collection-routing.module';
 import { ListPageComponent } from './pages/list-page/list-page.component';
 import { SharedModule } from '../../shared/shared.module';
 import { PackagingModule } from '../packaging/packaging.module';
+import { DeliveriesModule } from '../deliveries/deliveries.module';
 
 @NgModule({
   declarations: [
@@ -14,8 +15,9 @@ import { PackagingModule } from '../packaging/packaging.module';
   imports: [
     CommonModule,
     CollectionRoutingModule,
+    DeliveriesModule,
     PackagingModule,
-    SharedModule, 
+    SharedModule,
     ReactiveFormsModule
   ]
 })

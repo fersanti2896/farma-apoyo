@@ -49,11 +49,11 @@
         <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef> Acciones </th>
             <td mat-cell *matCellDef="let entry">
-                <button mat-icon-button class="cursor-pointer" (click)="openDetailsTicket(entry)">
+                <button mat-icon-button matTooltip="Ver detalles del Ticket" class="cursor-pointer" (click)="openDetailsTicket(entry)">
                     <mat-icon>visibility</mat-icon>
                 </button>
 
-                <button mat-icon-button class="text-blue-600 cursor-pointer ml-1" (click)="openStatusDialog(entry)">
+                <button mat-icon-button matTooltip="Actualizar Paquete" class="text-blue-600 cursor-pointer ml-1" (click)="openStatusDialog(entry)">
                   <mat-icon>shopping_cart_checkout</mat-icon>
                 </button>
             </td>

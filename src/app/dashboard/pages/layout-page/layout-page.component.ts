@@ -79,7 +79,7 @@ export class LayoutPageComponent implements OnInit {
           { label: 'Inventario', icon: 'inventory', url: '/sic/inicio/stock', roles: [1, 2, 4, 5] },
           { label: 'Compras', icon: 'shopping_cart', url: '/sic/inicio/compras', roles: [1, 2, 4] },
           { label: 'Surtido', icon: 'trolley', url: '/sic/inicio/surtido', roles: [1, 2, 4] },
-          { label: 'Entregas', icon: 'outbox', url: '/sic/inicio/entregas', roles: [1, 2, 4] },
+          { label: 'Entregas', icon: 'outbox', url: '/sic/inicio/entregas', roles: [1, 2, 4, 5, 6] },
         ]
       },
       {
@@ -91,7 +91,7 @@ export class LayoutPageComponent implements OnInit {
           { label: 'Usuarios', icon: 'supervisor_account', url: '/sic/inicio/usuarios', roles: [1] },
           { label: 'Proveedores', icon: 'local_mall', url: '/sic/inicio/proveedores', roles: [1, 2] },  
           { label: 'Clientes', icon: 'groups', url: '/sic/inicio/clientes', roles: [1, 2] },      
-          { label: 'Productos', icon: 'category', url: '/sic/inicio/productos', roles: [1, 2] },  
+          // { label: 'Productos', icon: 'category', url: '/sic/inicio/productos', roles: [1, 2] },  
         ]
       },
       {
@@ -101,7 +101,7 @@ export class LayoutPageComponent implements OnInit {
         roles: [1, 2, 3, 5],
         children: [
           { label: 'Punto de Venta', icon: 'point_of_sale', url: '/sic/inicio/ventas', roles: [1, 2, 3, 5] }, 
-          { label: 'Catálogo de Precios', icon: 'category', url: '/sic/inicio/productos', roles: [3, 5] }            
+          { label: 'Catálogo de Precios', icon: 'category', url: '/sic/inicio/productos', roles: [1, 2, 3, 5] }            
         ]
       },
       {

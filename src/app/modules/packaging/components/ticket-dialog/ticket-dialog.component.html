@@ -1,7 +1,7 @@
 <div id="ticket-content" style="width: 58mm; font-family: monospace;" class="w-[5.5cm] p-2 text-[11px] text-black bg-white mx-auto font-mono">
   <!-- Logo -->
   <div class="text-center mb-2">
-    <img src="assets/logos/inventory.png" alt="Farma Apoyo" class="h-14 mx-auto" />
+    <img src="assets/logos/inventory.png" alt="Farma Apoyo" class="h-10 mx-auto" />
   </div>
 
   <div class="text-center leading-tight mb-1">
@@ -21,6 +21,7 @@
     <span class="text-xl text-end">TICKET: {{ sale.saleId }}</span>
     <p><strong>HORA:</strong> {{ details[0].createDate | date:'shortTime' }}</p>
     <p><strong>FECHA:</strong> {{ details[0].createDate | date:'shortDate' }}</p>
+    <p><strong>REPARTIDOR:</strong> {{ details[0].repartidor }}</p>
   </div>
 
   <hr class="border-t border-dashed border-gray-600 my-2" />

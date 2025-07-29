@@ -13,10 +13,13 @@ import autoTable from 'jspdf-autotable';
 
 import { PackagingService } from '../../../packaging/services/packaging.service';
 import { GlobalStateService } from '../../../../shared/services';
-import { AssignDeliveryUserRequest, SaleDTO, SalesByStatusRequest } from '../../../interfaces/sale.interface';
+import { AssignDeliveryUserRequest, SaleDTO, SalesByStatusRequest, UpdateSaleStatusRequest } from '../../../interfaces/sale.interface';
 import { TicketDialogComponent } from '../../../packaging/components/ticket-dialog/ticket-dialog.component';
 import { AssignmentDeliveryComponent } from '../../components/assignment-delivery/assignment-delivery.component';
 import { DeliveriesService } from '../../services/deliveries.service';
+import { SalesService } from '../../../sales/services/sales.service';
+import { MovementsDialogComponent } from '../../components/movements-dialog/movements-dialog.component';
+import { UpdateStatusDialogComponent } from '../../../packaging/components/update-status-dialog/update-status-dialog.component';
 
 @Component({
   selector: 'app-list-page',
@@ -37,22 +40,37 @@ export class ListPageComponent implements OnInit {
     private packingService: PackagingService,
     private deliveriesService: DeliveriesService,
     private globalStateService: GlobalStateService,
+    private salesService: SalesService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
     this.onTabChange({ index: 0 } as MatTabChangeEvent);
+
+    const { roleId } = this.globalStateService.getUser();
+    this.rol = roleId;
+
+    const initialTabIndex = (this.rol === 4 || this.rol === 5) ? 2 : 0;
+    this.selectedTabIndex = initialTabIndex;
+    this.onTabChange({ index: initialTabIndex } as MatTabChangeEvent);
   }
 
   onTabChange(event: MatTabChangeEvent): void {
     const index = event.index;
-    const status = index === 0 ? 3 : 4;
-    this.displayedColumns = index === 0
-      ? ['saleId', 'businessName', 'vendedor', 'statusName', 'totalAmount', 'saleDate', 'actions']
-      : ['saleId', 'businessName', 'vendedor', 'repartidor', 'statusName', 'totalAmount', 'saleDate', 'actions'];
 
-    this.loadSales(status);
+    if (index === 0) {
+      this.displayedColumns = ['saleId', 'businessName', 'vendedor', 'statusName', 'totalAmount', 'saleDate', 'actions'];
+      this.loadSales(3);
+    }
+    else if (index === 1) {
+      this.displayedColumns = ['saleId', 'businessName', 'vendedor', 'repartidor', 'statusName', 'totalAmount', 'saleDate', 'actions'];
+      this.loadSales(4);
+    }
+    else if (index === 2) {
+      this.displayedColumns = ['saleId', 'businessName', 'vendedor', 'repartidor', 'statusName', 'totalAmount', 'saleDate', 'actions'];
+      this.loadSalesDelivery(4);
+    }
   }
 
   ngAfterViewInit(): void {
@@ -76,6 +94,25 @@ export class ListPageComponent implements OnInit {
 
     this.packingService.listSales( data ).subscribe({
       next: (response) => {
+        if (response.result) {
+          let filteredStock = response.result;
+          
+          this.dataSource.data = filteredStock;
+        }
+        this.isLoading = false;
+      },
+      error: () => this.isLoading = false,
+    });
+  }
+
+  loadSalesDelivery( statusId: number = 4 ): void {
+    this.isLoading = true;
+
+    const data: SalesByStatusRequest = { saleStatusId: statusId };
+
+    this.packingService.listSalesDeliveryByUserId( data ).subscribe({
+      next: (response) => {
+        console.log(response)
         if (response.result) {
           let filteredStock = response.result;
           
@@ -112,14 +149,16 @@ export class ListPageComponent implements OnInit {
   openAssigmentDialog(entry: SaleDTO): void {
     const dialogRef = this.dialog.open(AssignmentDeliveryComponent, {
       width: '400px',
-      data: { saleId: entry.saleId }
+      data: { saleId: entry.saleId, isUpdated: false }
     });
 
-    dialogRef.afterClosed().subscribe((userId: number | undefined) => {
-      if (userId !== undefined) {
+    dialogRef.afterClosed().subscribe((result: { userId: number, comment: string } | undefined) => {
+      if (result) {
         const request: AssignDeliveryUserRequest = {
           saleId: entry.saleId,
-          deliveryUserId: userId
+          deliveryUserId: result.userId,
+          commentsDelivery: result.comment,
+          isUpdated: false
         };
 
         this.isLoading = true;
@@ -135,6 +174,94 @@ export class ListPageComponent implements OnInit {
           },
           error: () => {
             this.snackBar.open('Error al asignar el ticket.', 'Cerrar', { duration: 3000 });
+            this.isLoading = false;
+          }
+        });
+      }
+    });
+  }
+
+  openReAssigmentDialog(entry: SaleDTO): void {
+    const dialogRef = this.dialog.open(AssignmentDeliveryComponent, {
+      width: '400px',
+      data: { saleId: entry.saleId, isUpdated: true }
+    });
+
+    dialogRef.afterClosed().subscribe((result: { userId: number, comment: string } | undefined) => {
+      if (result) {
+        const request: AssignDeliveryUserRequest = {
+          saleId: entry.saleId,
+          deliveryUserId: result.userId,
+          commentsDelivery: '',
+          isUpdated: true
+        };
+
+        this.isLoading = true;
+
+        this.deliveriesService.assignDelivery(request).subscribe({
+          next: (response) => {
+            if (response.result) {
+              this.snackBar.open('Ticket re-asignado correctamente.', 'Cerrar', { duration: 3000 });
+              this.loadSales(4);
+            }
+
+            this.isLoading = false;
+          },
+          error: () => {
+            this.snackBar.open('Error al re-asignar el ticket.', 'Cerrar', { duration: 3000 });
+            this.isLoading = false;
+          }
+        });
+      }
+    });
+  }
+
+  openMovementsDialog(entry: SaleDTO): void {
+    const request = { saleId: entry.saleId };
+
+    this.salesService.movementsSaleById(request).subscribe({
+      next: (response) => {
+        if (response.result) {
+          this.dialog.open(MovementsDialogComponent, {
+            width: '400px',
+            data: response.result
+          });
+        } else {
+          this.snackBar.open('No se encontraron movimientos para este ticket.', 'Cerrar', { duration: 3000 });
+        }
+      },
+      error: () => {
+        this.snackBar.open('Error al obtener movimientos de la venta.', 'Cerrar', { duration: 3000 });
+      }
+    });
+  }
+
+  openStatusDialog(entry: SaleDTO): void {
+    const dialogRef = this.dialog.open(UpdateStatusDialogComponent, {
+      width: '400px',
+      data: { saleId: entry.saleId, isPackaging: false }
+    });
+
+    dialogRef.afterClosed().subscribe((comment: string | undefined) => {
+      if (comment !== undefined) {
+        const request: UpdateSaleStatusRequest = {
+          saleId: entry.saleId,
+          saleStatusId: 5,
+          comments: ''
+        };
+
+        this.isLoading = true;
+        this.packingService.updateSaleStatus(request).subscribe({
+          next: (response) => {
+            if (response.result) {
+              this.snackBar.open('Estatus actualizado a Completado', 'Cerrar', { duration: 3000 });
+              this.loadSales();
+            }
+
+            this.isLoading = false;
+          },
+          error: () => {
+            this.snackBar.open('Error al actualizar estatus', 'Cerrar', { duration: 3000 });
             this.isLoading = false;
           }
         });

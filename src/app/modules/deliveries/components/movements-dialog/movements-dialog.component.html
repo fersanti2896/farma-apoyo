@@ -1,0 +1,14 @@
+<h2 mat-dialog-title class="text-xl font-bold text-center">Movimientos del Ticket #{{ data.saleId }}</h2>
+<mat-dialog-content class="mt-2">
+    <p><strong>Comentario Almacén:</strong></p>
+    <p class="mb-4 whitespace-pre-line text-sm">{{ data.comments || '' }}</p>
+
+    <p><strong>Comentario Almacén:</strong></p>
+    <p class="mb-4 whitespace-pre-line text-sm">{{ data.commentsDelivery || '' }}</p>
+
+    <p><strong>Última Modificación:</strong> {{ data.updateDate | date: 'medium' }}</p>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close class="btn-cancel">Cerrar</button>
+</mat-dialog-actions>

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, Router, ActivatedRouteSnapshot } from '@angular/router';
+
 import { GlobalStateService } from '../../shared/services';
 
 @Injectable({
@@ -14,8 +15,16 @@ export class AuthGuard implements CanActivate {
   canActivate(route: ActivatedRouteSnapshot): boolean {
     const allowedRoles = route.data['roles'] as number[];
     const user = this.globalState.getUser();
+    const token = this.globalState.getToken();
 
-    if (!user || !allowedRoles.includes(user.roleId)) {
+    if (!user || !token) {
+      this.globalState.clearState();
+      this.router.navigate(['/auth/login']);
+
+      return false;
+    }
+
+    if (allowedRoles && !allowedRoles.includes(user.roleId)) {
       this.router.navigate(['/sic/inicio/stock']);
       
       return false;

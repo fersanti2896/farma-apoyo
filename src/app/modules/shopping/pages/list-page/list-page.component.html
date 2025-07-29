@@ -73,11 +73,11 @@
       <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef> Acciones </th>
           <td mat-cell *matCellDef="let entry">
-              <button mat-icon-button class="cursor-pointer" (click)="openConfirmDialog(entry)">
+              <button mat-icon-button class="cursor-pointer" matTooltip="Ver detalles de compra" (click)="openConfirmDialog(entry)">
                   <mat-icon>visibility</mat-icon>
               </button>
 
-              <button mat-icon-button class="cursor-pointer" *ngIf="rol == 1 || rol == 2" (click)="editEntry(entry)">
+              <button mat-icon-button class="cursor-pointer" matTooltip="Editar compra" *ngIf="rol == 1 || rol == 2" (click)="editEntry(entry)">
                   <mat-icon>edit</mat-icon>
               </button>
           </td>

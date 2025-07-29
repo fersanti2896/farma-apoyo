@@ -31,6 +31,10 @@ export class PackagingService {
     return this.http.post<ApiResponse<ReplyResponse>>(`${ this.api }/Sales/UpdateSaleStatus`, data, { headers: this.getHeaders() });
   }
 
+  listSalesDeliveryByUserId( data: SalesByStatusRequest ): Observable<ApiResponse<SaleDTO[]>> {
+    return this.http.post<ApiResponse<SaleDTO[]>>(`${ this.api }/Sales/GetSalesByDeliveryId`, data,  { headers: this.getHeaders() });
+  }
+
   private getHeaders(): HttpHeaders {
     const token = this.globalStateService.getToken();
 

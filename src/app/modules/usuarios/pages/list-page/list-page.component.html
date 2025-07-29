@@ -67,7 +67,7 @@
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef> Acciones </th>
         <td mat-cell *matCellDef="let user">
-          <button mat-icon-button class="cursor-pointer" aria-label="Bloquear/Desbloquear usuario" (click)="openConfirmDialog(user)">
+          <button mat-icon-button class="cursor-pointer" [matTooltip]="user.status === 1 ? 'Bloquear usuario' : 'Desbloquear usuario'" aria-label="Bloquear/Desbloquear usuario" (click)="openConfirmDialog(user)">
             <mat-icon>{{ user.status === 1 ? 'lock' : 'lock_open' }}</mat-icon>
           </button>
         </td>

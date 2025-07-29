@@ -12,20 +12,21 @@
 
 <h2 class="text-2xl text-center md:w-full mb-4 -mt-6">Entregas Tickets</h2>
 <div class="flex items-center mb-4 w-full gap-4">
-  <button mat-raised-button class="btn-cancel h-10 flex items-center gap-x-1" (click)="exportToPDF()">
+  <button *ngIf="rol != 4 && rol != 5" mat-raised-button class="btn-cancel h-10 flex items-center gap-x-1" (click)="exportToPDF()">
     <span>Descargar</span>
     <mat-icon>picture_as_pdf</mat-icon>
   </button>
 
-  <button *ngIf="rol != 5" mat-raised-button class="btn-success h-10 flex items-center gap-x-1" (click)="exportToExcel()">
+  <button *ngIf="rol != 4 && rol != 5" mat-raised-button class="btn-success h-10 flex items-center gap-x-1" (click)="exportToExcel()">
     <span>Descargar</span>
     <mat-icon>explicit</mat-icon>
   </button>
 </div>
 
 <mat-tab-group [(selectedIndex)]="selectedTabIndex" (selectedTabChange)="onTabChange($event)">
-  <mat-tab label="Pendiente por Asignar"></mat-tab>
-  <mat-tab label="En Tránsito"></mat-tab>
+  <mat-tab *ngIf="rol != 5 && rol != 6" label="Pendiente por Asignar"></mat-tab>
+  <mat-tab *ngIf="rol != 5 && rol != 6" label="En Tránsito"></mat-tab>
+  <mat-tab *ngIf="rol != 4" label="Mis Entregas"></mat-tab>
 </mat-tab-group>
 
 <div class="mat-elevation-z8 overflow-x-auto">
@@ -51,7 +52,7 @@
         </ng-container>
 
         <!-- Repartidor Column (solo en tab En Tránsito) -->
-        <ng-container *ngIf="selectedTabIndex === 1" matColumnDef="repartidor">
+        <ng-container *ngIf="selectedTabIndex === 1 || selectedTabIndex === 2" matColumnDef="repartidor">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> Repartidor </th>
             <td mat-cell *matCellDef="let entry"> {{ entry.repartidor }} </td>
         </ng-container>
@@ -78,12 +79,24 @@
         <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef> Acciones </th>
             <td mat-cell *matCellDef="let entry">
-                <button mat-icon-button class="cursor-pointer" (click)="openDetailsTicket(entry)">
+                <button mat-icon-button class="cursor-pointer" matTooltip="Ver Detalles del Ticket" (click)="openDetailsTicket(entry)">
                     <mat-icon>visibility</mat-icon>
                 </button>
 
-                <button *ngIf="selectedTabIndex === 0" mat-icon-button class="text-blue-600 cursor-pointer ml-1" (click)="openAssigmentDialog(entry)">
+                <button *ngIf="selectedTabIndex === 0" matTooltip="Asignar Repartidor" mat-icon-button class="text-blue-600 cursor-pointer ml-1" (click)="openAssigmentDialog(entry)">
                     <mat-icon>inventory_2</mat-icon>
+                </button>
+
+                <button *ngIf="selectedTabIndex !== 0" matTooltip="Ver Movimientos" mat-icon-button class="text-blue-600 cursor-pointer ml-1" (click)="openMovementsDialog(entry)">
+                    <mat-icon>article</mat-icon>
+                </button>
+
+                <button *ngIf="selectedTabIndex === 1" matTooltip="Reasignar Repartidor" mat-icon-button class="text-blue-600 cursor-pointer ml-1" (click)="openReAssigmentDialog(entry)">
+                    <mat-icon>group_add</mat-icon>
+                </button>
+
+                <button *ngIf="selectedTabIndex === 2" matTooltip="Actualizar Entrega Completada" mat-icon-button class="text-green-600 cursor-pointer ml-1" (click)="openStatusDialog(entry)">
+                  <mat-icon>send</mat-icon>
                 </button>
             </td>
         </ng-container>

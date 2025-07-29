@@ -1,26 +1,24 @@
-<h2 mat-dialog-title class="text-2xl text-center">Asignar Ticket: #{{ saleId }}</h2>
+<h2 mat-dialog-title class="text-2xl text-center">{{ !isUpdated ? 'Asignar' : 'Re-Asignar' }} Ticket: #{{ saleId }}</h2>
 
 <mat-dialog-content [formGroup]="assigmentForm" class="flex flex-col items-center">
   <mat-form-field appearance="fill" class="w-full">
-    <mat-label>Usuario Asignado</mat-label>
-    <input
-      type="text"
-      matInput
-      [formControl]="userControl"
-      [matAutocomplete]="autoUser"
-      required
-    />
-    <mat-autocomplete
-      #autoUser="matAutocomplete"
-      [displayWith]="displayFnUser"
-      (optionSelected)="onUserSelected($event.option.value)"
-    >
+    <mat-label> {{ !isUpdated ? 'Usuario Asignado' : 'Usuario Re-Asignado' }}</mat-label>
+    <input type="text" matInput [formControl]="userControl" [matAutocomplete]="autoUser" required />
+    <mat-autocomplete #autoUser="matAutocomplete" [displayWith]="displayFnUser"
+      (optionSelected)="onUserSelected($event.option.value)">
       <mat-option *ngFor="let user of filteredUser | async" [value]="user">
         {{ user.firstName }} {{ user.lastName }} {{ user.mLastName }}
       </mat-option>
     </mat-autocomplete>
 
     <mat-error *ngIf="isValidField('userId')">Usuario Asignado es requerido</mat-error>
+  </mat-form-field>
+
+  <mat-form-field *ngIf="!isUpdated" appearance="fill" class="w-full mt-4">
+    <mat-label>Comentarios</mat-label>
+    <textarea matInput formControlName="comment" placeholder="Comentarios"></textarea>
+
+    <mat-error *ngIf="isValidField('comment')">Los comentarios son requeridos.</mat-error>
   </mat-form-field>
 </mat-dialog-content>
 

@@ -81,6 +81,14 @@ export class TicketDialogComponent {
       y += 4;
       doc.text(`FECHA: ${dateStr}`, 5, y);
       y += 4;
+      doc.text(`REPARTIDOR:`, 5, y);
+      y += 4;
+
+      const repartidorLines = this.splitRepartidorName(this.details[0].repartidor, pageWidth - 10, doc);
+        repartidorLines.forEach(line => {
+          doc.text(line, 5, y);
+          y += 4;
+      });
 
       doc.line(5, y, pageWidth - 5, y);
       y += 4;
@@ -205,6 +213,8 @@ export class TicketDialogComponent {
       y += 4;
       doc.text(`FECHA: ${dateStr}`, 5, y);
       y += 4;
+      doc.text(`REPARTIDOR: ${this.details[0].repartidor}`, 5, y);
+      y += 4;
 
       doc.line(5, y, pageWidth - 5, y);
       y += 4;
@@ -274,4 +284,7 @@ export class TicketDialogComponent {
     };
   }
 
+  splitRepartidorName(repartidor: string, width: number, doc: jsPDF): string[] {
+    return doc.splitTextToSize(repartidor, width);
+  }
 }

@@ -1,12 +1,14 @@
 <h2 mat-dialog-title class="text-2xl text-center">Estatus del Ticket: #{{ saleId }}</h2>
 
 <mat-dialog-content [formGroup]="statusForm">
-    <p class="text-sm text-center">¿Deseas marcar este ticket como <strong>EMPAQUETADO</strong>?</p>
+    <p class="text-sm text-center">¿Deseas marcar este ticket como <strong>{{ isPackaging ? 'EMPAQUETADO' : 'ENTREGADO' }}</strong>?</p>
   
 
-    <mat-form-field appearance="fill" class="w-full mt-4">
+    <mat-form-field *ngIf="isPackaging" appearance="fill" class="w-full mt-4">
         <mat-label>Comentarios</mat-label>
         <textarea matInput formControlName="comment" placeholder="Comentarios"></textarea>
+
+        <mat-error *ngIf="isValidField('comment')">Los comentarios son requeridos.</mat-error>
     </mat-form-field>
 </mat-dialog-content>
 

@@ -7,12 +7,14 @@ import { SharedModule } from '../../shared/shared.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { PackagingModule } from '../packaging/packaging.module';
 import { AssignmentDeliveryComponent } from './components/assignment-delivery/assignment-delivery.component';
+import { MovementsDialogComponent } from './components/movements-dialog/movements-dialog.component';
 
 
 @NgModule({
   declarations: [
     ListPageComponent,
-    AssignmentDeliveryComponent
+    AssignmentDeliveryComponent,
+    MovementsDialogComponent
   ],
   imports: [
     CommonModule,
@@ -20,6 +22,9 @@ import { AssignmentDeliveryComponent } from './components/assignment-delivery/as
     SharedModule,
     PackagingModule,
     ReactiveFormsModule
+  ], 
+  exports: [
+    MovementsDialogComponent
   ]
 })
 export class DeliveriesModule { }

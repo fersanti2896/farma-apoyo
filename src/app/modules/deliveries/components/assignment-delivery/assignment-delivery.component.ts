@@ -20,20 +20,31 @@ export class AssignmentDeliveryComponent {
   public userControl = new FormControl<UsersDTO | null>(null);
   public filteredUser!: Observable<UsersDTO[]>;
 
+  public isUpdated: boolean = false;
+
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<AssignmentDeliveryComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { saleId: number },
+    @Inject(MAT_DIALOG_DATA) public data: { saleId: number, isUpdated: boolean },
     private userService: UserService,
     private validatorsService: ValidatorsService
   ) {
     this.saleId = data.saleId;
+    this.isUpdated = data.isUpdated
   }
 
   ngOnInit(): void {
     this.assigmentForm = this.fb.group({
-      userId: [ null, [ Validators.required ] ]
+      userId: [ null, [ Validators.required ] ],
+      comment: [ '', [] ]
     });
+
+    if (!this.isUpdated) {
+      this.assigmentForm.get('comment')?.setValidators([Validators.required]);
+    }
+
+    // Siempre se actualiza la validez del campo
+    this.assigmentForm.get('comment')?.updateValueAndValidity();
 
     this.loadUser();
   }
@@ -74,7 +85,9 @@ export class AssignmentDeliveryComponent {
     }
 
     const userId = this.assigmentForm.get('userId')?.value;
-    this.dialogRef.close(userId);
+    const comment = this.assigmentForm.get('comment')?.value;
+
+    this.dialogRef.close({ userId, comment });
   }
 
   cancel(): void {

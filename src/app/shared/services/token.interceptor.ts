@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import {
   HttpEvent,
   HttpHandler,
@@ -14,7 +15,8 @@ import { RefreshTokenRequest } from '../../auth/interfaces/auth.interface';
 export class TokenInterceptor implements HttpInterceptor {
   constructor(
     private authService: AuthService,
-    private globalState: GlobalStateService
+    private globalState: GlobalStateService,
+    private router: Router
   ) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -34,6 +36,9 @@ export class TokenInterceptor implements HttpInterceptor {
           // Token expired; refresh the token
           const refreshToken = localStorage.getItem('refresh_token');
           if (!refreshToken) {
+            this.globalState.clearState();
+            this.router.navigate(['/auth/login']);
+
             return throwError(() => new Error('No refresh token found'));
           }
 
@@ -56,6 +61,7 @@ export class TokenInterceptor implements HttpInterceptor {
             }),
             catchError((refreshError) => {
               this.globalState.clearState();
+              this.router.navigate(['/auth/login']);
               return throwError(() => refreshError);
             })
           );

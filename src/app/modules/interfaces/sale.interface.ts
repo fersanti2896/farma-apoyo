@@ -3,7 +3,7 @@ import { ProductSale } from './product.interface';
 export interface CreateSaleRequest {
     clientId: number;
     totalAmount: number;
-    products: ProductSale[]; 
+    products: ProductSale[];
 }
 
 export interface SaleDTO {
@@ -28,7 +28,7 @@ export interface DetailsSaleDTO {
     expirationDate: string;
     createDate: string;
     vendedor: string;
-
+    repartidor: string;
 }
 
 export interface SalesByStatusRequest {
@@ -44,8 +44,8 @@ export interface DetailsSaleResponse {
 }
 
 export interface TicketData {
-  sale: SaleDTO;
-  details: DetailsSaleDTO[];
+    sale: SaleDTO;
+    details: DetailsSaleDTO[];
 }
 
 export interface UpdateSaleStatusRequest {
@@ -57,6 +57,8 @@ export interface UpdateSaleStatusRequest {
 export interface AssignDeliveryUserRequest {
     saleId: number;
     deliveryUserId: number;
+    commentsDelivery: string;
+    isUpdated: boolean;
 }
 
 export interface SalesStatusDTO {
@@ -81,4 +83,11 @@ export interface ApplyPaymentRequest {
     amount: number;
     method: string;
     comments: string;
+}
+
+export interface MovementsSaleDTO {
+    saleId: number;
+    comments: string;
+    commentsDelivery: string;
+    updateDate: string;
 }

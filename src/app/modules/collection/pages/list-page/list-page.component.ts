@@ -4,13 +4,15 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { CollectionService } from '../../services/collection.service';
 import { GlobalStateService } from '../../../../shared/services';
-import { SalesPendingPaymentDTO } from '../../../interfaces/sale.interface';
+import { SaleDTO, SalesPendingPaymentDTO } from '../../../interfaces/sale.interface';
 import { PackagingService } from '../../../packaging/services/packaging.service';
 import { TicketDialogComponent } from '../../../packaging/components/ticket-dialog/ticket-dialog.component';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { SalesService } from '../../../sales/services/sales.service';
+import { MovementsDialogComponent } from '../../../deliveries/components/movements-dialog/movements-dialog.component';
 
 @Component({
   selector: 'app-list-page',
@@ -36,6 +38,7 @@ export class ListPageComponent {
   constructor(
     private collectionService: CollectionService,
     private packingService: PackagingService,
+    private salesService: SalesService,
     private globalStateService: GlobalStateService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
@@ -143,6 +146,26 @@ export class ListPageComponent {
     });
   }
 
+  openMovementsDialog(entry: SaleDTO): void {
+    const request = { saleId: entry.saleId };
+
+    this.salesService.movementsSaleById(request).subscribe({
+      next: (response) => {
+        if (response.result) {
+          this.dialog.open(MovementsDialogComponent, {
+            width: '400px',
+            data: response.result
+          });
+        } else {
+          this.snackBar.open('No se encontraron movimientos para este ticket.', 'Cerrar', { duration: 3000 });
+        }
+      },
+      error: () => {
+        this.snackBar.open('Error al obtener movimientos de la venta.', 'Cerrar', { duration: 3000 });
+      }
+    });
+  }
+
   getPaymentAmountControl(index: number): FormControl {
     return this.payments.at(index).get('paymentAmount') as FormControl;
   }
@@ -186,5 +209,4 @@ export class ListPageComponent {
       }
     });
   }
-
 }

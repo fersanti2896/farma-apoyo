@@ -51,7 +51,7 @@ const routes: Routes = [
       { path: 'entregas', 
         loadChildren: () => import('../modules/deliveries/deliveries.module').then(m => m.DeliveriesModule),
         canActivate: [ AuthGuard ],
-        data: { roles: [1, 2, 3, 4] } 
+        data: { roles: [1, 2, 3, 4, 5, 6] } 
       },
       { path: 'cobranza', 
         loadChildren: () => import('../modules/collection/collection.module').then(m => m.CollectionModule),

@@ -38,14 +38,7 @@ export class ListPageComponent {
     const { roleId } = this.globalStateService.getUser();
     this.rol = roleId;
 
-    this.displayedColumns = [
-      'saleId',
-      'businessName',
-      'statusName',
-      'totalAmount',
-      'saleDate',
-      'actions'
-    ];
+    this.displayedColumns = ['saleId', 'businessName', 'statusName', 'totalAmount', 'saleDate', 'actions'];
   }
 
   ngAfterViewInit(): void {
@@ -108,7 +101,7 @@ export class ListPageComponent {
   openStatusDialog(entry: SaleDTO): void {
     const dialogRef = this.dialog.open(UpdateStatusDialogComponent, {
       width: '400px',
-      data: { saleId: entry.saleId }
+      data: { saleId: entry.saleId, isPackaging: true }
     });
 
     dialogRef.afterClosed().subscribe((comment: string | undefined) => {

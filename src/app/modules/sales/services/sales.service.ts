@@ -8,7 +8,7 @@ import { ApiResponse } from '../../../auth/interfaces/auth.interface';
 import { UserInfoCreditDTO } from '../../../dashboard/interfaces/user.interface';
 import { ClientByUserDTO } from '../../interfaces/client.interface';
 import { ProductStockDTO } from '../../interfaces/product.interface';
-import { CreateSaleRequest } from '../../interfaces/sale.interface';
+import { CreateSaleRequest, DetailSaleByIdRequest, MovementsSaleDTO } from '../../interfaces/sale.interface';
 import { ReplyResponse } from '../../interfaces/reply.interface';
 
 @Injectable({
@@ -36,6 +36,10 @@ export class SalesService {
 
   createSale( data: CreateSaleRequest ): Observable<ApiResponse<ReplyResponse>> {
     return this.http.post<ApiResponse<ReplyResponse>>(`${ this.api }/Sales/CreateSale`, data, { headers: this.getHeaders() });
+  }
+
+  movementsSaleById( data: DetailSaleByIdRequest ): Observable<ApiResponse<MovementsSaleDTO>> {
+    return this.http.post<ApiResponse<MovementsSaleDTO>>(`${ this.api }/Sales/MovementsSaleBySaleId`, data, { headers: this.getHeaders() });
   }
 
   private getHeaders(): HttpHeaders {
