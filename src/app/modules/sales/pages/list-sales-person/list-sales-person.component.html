@@ -1,0 +1,75 @@
+
+<shared-loading-page *ngIf="isLoading"></shared-loading-page>
+
+<div class="flex justify-between items-center mb-4 w-full">
+  <!-- Campo de búsqueda a la izquierda -->
+  <div class="w-full md:w-2/6">
+    <mat-form-field class="h-17 md:w-full w-40 -ml-4">
+      <mat-label>Buscar</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Buscar ticket" #input />
+    </mat-form-field>
+  </div>
+</div>
+
+<h2 class="text-2xl text-center md:w-full mb-4 -mt-6">Mis Ventas</h2>
+
+<div class="mat-elevation-z8 overflow-x-auto">
+  <div class="min-w-[700px]">
+    <table mat-table [dataSource]="dataSource" matSort>
+        <!-- ID Column -->
+        <ng-container matColumnDef="saleId">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> No. Ticket </th>
+            <td mat-cell *matCellDef="let entry"> {{ entry.saleId }}</td>
+        </ng-container>
+
+        <!-- BusinessName Column -->
+        <ng-container matColumnDef="businessName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Cliente </th>
+            <td mat-cell *matCellDef="let entry"> {{ entry.businessName }} </td>
+        </ng-container>
+
+        <!-- totalAmount Column -->
+        <ng-container matColumnDef="totalAmount">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Monto Ticket </th>
+            <td mat-cell *matCellDef="let entry"> {{ entry.totalAmount | currency}} </td>
+        </ng-container>
+
+        <!-- StatusName Column -->
+        <ng-container matColumnDef="statusName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Estatus Ticket </th>
+            <td mat-cell *matCellDef="let entry"> {{ entry.statusName }} </td>
+        </ng-container>
+
+        
+        <!-- StatusName Column -->
+        <ng-container matColumnDef="namePayment">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Estatus Pago Ticket </th>
+            <td mat-cell *matCellDef="let entry"> {{ entry.namePayment }} </td>
+        </ng-container>
+        
+        <!-- SaleDate Column -->
+        <ng-container matColumnDef="saleDate">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Fecha de Creación </th>
+            <td mat-cell *matCellDef="let entry"> {{ entry.saleDate | date: 'short' }} </td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef> Acciones </th>
+            <td mat-cell *matCellDef="let entry">
+                <button mat-icon-button matTooltip="Ver detalles del Ticket" class="cursor-pointer" (click)="openDetailsTicket(entry)">
+                    <mat-icon>visibility</mat-icon>
+                </button>
+            </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+        <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" colspan="4">No hay datos que coincidan con "{{ input.value }}"</td>
+        </tr>
+    </table>
+  </div>
+  <mat-paginator [pageSizeOptions]="[25, 50, 100]" aria-label="Selector de página"></mat-paginator>
+</div>

@@ -1,15 +1,15 @@
-import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
+import { ApiResponse } from '../../../auth/interfaces/auth.interface';
+import { ClientByUserDTO } from '../../interfaces/client.interface';
+import { CreateSaleRequest, DetailSaleByIdRequest, MovementsSaleDTO, SalesByUserDTO, SalesByUserRequest } from '../../interfaces/sale.interface';
 import { environment } from '../../../enviroments/enviroment';
 import { GlobalStateService } from '../../../shared/services';
-import { ApiResponse } from '../../../auth/interfaces/auth.interface';
-import { UserInfoCreditDTO } from '../../../dashboard/interfaces/user.interface';
-import { ClientByUserDTO } from '../../interfaces/client.interface';
 import { ProductStockDTO } from '../../interfaces/product.interface';
-import { CreateSaleRequest, DetailSaleByIdRequest, MovementsSaleDTO } from '../../interfaces/sale.interface';
 import { ReplyResponse } from '../../interfaces/reply.interface';
+import { UserInfoCreditDTO } from '../../../dashboard/interfaces/user.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -40,6 +40,10 @@ export class SalesService {
 
   movementsSaleById( data: DetailSaleByIdRequest ): Observable<ApiResponse<MovementsSaleDTO>> {
     return this.http.post<ApiResponse<MovementsSaleDTO>>(`${ this.api }/Sales/MovementsSaleBySaleId`, data, { headers: this.getHeaders() });
+  }
+
+  listSalesByUser( data: SalesByUserRequest ): Observable<ApiResponse<SalesByUserDTO[]>> {
+    return this.http.post<ApiResponse<SalesByUserDTO[]>>(`${ this.api }/Sales/GetSalesByUser`, data, { headers: this.getHeaders() });
   }
 
   private getHeaders(): HttpHeaders {

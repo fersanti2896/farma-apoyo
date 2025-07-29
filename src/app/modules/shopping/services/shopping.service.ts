@@ -1,13 +1,12 @@
-import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { environment } from '../../../enviroments/enviroment';
-import { GlobalStateService } from '../../../shared/services';
 import { ApiResponse } from '../../../auth/interfaces/auth.interface';
 import { CreateWarehouseRequest, DetailsEntryResponse, EntrySummaryDTO, FullEntryByIdRequest, UpdateEntryPricesRequest } from '../../interfaces/entrey-sumarry.interface';
+import { environment } from '../../../enviroments/enviroment';
+import { GlobalStateService } from '../../../shared/services';
 import { ReplyResponse } from '../../interfaces/reply.interface';
-import { ProductDTO } from '../../interfaces/product.interface';
 
 @Injectable({
   providedIn: 'root'

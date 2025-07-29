@@ -91,3 +91,21 @@ export interface MovementsSaleDTO {
     commentsDelivery: string;
     updateDate: string;
 }
+
+export interface SalesByUserRequest {
+    startDate: string;
+    endDate: string;
+}
+
+export interface SalesByUserDTO {
+    saleId: number;
+    clientId: number;
+    businessName: string;
+    userId: number;
+    saleDate: string;
+    totalAmount: number;
+    saleStatusId: number;
+    statusName: string;
+    paymentStatusId: number;
+    namePayment: string;
+}
