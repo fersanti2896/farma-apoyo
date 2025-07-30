@@ -46,8 +46,6 @@ export class ListPageComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.onTabChange({ index: 0 } as MatTabChangeEvent);
-
     const { roleId } = this.globalStateService.getUser();
     this.rol = roleId;
 
@@ -58,7 +56,7 @@ export class ListPageComponent implements OnInit {
 
   onTabChange(event: MatTabChangeEvent): void {
     const index = event.index;
-
+    
     if (index === 0) {
       this.displayedColumns = ['saleId', 'businessName', 'vendedor', 'statusName', 'totalAmount', 'saleDate', 'actions'];
       this.loadSales(3);
