@@ -1,18 +1,18 @@
 import { Component, ViewChild } from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 
 import { CollectionService } from '../../services/collection.service';
 import { GlobalStateService } from '../../../../shared/services';
-import { SaleDTO, SalesPendingPaymentDTO } from '../../../interfaces/sale.interface';
-import { PackagingService } from '../../../packaging/services/packaging.service';
-import { TicketDialogComponent } from '../../../packaging/components/ticket-dialog/ticket-dialog.component';
-import { SalesService } from '../../../sales/services/sales.service';
 import { MovementsDialogComponent } from '../../../deliveries/components/movements-dialog/movements-dialog.component';
+import { PackagingService } from '../../../packaging/services/packaging.service';
+import { SaleDTO, SalesPendingPaymentDTO } from '../../../interfaces/sale.interface';
+import { SalesService } from '../../../sales/services/sales.service';
+import { TicketDialogComponent } from '../../../packaging/components/ticket-dialog/ticket-dialog.component';
 
 @Component({
   selector: 'app-list-page',
@@ -20,11 +20,11 @@ import { MovementsDialogComponent } from '../../../deliveries/components/movemen
   templateUrl: './list-page.component.html'
 })
 export class ListPageComponent {
-  public displayedColumns: string[] = [];
   public dataSource = new MatTableDataSource<SalesPendingPaymentDTO>();
+  public displayedColumns: string[] = [];
   public isLoading: boolean = false;
-  public rol: number = 0;
   public paymentForm!: FormGroup;
+  public rol: number = 0;
 
   public paymentMethods = [
     { value: 'Efectivo', label: 'Efectivo' },
@@ -37,12 +37,12 @@ export class ListPageComponent {
 
   constructor(
     private collectionService: CollectionService,
+    private dialog: MatDialog,
+    private fb: FormBuilder,
+    private globalStateService: GlobalStateService,
     private packingService: PackagingService,
     private salesService: SalesService,
-    private globalStateService: GlobalStateService,
-    private dialog: MatDialog,
     private snackBar: MatSnackBar,
-    private fb: FormBuilder
   ) {
     this.paymentForm = this.fb.group({
       payments: this.fb.array([])
@@ -58,6 +58,7 @@ export class ListPageComponent {
     this.displayedColumns = [
       'saleId',
       'businessName',
+      'salesPerson',
       'saleStatus',
       'paymentStatus',
       'totalAmount',
@@ -73,7 +74,6 @@ export class ListPageComponent {
     return this.paymentForm.get('payments') as FormArray;
   }
 
-
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
@@ -83,21 +83,17 @@ export class ListPageComponent {
     const filterValue = (event.target as HTMLInputElement).value;
 
     this.dataSource.filter = filterValue.trim().toLowerCase();
-    if (this.dataSource.paginator) {
+    if (this.dataSource.paginator) 
       this.dataSource.paginator.firstPage();
-    }
   }
 
   loadSalesPayments(): void {
     this.isLoading = true;
 
-
     this.collectionService.listSalesPayments().subscribe({
       next: (response) => {
-        console.log(response)
         if (response.result) {
           let filteredStock = response.result;
-
 
           this.dataSource.data = filteredStock;
           this.payments.clear();
@@ -180,6 +176,7 @@ export class ListPageComponent {
     if (control.invalid) {
       this.snackBar.open('No se puede aplicar el pago debido a que el monto a pagar supera al monto del ticket.', 'Cerrar', { duration: 3000 });
       control.markAllAsTouched();
+
       return;
     }
 
@@ -196,8 +193,6 @@ export class ListPageComponent {
       method: paymentData.paymentMethod,
       comments: ''
     };
-
-    console.log(request)
 
     this.collectionService.applicationPayment(request).subscribe({
       next: (response) => {

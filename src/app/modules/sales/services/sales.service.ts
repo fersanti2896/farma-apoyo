@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 
 import { ApiResponse } from '../../../auth/interfaces/auth.interface';
 import { ClientByUserDTO } from '../../interfaces/client.interface';
-import { CreateSaleRequest, DetailSaleByIdRequest, MovementsSaleDTO, SalesByUserDTO, SalesByUserRequest } from '../../interfaces/sale.interface';
+import { CreateSaleRequest, DetailSaleByIdRequest, MovementsSaleDTO, SalesByUserDTO, SalesByUserRequest, SalesStatusDTO } from '../../interfaces/sale.interface';
 import { environment } from '../../../enviroments/enviroment';
 import { GlobalStateService } from '../../../shared/services';
 import { ProductStockDTO } from '../../interfaces/product.interface';
@@ -44,6 +44,10 @@ export class SalesService {
 
   listSalesByUser( data: SalesByUserRequest ): Observable<ApiResponse<SalesByUserDTO[]>> {
     return this.http.post<ApiResponse<SalesByUserDTO[]>>(`${ this.api }/Sales/GetSalesByUser`, data, { headers: this.getHeaders() });
+  }
+
+  listSalesStatus(): Observable<ApiResponse<SalesStatusDTO[]>> {
+    return this.http.get<ApiResponse<SalesStatusDTO[]>>(`${ this.api }/Sales/GetAllSalesStatus`,  { headers: this.getHeaders() });
   }
 
   private getHeaders(): HttpHeaders {

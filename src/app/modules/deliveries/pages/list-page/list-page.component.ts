@@ -51,7 +51,7 @@ export class ListPageComponent implements OnInit {
     const { roleId } = this.globalStateService.getUser();
     this.rol = roleId;
 
-    const initialTabIndex = (this.rol === 4 || this.rol === 5) ? 2 : 0;
+    const initialTabIndex = (this.rol === 5 || this.rol === 6) ? 2 : 0;
     this.selectedTabIndex = initialTabIndex;
     this.onTabChange({ index: initialTabIndex } as MatTabChangeEvent);
   }
@@ -82,9 +82,9 @@ export class ListPageComponent implements OnInit {
     const filterValue = (event.target as HTMLInputElement).value;
 
     this.dataSource.filter = filterValue.trim().toLowerCase();
-    if (this.dataSource.paginator) {
+
+    if (this.dataSource.paginator) 
       this.dataSource.paginator.firstPage();
-    }
   }
 
   loadSales( statusId: number = 3 ): void {
@@ -96,9 +96,9 @@ export class ListPageComponent implements OnInit {
       next: (response) => {
         if (response.result) {
           let filteredStock = response.result;
-          
           this.dataSource.data = filteredStock;
         }
+
         this.isLoading = false;
       },
       error: () => this.isLoading = false,
@@ -112,12 +112,11 @@ export class ListPageComponent implements OnInit {
 
     this.packingService.listSalesDeliveryByUserId( data ).subscribe({
       next: (response) => {
-        console.log(response)
         if (response.result) {
           let filteredStock = response.result;
-          
           this.dataSource.data = filteredStock;
         }
+
         this.isLoading = false;
       },
       error: () => this.isLoading = false,

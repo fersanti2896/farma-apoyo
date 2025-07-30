@@ -100,7 +100,7 @@ export class LayoutPageComponent implements OnInit {
         expanded: false,
         roles: [1, 2, 3, 5],
         children: [
-          { label: 'Punto de Venta', icon: 'point_of_sale', url: '/sic/inicio/ventas', roles: [1, 2, 3, 5] }, 
+          { label: 'Punto de Venta', icon: 'point_of_sale', url: '/sic/inicio/ventas/venta', roles: [1, 2, 3, 5] }, 
           { label: 'Catálogo de Precios', icon: 'category', url: '/sic/inicio/productos', roles: [1, 2, 3, 5] },
           { label: 'Mis Ventas', icon: 'price_check', url: '/sic/inicio/ventas/list', roles: [ 5 ] },           
         ]

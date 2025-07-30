@@ -15,17 +15,16 @@ import { ValidatorsService } from '../../../../shared/services';
 export class AssignmentDeliveryComponent {
   public assigmentForm!: FormGroup;
   public saleId: number = 0;
+  public isUpdated: boolean = false;
 
   public users: UsersDTO[] = [];
   public userControl = new FormControl<UsersDTO | null>(null);
   public filteredUser!: Observable<UsersDTO[]>;
 
-  public isUpdated: boolean = false;
-
   constructor(
+    @Inject(MAT_DIALOG_DATA) public data: { saleId: number, isUpdated: boolean },
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<AssignmentDeliveryComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { saleId: number, isUpdated: boolean },
     private userService: UserService,
     private validatorsService: ValidatorsService
   ) {

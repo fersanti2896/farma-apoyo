@@ -13,6 +13,53 @@
 
 <h2 class="text-2xl text-center md:w-full mb-4 -mt-6">Mis Ventas</h2>
 
+<form [formGroup]="filterForm" (ngSubmit)="filterSales()" class="mb-4">
+  <div class="flex flex-col md:flex-row gap-4 w-full">
+
+    <!-- Fila 1: Fechas -->
+    <div class="flex flex-row gap-4 w-full md:w-auto">
+      <!-- Desde -->
+      <mat-form-field appearance="fill" class="w-full sm:w-1/2 md:w-48">
+        <mat-label>Desde</mat-label>
+        <input matInput [matDatepicker]="picker1" formControlName="startDate">
+        <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+        <mat-datepicker #picker1></mat-datepicker>
+      </mat-form-field>
+
+      <!-- Hasta -->
+      <mat-form-field appearance="fill" class="w-full sm:w-1/2 md:w-48">
+        <mat-label>Hasta</mat-label>
+        <input matInput [matDatepicker]="picker2" formControlName="endDate">
+        <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+        <mat-datepicker #picker2></mat-datepicker>
+      </mat-form-field>
+    </div>
+
+    <!-- Fila 2: Estatus + Botón -->
+    <div class="flex flex-row gap-4 w-full md:w-auto">
+      <!-- Estatus -->
+      <mat-form-field appearance="fill" class="w-full sm:w-1/2 md:w-48">
+        <mat-label>Estatus</mat-label>
+        <mat-select formControlName="saleStatusId">
+          <mat-option [value]="null">Todos</mat-option>
+          <mat-option *ngFor="let s of salesStatuses" [value]="s.saleStatusId">
+            {{ s.statusName }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Botón -->
+      <div class="w-full sm:w-1/2 md:w-48 mb-5 flex items-end">
+        <button mat-raised-button class="btn-success w-full md:w-auto" type="submit">
+          Filtrar
+        </button>
+      </div>
+    </div>
+
+  </div>
+</form>
+
+
 <div class="mat-elevation-z8 overflow-x-auto">
   <div class="min-w-[700px]">
     <table mat-table [dataSource]="dataSource" matSort>

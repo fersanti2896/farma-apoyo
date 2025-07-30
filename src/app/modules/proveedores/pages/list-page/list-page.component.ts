@@ -1,21 +1,19 @@
 import { Component, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { jsPDF } from 'jspdf';
 import * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
 import autoTable from 'jspdf-autotable';
 
-import { SupplierDTO } from '../../../interfaces/supplier.interface';
-import { ProveedoresService } from '../../services/proveedores.service';
 import { ConfirmationDialogComponent } from '../../../../shared/components/confirmation-dialog/confirmation-dialog.component';
+import { ProveedoresService } from '../../services/proveedores.service';
 import { StatusRequest } from '../../../interfaces/reply.interface';
-
-
+import { SupplierDTO } from '../../../interfaces/supplier.interface';
 
 @Component({
   selector: 'proveedores-list-page',
@@ -31,9 +29,9 @@ export class ListPageComponent {
   @ViewChild(MatSort) sort!: MatSort;
 
   constructor(
-    private supplierService: ProveedoresService,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private supplierService: ProveedoresService,
   ) {}
 
   ngOnInit(): void {
@@ -48,9 +46,9 @@ export class ListPageComponent {
   applyFilter(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
-    if (this.dataSource.paginator) {
+
+    if (this.dataSource.paginator) 
       this.dataSource.paginator.firstPage();
-    }
   }
 
   loadGetSuppliers(): void {
@@ -58,10 +56,9 @@ export class ListPageComponent {
 
     this.supplierService.listSupliers().subscribe({
       next: (response) => {
-        if (response.result) {
+        if (response.result)
           this.dataSource.data = response.result;
-          console.log(response.result)
-        }
+        
         this.isLoading = false;
       },
       error: () => this.isLoading = false,

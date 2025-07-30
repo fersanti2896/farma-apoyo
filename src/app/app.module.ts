@@ -2,13 +2,14 @@ import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 
-import { AppRoutingModule } from './app-routing.module';
-import { SharedModule } from './shared/shared.module';
-import { AppComponent } from './app.component';
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { LayoutPageComponent } from './dashboard/pages/layout-page/layout-page.component';
+
+import { AppComponent } from './app.component';
 import { AppInitializerService, TokenInterceptor } from './shared/services';
+import { AppRoutingModule } from './app-routing.module';
+import { LayoutPageComponent } from './dashboard/pages/layout-page/layout-page.component';
+import { SharedModule } from './shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,6 @@ import { AppInitializerService, TokenInterceptor } from './shared/services';
     SharedModule,
     RouterModule
   ],
-
   providers: [
     provideHttpClient(withInterceptorsFromDi()),
     provideAnimationsAsync(),

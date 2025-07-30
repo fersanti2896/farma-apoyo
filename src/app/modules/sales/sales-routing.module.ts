@@ -5,7 +5,7 @@ import { ListSalesPersonComponent } from './pages/list-sales-person/list-sales-p
 import { PosPageComponent } from './pages/pos-page/pos-page.component';
 
 const routes: Routes = [
-  { path: '', component: PosPageComponent },
+  { path: 'venta', component: PosPageComponent },
   { path: 'list', component: ListSalesPersonComponent }
 ];
 

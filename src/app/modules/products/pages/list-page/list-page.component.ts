@@ -73,10 +73,9 @@ export class ListPageComponent {
 
     this.productsService.listProducts().subscribe({
       next: (response) => {
-        if (response.result) {
+        if (response.result) 
           this.dataSource.data = response.result;
-          console.log('Products', response.result)
-        }
+        
         this.isLoading = false;
       },
       error: () => this.isLoading = false,

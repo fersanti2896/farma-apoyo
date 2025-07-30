@@ -28,6 +28,12 @@
             <td mat-cell *matCellDef="let entry"> {{ entry.businessName }} </td>
         </ng-container>
 
+        <!-- SalesPerson Column -->
+        <ng-container matColumnDef="salesPerson">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Vendedor </th>
+            <td mat-cell *matCellDef="let entry"> {{ entry.salesPerson }} </td>
+        </ng-container>
+
         <!-- SaleStatus Column -->
         <ng-container matColumnDef="saleStatus">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> Estatus Ticket </th>
@@ -51,6 +57,7 @@
             <th mat-header-cell *matHeaderCellDef mat-sort-header> Monto Pendiente </th>
             <td mat-cell *matCellDef="let entry"> {{ entry.amountPending | currency}} </td>
         </ng-container>
+        
         <!-- SaleDate Column -->
         <ng-container matColumnDef="saleDate">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> Fecha de Venta </th>

@@ -66,10 +66,9 @@ export class ListPageComponent {
       next: (response) => {
         if (response.result) {
           let filteredStock = response.result;
-
-
           this.dataSource.data = filteredStock;
         }
+
         this.isLoading = false;
       },
       error: () => this.isLoading = false,
@@ -113,6 +112,7 @@ export class ListPageComponent {
         };
 
         this.isLoading = true;
+        
         this.packingService.updateSaleStatus(request).subscribe({
           next: (response) => {
             if (response.result) {

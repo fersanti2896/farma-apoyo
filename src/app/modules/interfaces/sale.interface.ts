@@ -76,6 +76,8 @@ export interface SalesPendingPaymentDTO {
     paymentStatus: string;
     clientId: number;
     businessName: string;
+    salesPersonId: number;
+    salesPerson: string;
 }
 
 export interface ApplyPaymentRequest {
@@ -95,6 +97,7 @@ export interface MovementsSaleDTO {
 export interface SalesByUserRequest {
     startDate: string;
     endDate: string;
+    saleStatusId?: number;
 }
 
 export interface SalesByUserDTO {

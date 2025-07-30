@@ -3,16 +3,16 @@ import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 
-import { GlobalStateService } from '../../../../shared/services';
-import { SalesService } from '../../services/sales.service';
-import { UserInfoCreditDTO } from '../../../../dashboard/interfaces/user.interface';
 import { ClientByUserDTO } from '../../../interfaces/client.interface';
+import { CreateSaleRequest, SaleDTO } from '../../../interfaces/sale.interface';
+import { GlobalStateService } from '../../../../shared/services';
+import { PackagingService } from '../../../packaging/services/packaging.service';
 import { ProductDialogComponent } from '../../components/product-dialog/product-dialog.component';
 import { ProductStockDTO } from '../../../interfaces/product.interface';
 import { SalesAlertDialogComponent } from '../../components/sales-alert-dialog/sales-alert-dialog.component';
-import { CreateSaleRequest, SaleDTO } from '../../../interfaces/sale.interface';
-import { PackagingService } from '../../../packaging/services/packaging.service';
+import { SalesService } from '../../services/sales.service';
 import { TicketDialogComponent } from '../../../packaging/components/ticket-dialog/ticket-dialog.component';
+import { UserInfoCreditDTO } from '../../../../dashboard/interfaces/user.interface';
 
 @Component({
   selector: 'modules-sales-pos-page',
@@ -20,24 +20,24 @@ import { TicketDialogComponent } from '../../../packaging/components/ticket-dial
   templateUrl: './pos-page.component.html',
 })
 export class PosPageComponent {
-  public posForm!: FormGroup;
-  public sellerName: string = '';
-  public creditInfoUser!: UserInfoCreditDTO;
+  public availableCredit: number = 0;
   public availableCreditUser: number = 0;
   public clientsByUser: ClientByUserDTO[] = [];
-  public availableCredit: number = 0;
+  public creditInfoUser!: UserInfoCreditDTO;
   public isBlocked: string = 'Desconocido';
   public isLoading: boolean = false;
-  public productsStock: ProductStockDTO[] = [];
   public isRegisterDisabled: boolean = true;
+  public posForm!: FormGroup;
+  public productsStock: ProductStockDTO[] = [];
+  public sellerName: string = '';
 
   constructor(
+    private dialog: MatDialog,
     private fb: FormBuilder, 
-    private snackbar: MatSnackBar,
     private globalStateService: GlobalStateService,
     private packingService: PackagingService,
     private salesService: SalesService,
-    private dialog: MatDialog,
+    private snackbar: MatSnackBar,
     private snackBar: MatSnackBar,
   ) {}
 
@@ -107,16 +107,16 @@ export class PosPageComponent {
         if (response.result) {
           this.creditInfoUser = response.result;
           this.availableCreditUser = response.result.availableCredit;
+
           setTimeout(() => {
             this.validateSaleConditions();
           }, 300); 
         }
+
         this.isLoading = false;
       },
       error: () => this.isLoading = false,
     });
-
-
   }
 
   loadClientsByUser(): void {
@@ -124,10 +124,9 @@ export class PosPageComponent {
 
     this.salesService.getClienteByUser().subscribe({
       next: (response) => {
-        if(response.result) {
-          console.log(response)
+        if(response.result) 
           this.clientsByUser = response.result;
-        }
+        
         this.isLoading = false;
       },
       error: () => this.isLoading = false
@@ -141,6 +140,7 @@ export class PosPageComponent {
   onClientChange(): void {
     const selectedId = this.posForm.get('selectedClientId')?.value;
     const client = this.clientsByUser.find(c => c.clientId === +selectedId);
+
     this.availableCredit  = client?.availableCredit ?? 0;
     this.isBlocked = client?.isBlocked == 0 ? 'Activo' : 'Bloqueado'
   }
@@ -149,7 +149,6 @@ export class PosPageComponent {
     this.salesService.getProductStock().subscribe({
       next: (response) => {
         const productList = response.result;
-        console.log('Productos: ', productList)
         const dialogRef = this.dialog.open(ProductDialogComponent, {
           width: '500px',
           data: productList
@@ -261,7 +260,7 @@ export class PosPageComponent {
           totalAmount: totalAmount,
           saleDate: new Date().toISOString(),
           vendedor: this.sellerName,
-          repartidor: '' // puedes llenarlo si lo asignas más adelante
+          repartidor: ''
         };
 
         this.openDetailsTicket(sale);

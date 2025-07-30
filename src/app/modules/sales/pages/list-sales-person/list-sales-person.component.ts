@@ -1,4 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -7,7 +8,7 @@ import { MatTableDataSource } from '@angular/material/table';
 
 import { SalesService } from '../../services/sales.service';
 import { GlobalStateService } from '../../../../shared/services';
-import { SalesByUserDTO, SalesByUserRequest } from '../../../interfaces/sale.interface';
+import { SalesByUserDTO, SalesByUserRequest, SalesStatusDTO } from '../../../interfaces/sale.interface';
 import { PackagingService } from '../../../packaging/services/packaging.service';
 import { TicketDialogComponent } from '../../../packaging/components/ticket-dialog/ticket-dialog.component';
 
@@ -21,6 +22,11 @@ export class ListSalesPersonComponent {
   public dataSource = new MatTableDataSource<SalesByUserDTO>();
   public isLoading: boolean = false;
   public rol: number = 0;
+  public startDate!: Date;
+  public endDate!: Date;
+  public selectedStatusId: number | null = null;
+  public salesStatuses: SalesStatusDTO[] = [];
+  public filterForm!: FormGroup;
 
   @ViewChild(MatPaginatorIntl) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -30,16 +36,47 @@ export class ListSalesPersonComponent {
     private packingService: PackagingService,
     private globalStateService: GlobalStateService,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private fb: FormBuilder
   ) {}
 
   ngOnInit(): void {
+    this.initFilters();
+    this.loadSalesStatus();
     this.loadSalesByUser();
 
     const { roleId } = this.globalStateService.getUser();
     this.rol = roleId;
 
     this.displayedColumns = ['saleId', 'businessName', 'totalAmount', 'statusName', 'namePayment', 'saleDate', 'actions'];
+  }
+
+  initFilters(): void {
+    const today = new Date();
+    const startDate = today.getDate() <= 15
+      ? new Date(today.getFullYear(), today.getMonth(), 1)
+      : new Date(today.getFullYear(), today.getMonth(), 16);
+    const endDate = today.getDate() <= 15
+      ? new Date(today.getFullYear(), today.getMonth(), 15)
+      : new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+    this.filterForm = this.fb.group({
+      startDate: [startDate],
+      endDate: [endDate],
+      saleStatusId: [null]
+    });
+  }
+
+  loadSalesStatus(): void {
+    this.salesService.listSalesStatus().subscribe({
+      next: (res) => {
+        if (res.result) this.salesStatuses = res.result;
+      }
+    });
+  }
+
+  filterSales(): void {
+    this.loadSalesByUser();
   }
 
   ngAfterViewInit(): void {
@@ -58,18 +95,18 @@ export class ListSalesPersonComponent {
 
   loadSalesByUser(): void {
     this.isLoading = true;
+    const { startDate, endDate, saleStatusId } = this.filterForm.value;
 
     const data: SalesByUserRequest = {
-      startDate: '2025-07-01',
-      endDate: '2025-07-30'
+      startDate: new Date(startDate).toISOString(),
+      endDate: new Date(endDate).toISOString(),
+      saleStatusId: saleStatusId || 20
     }
 
     this.salesService.listSalesByUser( data ).subscribe({
       next: (response) => {
         if (response.result) {
-          let filteredStock = response.result;
-
-
+          let filteredStock = response.result ?? [];
           this.dataSource.data = filteredStock;
         }
         this.isLoading = false;
