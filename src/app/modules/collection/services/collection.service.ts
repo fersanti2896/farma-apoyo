@@ -7,6 +7,7 @@ import { GlobalStateService } from '../../../shared/services';
 import { environment } from '../../../enviroments/enviroment';
 import { ApplyPaymentRequest, SalesPendingPaymentDTO } from '../../interfaces/sale.interface';
 import { ReplyResponse } from '../../interfaces/reply.interface';
+import { PaymentStatusDTO } from '../../interfaces/collection.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +25,11 @@ export class CollectionService {
   }
 
   applicationPayment( data: ApplyPaymentRequest ): Observable<ApiResponse<ReplyResponse>> {
-    return this.http.post<ApiResponse<ReplyResponse>>(`${ this.api }/Sales/ApplyPayment`, data, { headers: this.getHeaders() });
+    return this.http.post<ApiResponse<ReplyResponse>>(`${ this.api }/Collection/ApplyPayment`, data, { headers: this.getHeaders() });
+  }
+
+  listStatusPayment(): Observable<ApiResponse<PaymentStatusDTO[]>> {
+    return this.http.get<ApiResponse<PaymentStatusDTO[]>>(`${ this.api }/Collection/GetAllPaymentStatus`,  { headers: this.getHeaders() });
   }
 
   private getHeaders(): HttpHeaders {

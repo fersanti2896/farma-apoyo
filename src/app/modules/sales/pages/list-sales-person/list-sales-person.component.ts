@@ -11,6 +11,8 @@ import { GlobalStateService } from '../../../../shared/services';
 import { SalesByUserDTO, SalesByUserRequest, SalesStatusDTO } from '../../../interfaces/sale.interface';
 import { PackagingService } from '../../../packaging/services/packaging.service';
 import { TicketDialogComponent } from '../../../packaging/components/ticket-dialog/ticket-dialog.component';
+import { CollectionService } from '../../../collection/services/collection.service';
+import { PaymentStatusDTO } from '../../../interfaces/collection.interface';
 
 @Component({
   selector: 'app-list-sales-person',
@@ -26,6 +28,7 @@ export class ListSalesPersonComponent {
   public endDate!: Date;
   public selectedStatusId: number | null = null;
   public salesStatuses: SalesStatusDTO[] = [];
+  public paymentStatuses: PaymentStatusDTO[] = []
   public filterForm!: FormGroup;
 
   @ViewChild(MatPaginatorIntl) paginator!: MatPaginator;
@@ -34,6 +37,7 @@ export class ListSalesPersonComponent {
   constructor(
     private salesService: SalesService,
     private packingService: PackagingService,
+    private collectionService: CollectionService,
     private globalStateService: GlobalStateService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
@@ -43,12 +47,27 @@ export class ListSalesPersonComponent {
   ngOnInit(): void {
     this.initFilters();
     this.loadSalesStatus();
+    this.loadPaymentStatus();
     this.loadSalesByUser();
 
     const { roleId } = this.globalStateService.getUser();
     this.rol = roleId;
 
     this.displayedColumns = ['saleId', 'businessName', 'totalAmount', 'statusName', 'namePayment', 'saleDate', 'actions'];
+  
+    // Se limpia el select de pagos de cobranza si se escoge el select de estado del ticket
+    this.filterForm.get('saleStatusId')?.valueChanges.subscribe(val => {
+      if (val !== null) {
+        this.filterForm.get('paymentStatusId')?.setValue(null, { emitEvent: false });
+      }
+    });
+
+    // Se limpia el select del estado del ticket si se escoge el select de pagos de cobranza
+    this.filterForm.get('paymentStatusId')?.valueChanges.subscribe(val => {
+      if (val !== null) {
+        this.filterForm.get('saleStatusId')?.setValue(null, { emitEvent: false });
+      }
+    });
   }
 
   initFilters(): void {
@@ -63,7 +82,8 @@ export class ListSalesPersonComponent {
     this.filterForm = this.fb.group({
       startDate: [startDate],
       endDate: [endDate],
-      saleStatusId: [null]
+      saleStatusId: [null],
+      paymentStatusId: [null]
     });
   }
 
@@ -71,6 +91,14 @@ export class ListSalesPersonComponent {
     this.salesService.listSalesStatus().subscribe({
       next: (res) => {
         if (res.result) this.salesStatuses = res.result;
+      }
+    });
+  }
+
+  loadPaymentStatus(): void {
+    this.collectionService.listStatusPayment().subscribe({
+      next: (res) => {
+        if (res.result) this.paymentStatuses = res.result;
       }
     });
   }
@@ -95,12 +123,13 @@ export class ListSalesPersonComponent {
 
   loadSalesByUser(): void {
     this.isLoading = true;
-    const { startDate, endDate, saleStatusId } = this.filterForm.value;
+    const { startDate, endDate, saleStatusId, paymentStatusId } = this.filterForm.value;
 
     const data: SalesByUserRequest = {
       startDate: new Date(startDate).toISOString(),
       endDate: new Date(endDate).toISOString(),
-      saleStatusId: saleStatusId || 20
+      saleStatusId: saleStatusId || 20,
+      PaymentStatusId: paymentStatusId || 20
     }
 
     this.salesService.listSalesByUser( data ).subscribe({

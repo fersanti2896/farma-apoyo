@@ -98,6 +98,7 @@ export interface SalesByUserRequest {
     startDate: string;
     endDate: string;
     saleStatusId?: number;
+    PaymentStatusId?: number;
 }
 
 export interface SalesByUserDTO {

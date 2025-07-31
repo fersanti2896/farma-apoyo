@@ -296,6 +296,9 @@ export class CreatePageComponent {
   }
 
   onCancel(): void {
+    if(this.isEditMode)
+      this.location.back();
+
     this.form.reset();
     this.products = [];
   }
