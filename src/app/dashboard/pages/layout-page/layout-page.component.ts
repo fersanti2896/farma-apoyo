@@ -111,7 +111,10 @@ export class LayoutPageComponent implements OnInit {
         expanded: false,
         roles: [1, 2],
         children: [
-          { label: 'Cobranza', icon: 'currency_exchange', url: '/sic/inicio/cobranza', roles: [1, 2] },          
+          { label: 'Histórico', icon: 'history', url: '/sic/inicio/cobranza', roles: [1, 2] },
+          { label: 'Por Cobrar', icon: 'payments', url: '/sic/inicio/cobranza', roles: [1, 2] },         
+          { label: 'Pagado', icon: 'credit_score', url: '/sic/inicio/cobranza', roles: [1, 2] },         
+          { label: 'Notas de Crédito', icon: 'request_quote', url: '/sic/inicio/cobranza', roles: [1, 2] },         
         ]
       },
       {

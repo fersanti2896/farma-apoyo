@@ -204,4 +204,50 @@ export class ListPageComponent {
       }
     });
   }
+
+getChipStyle(statusId: number): { [klass: string]: any } {
+  switch (statusId) {
+    case 1: // Sin Pago
+      return {
+        backgroundColor: '#cbd5e1',
+        color: '#1e293b',
+        border: 'none'
+      };
+    case 2: // Pago Parcial
+      return {
+        backgroundColor: '#fde68a',
+        color: '#92400e',
+        border: 'none'
+      };
+    case 3: // Pagado
+      return {
+        backgroundColor: '#86efac',
+        color: '#065f46',
+        border: 'none'
+      };
+    case 4: // Vencido
+      return {
+        backgroundColor: '#fca5a5',
+        color: '#991b1b',
+        border: 'none'
+      };
+    case 5: // Cancelado
+      return {
+        backgroundColor: '#ddd6fe',
+        color: '#4c1d95',
+        border: 'none'
+      };
+    default:
+      return {
+        backgroundColor: '#e5e7eb',
+        color: '#374151',
+        border: 'none'
+      };
+  }
+}
+
+
+
+
+
 }

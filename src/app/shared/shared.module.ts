@@ -14,6 +14,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import {MatChipsModule} from '@angular/material/chips';
 
 import { LoadingPageComponent } from './components/loading-page/loading-page.component';
 import { ConfirmationDialogComponent } from './components/confirmation-dialog/confirmation-dialog.component';
@@ -28,6 +29,7 @@ import { ConfirmationDialogComponent } from './components/confirmation-dialog/co
     CommonModule,
     MatAutocompleteModule,
     MatDatepickerModule,
+    MatChipsModule,
     MatDialogModule,
     MatFormFieldModule,
     MatIconModule,
@@ -47,6 +49,7 @@ import { ConfirmationDialogComponent } from './components/confirmation-dialog/co
     MatAutocompleteModule,
     MatDatepickerModule,
     MatDialogModule,
+    MatChipsModule,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,

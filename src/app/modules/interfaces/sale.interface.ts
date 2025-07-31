@@ -73,6 +73,7 @@ export interface SalesPendingPaymentDTO {
     amountPaid: number;
     amountPending: number;
     saleStatus: string;
+    paymentStatusId: number;
     paymentStatus: string;
     clientId: number;
     businessName: string;

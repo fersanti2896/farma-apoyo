@@ -78,4 +78,24 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   background-color: #f9fafb;
 }
 
+/* Chips para estatus de cobranza */
+.chip-payment-sin-pago {
+  @apply bg-gray-300 text-gray-800;
+}
+
+.chip-payment-parcial {
+  @apply bg-amber-300  text-yellow-800;
+}
+
+.chip-payment-pagado {
+  @apply bg-green-300  text-green-800;
+}
+
+.chip-payment-vencido {
+  @apply bg-red-300  text-red-800;
+}
+
+.chip-payment-cancelado {
+  @apply bg-indigo-300  text-indigo-800;
+}
 

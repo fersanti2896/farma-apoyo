@@ -42,8 +42,12 @@
 
         <!-- PaymentStatus Column -->
         <ng-container matColumnDef="paymentStatus">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Estatus Cobranza </th>
-            <td mat-cell *matCellDef="let entry"> {{ entry.paymentStatus }} </td>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Estatus Cobranza </th>
+          <td mat-cell *matCellDef="let entry">
+            <mat-chip [ngStyle]="getChipStyle(entry.paymentStatusId)" style="border: red;" selected>
+              {{ entry.paymentStatus }}
+            </mat-chip>
+          </td>
         </ng-container>
 
         <!-- totalAmount Column -->
