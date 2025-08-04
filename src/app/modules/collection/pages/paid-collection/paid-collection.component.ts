@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -12,6 +12,7 @@ import * as FileSaver from 'file-saver';
 import autoTable from 'jspdf-autotable';
 
 import { ClientDTO } from '../../../interfaces/client.interface';
+import { ClientesService } from '../../../clientes/services/clientes.service';
 import { CollectionService } from '../../services/collection.service';
 import { GlobalStateService } from '../../../../shared/services';
 import { MovementsDialogComponent } from '../../../deliveries/components/movements-dialog/movements-dialog.component';
@@ -22,31 +23,20 @@ import { SalesService } from '../../../sales/services/sales.service';
 import { TicketDialogComponent } from '../../../packaging/components/ticket-dialog/ticket-dialog.component';
 import { UsersDTO } from '../../../../auth/interfaces/auth.interface';
 import { UserService } from '../../../usuarios/services/user.service';
-import { ClientesService } from '../../../clientes/services/clientes.service';
 
 @Component({
-  selector: 'app-list-page',
+  selector: 'app-paid-collection',
   standalone: false,
-  templateUrl: './list-page.component.html'
+  templateUrl: './paid-collection.component.html'
 })
-export class ListPageComponent {
+export class PaidCollectionComponent {
   public dataSource = new MatTableDataSource<SalesPendingPaymentDTO>();
   public displayedColumns: string[] = [];
   public isLoading: boolean = false;
-  public paymentForm!: FormGroup;
   public rol: number = 0;
   public filterForm!: FormGroup;
-  public salesStatuses: SalesStatusDTO[] = [];
-  public paymentStatuses: PaymentStatusDTO[] = [];
   public users: UsersDTO[] = [];
   public clients: ClientDTO[] = [];
-
-  public paymentMethods = [
-    { value: 'Efectivo', label: 'Efectivo' },
-    { value: 'Transferencia', label: 'Transferencia' },
-    { value: 'Tarjeta', label: 'Tarjeta' }, 
-    { value: 'Pago Cuenta de Tercero', label: 'Pago Cuenta de Tercero' }
-  ];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -61,31 +51,23 @@ export class ListPageComponent {
     private clientService: ClientesService,
     private salesService: SalesService,
     private snackBar: MatSnackBar,
-  ) {
-    this.paymentForm = this.fb.group({
-      payments: this.fb.array([])
-    });
-  }
+  ) { }
 
   ngOnInit(): void {
     this.initFilters();
     this.loadUser();
     this.loadClients();
-    this.loadSalesStatus();
-    this.loadPaymentStatus();
     this.loadSalesPayments();
 
     const { roleId } = this.globalStateService.getUser();
     this.rol = roleId;
 
-    this.displayedColumns = [ 'saleId', 'businessName', 'salesPerson', 'saleStatus', 'paymentStatus', 'totalAmount', 'amountPending', 'saleDate', 'paymentAmount', 'paymentMethod', 'actions' ];
+    this.displayedColumns = [ 'saleId', 'businessName', 'salesPerson', 'saleStatus', 'paymentStatus', 'totalAmount', 'amountPending', 'saleDate', 'actions' ];
     
     // Se limpia todos los select si se escoge el select de cliente
     this.filterForm.get('clientId')?.valueChanges.subscribe(val => {
       if (val !== null) {
         this.filterForm.get('salesPersonId')?.setValue(null, { emitEvent: false });
-        this.filterForm.get('saleStatusId')?.setValue(null, { emitEvent: false });
-        this.filterForm.get('paymentStatusId')?.setValue(null, { emitEvent: false });
       }
     });
 
@@ -93,32 +75,8 @@ export class ListPageComponent {
     this.filterForm.get('salesPersonId')?.valueChanges.subscribe(val => {
       if (val !== null) {
         this.filterForm.get('clientId')?.setValue(null, { emitEvent: false });
-        this.filterForm.get('saleStatusId')?.setValue(null, { emitEvent: false });
-        this.filterForm.get('paymentStatusId')?.setValue(null, { emitEvent: false });
       }
     });
-
-    // Se limpia todos los select si se escoge el select de estado del ticket
-    this.filterForm.get('saleStatusId')?.valueChanges.subscribe(val => {
-      if (val !== null) {
-        this.filterForm.get('clientId')?.setValue(null, { emitEvent: false });
-        this.filterForm.get('salesPersonId')?.setValue(null, { emitEvent: false });
-        this.filterForm.get('paymentStatusId')?.setValue(null, { emitEvent: false });
-      }
-    });
-
-    // Se limpia todos los select si se escoge pago de cobranza
-    this.filterForm.get('paymentStatusId')?.valueChanges.subscribe(val => {
-      if (val !== null) {
-        this.filterForm.get('clientId')?.setValue(null, { emitEvent: false });
-        this.filterForm.get('salesPersonId')?.setValue(null, { emitEvent: false });
-        this.filterForm.get('saleStatusId')?.setValue(null, { emitEvent: false });
-      }
-    });
-  }
-
-  get payments(): FormArray {
-    return this.paymentForm.get('payments') as FormArray;
   }
 
   ngAfterViewInit(): void {
@@ -137,7 +95,7 @@ export class ListPageComponent {
   initFilters(): void {
     const today = new Date();
     const twoMonthsAgo = new Date(today);
-    twoMonthsAgo.setMonth(today.getMonth() - 2);
+    twoMonthsAgo.setMonth(today.getMonth() - 1);
 
     this.filterForm = this.fb.group({
       startDate: [ twoMonthsAgo ],
@@ -165,62 +123,26 @@ export class ListPageComponent {
     });
   }
 
-  loadSalesStatus(): void {
-    this.salesService.listSalesStatus().subscribe({
-      next: (res) => {
-        if (res.result) this.salesStatuses = res.result.filter(p => [2, 3, 4, 5, 7].includes(p.saleStatusId));
-      }
-    });
-  }
-
-  loadPaymentStatus(): void {
-    this.collectionService.listStatusPayment().subscribe({
-      next: (res) => {
-        if (res.result) this.paymentStatuses = res.result.filter(p => [1, 2, 4].includes(p.paymentStatusId));
-      }
-    });
-  }
-
   filterSales(): void {
     this.loadSalesPayments();
   }
 
   loadSalesPayments(): void {
     this.isLoading = true;
-    const { startDate, endDate, clientId, salesPersonId, saleStatusId, paymentStatusId } = this.filterForm.value;
+    const { startDate, endDate, clientId, salesPersonId } = this.filterForm.value;
 
     const data: SalesPendingPaymentRequest = {
       startDate: new Date(startDate).toISOString(),
       endDate: new Date(endDate).toISOString(),
       clientId: clientId || 20,
-      salesPersonId: salesPersonId || 20,
-      saleStatusId: saleStatusId || 20,
-      paymentStatusId: paymentStatusId || 20,
-    }
+      salesPersonId: salesPersonId || 20
+    };
 
-    this.collectionService.listSalesPayments( data ).subscribe({
+    this.collectionService.listSalesPaids( data ).subscribe({
       next: (response) => {
         if (response.result) {
           let filteredStock = response.result;
-
           this.dataSource.data = filteredStock;
-          this.payments.clear();
-          
-          this.dataSource.data.forEach(sale => {
-            this.payments.push(this.fb.group({
-              saleId: [sale.saleId],
-              paymentAmount: [
-                null,
-                [
-                  Validators.required,
-                  Validators.min(0),
-                  Validators.max(sale.totalAmount)
-                ]
-              ],
-              paymentMethod: [null, Validators.required]
-            }));
-          });
-
         }
         this.isLoading = false;
       },
@@ -270,49 +192,6 @@ export class ListPageComponent {
     });
   }
 
-  getPaymentAmountControl(index: number): FormControl {
-    return this.payments.at(index).get('paymentAmount') as FormControl;
-  }
-
-  getPaymentMethodControl(index: number): FormControl {
-    return this.payments.at(index).get('paymentMethod') as FormControl;
-  }
-
-  applyPayment(i: number): void {
-    const control = this.payments.at(i);
-
-    if (control.invalid) {
-      this.snackBar.open('No se puede aplicar el pago debido a que el monto a pagar supera al monto del ticket.', 'Cerrar', { duration: 3000 });
-      control.markAllAsTouched();
-
-      return;
-    }
-
-    const paymentData = this.payments.at(i).value;
-
-    if (!paymentData.paymentAmount || !paymentData.paymentMethod) {
-      this.snackBar.open('Monto y método de pago son obligatorios.', 'Cerrar', { duration: 3000 });
-      return;
-    }
-
-    const request = {
-      saleId: paymentData.saleId,
-      amount: paymentData.paymentAmount,
-      method: paymentData.paymentMethod,
-      comments: ''
-    };
-
-    this.collectionService.applicationPayment(request).subscribe({
-      next: (response) => {
-        this.snackBar.open('Pago registrado exitosamente.', 'Cerrar', { duration: 3000 });
-        this.loadSalesPayments();
-      },
-      error: () => {
-        this.snackBar.open('Error al registrar el pago.', 'Cerrar', { duration: 3000 });
-      }
-    });
-  }
-
   getChipStyle(statusId: number): { [klass: string]: any } {
     switch (statusId) {
       case 1: // Sin Pago
@@ -330,7 +209,7 @@ export class ListPageComponent {
     }
   }
 
-  exportToPDF(): void {
+exportToPDF(): void {
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
 
@@ -353,7 +232,7 @@ export class ListPageComponent {
 
       doc.setFontSize(12);
       doc.setFont('helvetica', 'normal');
-      doc.text('Cobranza - Por Pagar', pageWidth / 2, 28, { align: 'center' });
+      doc.text('Cobranza - Pagado', pageWidth / 2, 28, { align: 'center' });
 
       doc.setFontSize(10);
       doc.setFont('helvetica', 'normal');
@@ -392,7 +271,7 @@ export class ListPageComponent {
         }
       });
 
-      const nombreArchivo = `CobranzaPorPagar_${new Date().toLocaleDateString('es-MX')}.pdf`;
+      const nombreArchivo = `CobranzaPagado_${new Date().toLocaleDateString('es-MX')}.pdf`;
       doc.save(nombreArchivo);
     };
   }
@@ -444,6 +323,6 @@ export class ListPageComponent {
     const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
     const blobData: Blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
 
-    FileSaver.saveAs(blobData, `CobranzaPorPagar_${date}.xlsx`);
+    FileSaver.saveAs(blobData, `CobranzaPagado_${date}.xlsx`);
   }
 }

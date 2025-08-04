@@ -28,7 +28,7 @@ export class ListSalesPersonComponent {
   public endDate!: Date;
   public selectedStatusId: number | null = null;
   public salesStatuses: SalesStatusDTO[] = [];
-  public paymentStatuses: PaymentStatusDTO[] = []
+  public paymentStatuses: PaymentStatusDTO[] = [];
   public filterForm!: FormGroup;
 
   @ViewChild(MatPaginatorIntl) paginator!: MatPaginator;
@@ -131,7 +131,7 @@ export class ListSalesPersonComponent {
       saleStatusId: saleStatusId || 20,
       PaymentStatusId: paymentStatusId || 20
     }
-
+    
     this.salesService.listSalesByUser( data ).subscribe({
       next: (response) => {
         if (response.result) {

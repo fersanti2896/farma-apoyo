@@ -7,7 +7,7 @@ import { GlobalStateService } from '../../../shared/services';
 import { environment } from '../../../enviroments/enviroment';
 import { ApplyPaymentRequest, SalesPendingPaymentDTO } from '../../interfaces/sale.interface';
 import { ReplyResponse } from '../../interfaces/reply.interface';
-import { PaymentStatusDTO } from '../../interfaces/collection.interface';
+import { PaymentStatusDTO, SalesHistoricalRequest, SalesPendingPaymentRequest } from '../../interfaces/collection.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -20,8 +20,16 @@ export class CollectionService {
     private globalStateService: GlobalStateService
   ) { }
 
-  listSalesPayments( ): Observable<ApiResponse<SalesPendingPaymentDTO[]>> {
-    return this.http.get<ApiResponse<SalesPendingPaymentDTO[]>>(`${ this.api }/Sales/GetSalesPendingPayment`,  { headers: this.getHeaders() });
+  listSalesHistorical( data: SalesHistoricalRequest ): Observable<ApiResponse<SalesPendingPaymentDTO[]>> {
+    return this.http.post<ApiResponse<SalesPendingPaymentDTO[]>>(`${ this.api }/Collection/GetSalesHistorical`, data, { headers: this.getHeaders() });
+  }
+
+  listSalesPayments( data: SalesPendingPaymentRequest ): Observable<ApiResponse<SalesPendingPaymentDTO[]>> {
+    return this.http.post<ApiResponse<SalesPendingPaymentDTO[]>>(`${ this.api }/Collection/GetSalesPendingPayment`, data, { headers: this.getHeaders() });
+  }
+
+  listSalesPaids( data: SalesHistoricalRequest ): Observable<ApiResponse<SalesPendingPaymentDTO[]>> {
+    return this.http.post<ApiResponse<SalesPendingPaymentDTO[]>>(`${ this.api }/Collection/GetSalesPaids`, data, { headers: this.getHeaders() });
   }
 
   applicationPayment( data: ApplyPaymentRequest ): Observable<ApiResponse<ReplyResponse>> {

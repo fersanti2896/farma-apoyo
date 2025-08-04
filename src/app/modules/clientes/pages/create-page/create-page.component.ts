@@ -370,7 +370,6 @@ export class CreatePageComponent implements OnInit {
     });
   }
 
-
   goBack() {
     this.location.back();
   }
@@ -416,5 +415,4 @@ export class CreatePageComponent implements OnInit {
     const userObj = this.users.find(u => u.userId === client.userId);
     if (userObj) this.userControl.setValue(userObj, { emitEvent: false });
   }
-
 }

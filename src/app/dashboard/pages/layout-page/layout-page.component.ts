@@ -13,7 +13,6 @@ import { User } from '../../interfaces/user.interface';
 export class LayoutPageComponent implements OnInit {
   public isSidebarOpen: boolean = false;
   public isUserMenuOpen: boolean = false;
-  public currentLanguage: string = 'es';
   public user!: User;
   public sidebarItems!: any;
 
@@ -111,10 +110,10 @@ export class LayoutPageComponent implements OnInit {
         expanded: false,
         roles: [1, 2],
         children: [
-          { label: 'Histórico', icon: 'history', url: '/sic/inicio/cobranza', roles: [1, 2] },
-          { label: 'Por Cobrar', icon: 'payments', url: '/sic/inicio/cobranza', roles: [1, 2] },         
-          { label: 'Pagado', icon: 'credit_score', url: '/sic/inicio/cobranza', roles: [1, 2] },         
-          { label: 'Notas de Crédito', icon: 'request_quote', url: '/sic/inicio/cobranza', roles: [1, 2] },         
+          { label: 'Histórico', icon: 'history', url: '/sic/inicio/cobranza/historico', roles: [1, 2] },
+          { label: 'Por Cobrar', icon: 'payments', url: '/sic/inicio/cobranza/cobrar', roles: [1, 2] },         
+          { label: 'Pagado', icon: 'credit_score', url: '/sic/inicio/cobranza/pagado', roles: [1, 2] },         
+          { label: 'Notas de Crédito', icon: 'request_quote', url: '/sic/inicio/cobranza/credito', roles: [1, 2] },         
         ]
       },
       {
