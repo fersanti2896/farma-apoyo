@@ -248,7 +248,7 @@ export class HistoricalCollectionComponent {
       case 4: // Vencido
         return { backgroundColor: '#E8A987', color: '#991b1b', border: 'none' };
       case 5: // Cancelado
-        return { backgroundColor: '#9B8AE6', color: '#4c1d95', border: 'none' };
+        return { backgroundColor: '#FF8166', color: '#4c1d95', border: 'none' };
       default:
         return { backgroundColor: '#e5e7eb', color: '#374151', border: 'none' };
     }
