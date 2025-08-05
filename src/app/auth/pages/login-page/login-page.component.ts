@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 
 import { AuthService } from '../../services/auth.service';
 import { LoginRequest } from '../../interfaces/auth.interface';
 import { ValidatorsService } from '../../../shared/services';
-import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'auth-login-page',
@@ -58,9 +58,11 @@ export class LoginPageComponent {
         if(response.result) {
           localStorage.setItem('refresh_token', response.result.refreshToken);
           
-          this.loginForm.reset();
           this.router.navigate(['/sic/inicio/stock']);
-          this.isLoading = false;
+
+          setTimeout(() => {
+            this.isLoading = false;
+          }, 300);
         }
         
       },

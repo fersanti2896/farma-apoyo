@@ -4,6 +4,11 @@ export interface PaymentStatusDTO {
     paymentStatusName: string;
 }
 
+export interface CancelledSaleCommentDTO {
+    comments: string;
+    createDate: string
+}
+
 export interface SalesPendingPaymentRequest {
     startDate: string;
     endDate: string;
@@ -20,4 +25,8 @@ export interface SalesHistoricalRequest {
     salesPersonId?: number;
     saleStatusId?: number;
     paymentStatusId?: number; 
+}
+
+export interface CancelledCommentsRequest {
+    saleId: number;
 }

@@ -10,13 +10,15 @@ import { DeliveriesModule } from '../deliveries/deliveries.module';
 import { HistoricalCollectionComponent } from './pages/historical-collection/historical-collection.component';
 import { PaidCollectionComponent } from './pages/paid-collection/paid-collection.component';
 import { CreditNotesCollectionComponent } from './pages/credit-notes-collection/credit-notes-collection.component';
+import { CancelSaleDialogComponent } from './components/cancel-sale-dialog/cancel-sale-dialog.component';
 
 @NgModule({
   declarations: [
     ListPageComponent,
     HistoricalCollectionComponent,
     PaidCollectionComponent,
-    CreditNotesCollectionComponent
+    CreditNotesCollectionComponent,
+    CancelSaleDialogComponent
   ],
   imports: [
     CommonModule,

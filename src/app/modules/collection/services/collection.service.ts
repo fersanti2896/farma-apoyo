@@ -5,9 +5,9 @@ import { Observable } from 'rxjs';
 import { ApiResponse } from '../../../auth/interfaces/auth.interface';
 import { GlobalStateService } from '../../../shared/services';
 import { environment } from '../../../enviroments/enviroment';
-import { ApplyPaymentRequest, SalesPendingPaymentDTO } from '../../interfaces/sale.interface';
+import { ApplyPaymentRequest, CancelSaleRequest, SalesPendingPaymentDTO } from '../../interfaces/sale.interface';
 import { ReplyResponse } from '../../interfaces/reply.interface';
-import { PaymentStatusDTO, SalesHistoricalRequest, SalesPendingPaymentRequest } from '../../interfaces/collection.interface';
+import { CancelledCommentsRequest, CancelledSaleCommentDTO, PaymentStatusDTO, SalesHistoricalRequest, SalesPendingPaymentRequest } from '../../interfaces/collection.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -38,6 +38,18 @@ export class CollectionService {
 
   listStatusPayment(): Observable<ApiResponse<PaymentStatusDTO[]>> {
     return this.http.get<ApiResponse<PaymentStatusDTO[]>>(`${ this.api }/Collection/GetAllPaymentStatus`,  { headers: this.getHeaders() });
+  }
+
+  cancelSaleCompleted( data: CancelSaleRequest ): Observable<ApiResponse<ReplyResponse>> {
+    return this.http.post<ApiResponse<ReplyResponse>>(`${ this.api }/Collection/CancelSaleWithComment`, data, { headers: this.getHeaders() });
+  }
+
+  cancelSaleByOmission( data: CancelSaleRequest ): Observable<ApiResponse<ReplyResponse>> {
+    return this.http.post<ApiResponse<ReplyResponse>>(`${ this.api }/Collection/CancelSaleByOmission`, data, { headers: this.getHeaders() });
+  }
+
+  getCommentsSaleCancelled( data: CancelledCommentsRequest ): Observable<ApiResponse<CancelledSaleCommentDTO[]>> {
+    return this.http.post<ApiResponse<CancelledSaleCommentDTO[]>>(`${ this.api }/Collection/GetSaleCancelledComments`, data, { headers: this.getHeaders() });
   }
 
   private getHeaders(): HttpHeaders {

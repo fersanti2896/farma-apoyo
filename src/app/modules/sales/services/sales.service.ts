@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 
 import { ApiResponse } from '../../../auth/interfaces/auth.interface';
 import { ClientByUserDTO } from '../../interfaces/client.interface';
-import { CreateSaleRequest, DetailSaleByIdRequest, MovementsSaleDTO, SalesByUserDTO, SalesByUserRequest, SalesStatusDTO } from '../../interfaces/sale.interface';
+import { CancelSaleRequest, CreateSaleRequest, DetailSaleByIdRequest, MovementsSaleDTO, SalesByUserDTO, SalesByUserRequest, SalesStatusDTO } from '../../interfaces/sale.interface';
 import { environment } from '../../../enviroments/enviroment';
 import { GlobalStateService } from '../../../shared/services';
 import { ProductStockDTO } from '../../interfaces/product.interface';
@@ -48,6 +48,10 @@ export class SalesService {
 
   listSalesStatus(): Observable<ApiResponse<SalesStatusDTO[]>> {
     return this.http.get<ApiResponse<SalesStatusDTO[]>>(`${ this.api }/Sales/GetAllSalesStatus`,  { headers: this.getHeaders() });
+  }
+
+  confirmCancellationSale( data: CancelSaleRequest ): Observable<ApiResponse<ReplyResponse>> {
+    return this.http.post<ApiResponse<ReplyResponse>>(`${ this.api }/Sales/ConfirmCancellationSale`, data, { headers: this.getHeaders() });
   }
 
   private getHeaders(): HttpHeaders {

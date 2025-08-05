@@ -102,6 +102,11 @@ export interface SalesByUserRequest {
     PaymentStatusId?: number;
 }
 
+export interface CancelSaleRequest {
+    saleId: number;
+    comments: string;
+}
+
 export interface SalesByUserDTO {
     saleId: number;
     clientId: number;

@@ -1,0 +1,19 @@
+<h2 mat-dialog-title class="text-2xl text-center">Ticket #{{ data.saleId }}</h2>
+
+<mat-dialog-content [formGroup]="cancelForm">
+  <p class="text-sm text-center">
+    ¿Deseas marcar este ticket como 
+    <strong>{{ this.type === 'completed' ? 'CANCELACIÓN AL 100%' : 'CANCELACIÓN POR OMISIÓN' }}</strong>?
+  </p>
+
+  <mat-form-field appearance="fill" class="w-full mt-4">
+    <mat-label>Comentario</mat-label>
+    <textarea matInput formControlName="comment" placeholder="Comentarios"></textarea>
+    <mat-error *ngIf="isValidField('comment')">Los comentarios son requeridos.</mat-error>
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="center">
+  <button mat-raised-button class="btn-success" (click)="confirm()">Aceptar</button>
+  <button mat-button class="btn-cancel ml-2" (click)="cancel()">Cancelar</button>
+</mat-dialog-actions>

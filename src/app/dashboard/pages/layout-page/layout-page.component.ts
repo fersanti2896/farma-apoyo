@@ -79,6 +79,7 @@ export class LayoutPageComponent implements OnInit {
           { label: 'Compras', icon: 'shopping_cart', url: '/sic/inicio/compras', roles: [1, 2, 4] },
           { label: 'Surtido', icon: 'trolley', url: '/sic/inicio/surtido', roles: [1, 2, 4] },
           { label: 'Entregas', icon: 'outbox', url: '/sic/inicio/entregas', roles: [1, 2, 4, 5, 6] },
+          { label: 'Devoluciones', icon: 'assignment_return', url: '/sic/inicio/devoluciones', roles: [1, 4] },
         ]
       },
       {
@@ -121,7 +122,9 @@ export class LayoutPageComponent implements OnInit {
         icon: 'account_balance_wallet',
         expanded: false,
         roles: [1, 2],
-        url: '/sic/inicio/finanzas'
+        children: [
+          { label: 'Resumen', icon: 'history', url: '/sic/inicio/finanzas', roles: [1, 2] },         
+        ]
       }
     ];
 

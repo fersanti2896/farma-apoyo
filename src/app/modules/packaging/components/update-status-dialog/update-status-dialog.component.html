@@ -7,7 +7,6 @@
     <mat-form-field *ngIf="isPackaging" appearance="fill" class="w-full mt-4">
         <mat-label>Comentarios</mat-label>
         <textarea matInput formControlName="comment" placeholder="Comentarios"></textarea>
-
         <mat-error *ngIf="isValidField('comment')">Los comentarios son requeridos.</mat-error>
     </mat-form-field>
 </mat-dialog-content>

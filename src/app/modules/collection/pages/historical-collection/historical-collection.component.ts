@@ -18,11 +18,12 @@ import { GlobalStateService } from '../../../../shared/services';
 import { MovementsDialogComponent } from '../../../deliveries/components/movements-dialog/movements-dialog.component';
 import { PackagingService } from '../../../packaging/services/packaging.service';
 import { PaymentStatusDTO, SalesPendingPaymentRequest } from '../../../interfaces/collection.interface';
-import { SaleDTO, SalesPendingPaymentDTO, SalesStatusDTO } from '../../../interfaces/sale.interface';
+import { CancelSaleRequest, SaleDTO, SalesPendingPaymentDTO, SalesStatusDTO } from '../../../interfaces/sale.interface';
 import { SalesService } from '../../../sales/services/sales.service';
 import { TicketDialogComponent } from '../../../packaging/components/ticket-dialog/ticket-dialog.component';
 import { UsersDTO } from '../../../../auth/interfaces/auth.interface';
 import { UserService } from '../../../usuarios/services/user.service';
+import { CancelSaleDialogComponent } from '../../components/cancel-sale-dialog/cancel-sale-dialog.component';
 
 @Component({
   selector: 'app-historical-collection',
@@ -252,6 +253,40 @@ export class HistoricalCollectionComponent {
         return { backgroundColor: '#e5e7eb', color: '#374151', border: 'none' };
     }
   }
+
+  openCancellationDialog(saleId: number, type: 'completed' | 'omission'): void {
+    const isCompleted = type === 'completed';
+
+    const dialogRef = this.dialog.open(CancelSaleDialogComponent, {
+      width: '400px',
+      data: { saleId, type }
+    });
+
+    dialogRef.afterClosed().subscribe((comment: string | undefined) => {
+      if (!comment) return;
+
+      const request: CancelSaleRequest = { saleId, comments: comment };
+
+      const serviceCall = isCompleted
+        ? this.collectionService.cancelSaleCompleted(request)
+        : this.collectionService.cancelSaleByOmission(request);
+
+      serviceCall.subscribe({
+        next: (res) => {
+          if (res.result?.status) {
+            this.snackBar.open('Cancelación exitosa.', 'Cerrar', { duration: 3000 });
+            this.loadSalesPayments(); // Refrescar la tabla
+          } else {
+            this.snackBar.open(res.result?.msg ?? 'Error al cancelar.', 'Cerrar', { duration: 3000 });
+          }
+        },
+        error: () => {
+          this.snackBar.open('Error al procesar la cancelación.', 'Cerrar', { duration: 3000 });
+        }
+      });
+    });
+  }
+
 
   exportToPDF(): void {
     const doc = new jsPDF();

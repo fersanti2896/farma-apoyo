@@ -58,6 +58,16 @@ const routes: Routes = [
         canActivate: [ AuthGuard ],
         data: { roles: [1, 2] } 
       },
+      { path: 'devoluciones', 
+        loadChildren: () => import('../modules/returns/returns.module').then(m => m.ReturnsModule),
+        canActivate: [ AuthGuard ],
+        data: { roles: [1, 4] } 
+      },
+      { path: 'finanzas', 
+        loadChildren: () => import('../modules/finance/finance.module').then(m => m.FinanceModule),
+        canActivate: [ AuthGuard ],
+        data: { roles: [1, 2] } 
+      },
       { path: '**', redirectTo: 'list' },
     ] 
   }
