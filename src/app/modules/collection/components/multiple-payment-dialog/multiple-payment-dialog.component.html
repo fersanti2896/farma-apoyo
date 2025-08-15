@@ -1,0 +1,67 @@
+<h2 mat-dialog-title class="text-center text-2xl">Confirmar Pago Múltiple</h2>
+
+<mat-dialog-content class="flex flex-col gap-4">
+    <div class="grid grid-cols-2 gap-4">
+        <mat-form-field class="w-full" appearance="fill">
+            <mat-label>Monto ingresado</mat-label>
+            <input matInput [value]="data.enteredAmount | currency : 'MXN'" readonly />
+        </mat-form-field>
+
+        <mat-form-field class="w-full" appearance="fill">
+            <mat-label>Fecha de pago</mat-label>
+            <input matInput [value]="(data.paymentDate | date:'shortDate')" readonly />
+        </mat-form-field>
+    </div>
+
+    <div class="border rounded p-3">
+        <div class="font-semibold mb-2">Tickets seleccionados</div>
+        <table class="w-full text-sm">
+            <thead>
+                <tr class="text-left">
+                    <th class="py-1">No. Ticket</th>
+                    <th class="py-1 text-right">Saldo a pagar</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let s of data.selected">
+                    <td class="py-1">#{{ s.saleId }}</td>
+                    <td class="py-1 text-right">{{ s.amount | currency:'MXN' }}</td>
+                </tr>
+                <tr class="font-semibold border-t">
+                    <td class="py-2">Total seleccionado</td>
+                    <td class="py-2 text-right">{{ totalSeleccionado | currency:'MXN' }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <form [formGroup]="form" class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+        <mat-form-field appearance="fill">
+            <mat-label>Método de pago</mat-label>
+            <mat-select formControlName="method" placeholder="Seleccionar">
+                <mat-option *ngFor="let m of data.paymentMethods" [value]="m.value">
+                    {{ m.label }}
+                </mat-option>
+            </mat-select>
+            <mat-error *ngIf="isValidField('method')">
+                Método de Pago es Requerido.
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="md:col-span-2">
+            <mat-label>Comentarios</mat-label>
+            <textarea matInput rows="3" formControlName="comments"></textarea>
+
+            <mat-error *ngIf="isValidField('comments')">
+                Comentarios es Requerido.
+            </mat-error>
+        </mat-form-field>
+    </form>
+
+    <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+</mat-dialog-content>
+
+<mat-dialog-actions align="center">
+    <button mat-raised-button class="btn-success h-10" (click)="aplicar()" [disabled]="loading">Aplicar</button>
+    <button mat-button class="btn-cancel ml-2 h-10" (click)="cancelar()" [disabled]="loading">Cancelar</button>
+</mat-dialog-actions>

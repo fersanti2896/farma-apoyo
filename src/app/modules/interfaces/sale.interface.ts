@@ -86,6 +86,7 @@ export interface ApplyPaymentRequest {
     amount: number;
     method: string;
     comments: string;
+    paymentDate?: string;
 }
 
 export interface MovementsSaleDTO {

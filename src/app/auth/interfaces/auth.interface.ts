@@ -35,4 +35,7 @@ export interface UsersDTO {
   status: number;
   descriptionStatus: string;
   role: string;
+  email: string;
+  creditLimit: number;
+  roleId: number;
 }

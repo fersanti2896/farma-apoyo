@@ -36,21 +36,21 @@
 
     <div class="flex flex-row gap-4 w-full md:w-auto">
       <mat-form-field appearance="fill" class="w-full sm:w-1/2 md:w-48">
-        <mat-label>Cliente</mat-label>
-        <mat-select formControlName="clientId">
-          <mat-option [value]="null">Todos</mat-option>
-          <mat-option *ngFor="let s of clients" [value]="s.clientId">
-            {{ s.businessName }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-
-      <mat-form-field appearance="fill" class="w-full sm:w-1/2 md:w-48">
         <mat-label>Vendedor</mat-label>
         <mat-select formControlName="salesPersonId">
           <mat-option [value]="null">Todos</mat-option>
           <mat-option *ngFor="let s of users" [value]="s.userId">
             {{ s.firstName }} {{ s.lastName }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="w-full sm:w-1/2 md:w-48">
+        <mat-label>Cliente</mat-label>
+        <mat-select formControlName="clientId">
+          <mat-option [value]="null">Todos</mat-option>
+          <mat-option *ngFor="let s of clients" [value]="s.clientId">
+            {{ s.businessName }}
           </mat-option>
         </mat-select>
       </mat-form-field>
@@ -83,8 +83,12 @@
 
     <!-- Botón -->
     <div class="w-full sm:w-1/2 md:w-48 mb-5 flex items-end">
-      <button mat-raised-button class="btn-success w-full md:w-auto" type="submit">
+      <button mat-raised-button class="btn-success h-10 md:w-auto" type="submit">
         Filtrar
+      </button>
+
+      <button mat-raised-button class="btn-cancel h-10 ml-2 md:h-10" type="button" (click)="clearFilters()">
+        Limpiar
       </button>
     </div>
   </div>
@@ -181,6 +185,10 @@
                     mat-icon-button matTooltip="Cancelación por omisión" class="cursor-pointer"
                     (click)="openCancellationDialog(entry.saleId, 'omission')">
               <mat-icon color="accent">cancel</mat-icon>
+            </button>
+
+            <button *ngIf="entry.paymentStatusId === 2 || entry.paymentStatusId === 3" matTooltip="Ver Pagos del Ticket" mat-icon-button class="text-green-600 cursor-pointer" (click)="openPaymentsHistory(entry)">
+              <mat-icon>price_change</mat-icon>
             </button>
           </td>
         </ng-container>

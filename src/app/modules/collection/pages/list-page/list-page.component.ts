@@ -23,6 +23,7 @@ import { TicketDialogComponent } from '../../../packaging/components/ticket-dial
 import { UsersDTO } from '../../../../auth/interfaces/auth.interface';
 import { UserService } from '../../../usuarios/services/user.service';
 import { ClientesService } from '../../../clientes/services/clientes.service';
+import { MultiplePaymentDialogComponent } from '../../components/multiple-payment-dialog/multiple-payment-dialog.component';
 
 @Component({
   selector: 'app-list-page',
@@ -51,6 +52,11 @@ export class ListPageComponent {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
+  // ---- NUEVO: Pago múltiple ----
+  public multiPayActive = false;
+  public multiPayForm!: FormGroup; // {enteredAmount, remainingAmount, paymentDate}
+  public selectedIds = new Set<number>(); // saleId seleccionados
+
   constructor(
     private collectionService: CollectionService,
     private dialog: MatDialog,
@@ -65,6 +71,13 @@ export class ListPageComponent {
     this.paymentForm = this.fb.group({
       payments: this.fb.array([])
     });
+
+    // ---- NUEVO: inicializa form de pago múltiple ----
+    this.multiPayForm = this.fb.group({
+      enteredAmount: [null, [Validators.required, Validators.min(0.01)]],
+      remainingAmount: [{ value: null, disabled: true }],
+      paymentDate: [new Date(), Validators.required],
+    });
   }
 
   ngOnInit(): void {
@@ -78,43 +91,13 @@ export class ListPageComponent {
     const { roleId } = this.globalStateService.getUser();
     this.rol = roleId;
 
-    this.displayedColumns = [ 'saleId', 'businessName', 'salesPerson', 'saleStatus', 'paymentStatus', 'totalAmount', 'amountPending', 'saleDate', 'paymentAmount', 'paymentMethod', 'actions' ];
-    
-    // Se limpia todos los select si se escoge el select de cliente
-    this.filterForm.get('clientId')?.valueChanges.subscribe(val => {
-      if (val !== null) {
-        this.filterForm.get('salesPersonId')?.setValue(null, { emitEvent: false });
-        this.filterForm.get('saleStatusId')?.setValue(null, { emitEvent: false });
-        this.filterForm.get('paymentStatusId')?.setValue(null, { emitEvent: false });
-      }
-    });
+    // this.displayedColumns = [ 'saleId', 'businessName', 'salesPerson', 'saleStatus', 'paymentStatus', 'totalAmount', 'amountPending', 'saleDate', 'paymentAmount', 'paymentMethod', 'actions' ];
+    this.updateDisplayedColumns();
+  }
 
-    // Se limpia todos los select si se escoge el select de vendedor
-    this.filterForm.get('salesPersonId')?.valueChanges.subscribe(val => {
-      if (val !== null) {
-        this.filterForm.get('clientId')?.setValue(null, { emitEvent: false });
-        this.filterForm.get('saleStatusId')?.setValue(null, { emitEvent: false });
-        this.filterForm.get('paymentStatusId')?.setValue(null, { emitEvent: false });
-      }
-    });
-
-    // Se limpia todos los select si se escoge el select de estado del ticket
-    this.filterForm.get('saleStatusId')?.valueChanges.subscribe(val => {
-      if (val !== null) {
-        this.filterForm.get('clientId')?.setValue(null, { emitEvent: false });
-        this.filterForm.get('salesPersonId')?.setValue(null, { emitEvent: false });
-        this.filterForm.get('paymentStatusId')?.setValue(null, { emitEvent: false });
-      }
-    });
-
-    // Se limpia todos los select si se escoge pago de cobranza
-    this.filterForm.get('paymentStatusId')?.valueChanges.subscribe(val => {
-      if (val !== null) {
-        this.filterForm.get('clientId')?.setValue(null, { emitEvent: false });
-        this.filterForm.get('salesPersonId')?.setValue(null, { emitEvent: false });
-        this.filterForm.get('saleStatusId')?.setValue(null, { emitEvent: false });
-      }
-    });
+  private updateDisplayedColumns(): void {
+    const base = ['saleId', 'businessName', 'salesPerson', 'saleStatus', 'paymentStatus', 'totalAmount', 'amountPending', 'saleDate', 'paymentAmount', 'paymentMethod', 'actions'];
+    this.displayedColumns = this.multiPayActive ? ['select', ...base] : base;
   }
 
   get payments(): FormArray {
@@ -299,7 +282,7 @@ export class ListPageComponent {
       saleId: paymentData.saleId,
       amount: paymentData.paymentAmount,
       method: paymentData.paymentMethod,
-      comments: ''
+      comments: `Se registra pago.`
     };
 
     this.collectionService.applicationPayment(request).subscribe({
@@ -328,6 +311,103 @@ export class ListPageComponent {
       default:
         return { backgroundColor: '#e5e7eb', color: '#374151', border: 'none' };
     }
+  }
+
+  clearFilters(): void {
+    this.filterForm.patchValue({
+      clientId: null,
+      salesPersonId: null,
+      saleStatusId: null,
+      paymentStatusId: null
+    });
+
+    this.loadSalesPayments();
+  }
+
+  toggleMultiPay(): void {
+    this.multiPayActive = !this.multiPayActive;
+    this.updateDisplayedColumns();
+
+    // Reset selección y montos
+    this.selectedIds.clear();
+    this.multiPayForm.reset({
+      enteredAmount: null,
+      remainingAmount: null,
+      paymentDate: new Date()
+    });
+  }
+
+  onEnteredAmountChange(): void {
+    this.recalcRemaining();
+  }
+
+  isSelected(saleId: number): boolean {
+    return this.selectedIds.has(saleId);
+  }
+
+  toggleRowSelection(entry: SalesPendingPaymentDTO, checked: boolean): void {
+    if (checked) this.selectedIds.add(entry.saleId);
+    else this.selectedIds.delete(entry.saleId);
+    this.recalcRemaining();
+  }
+
+  private recalcRemaining(): void {
+    const entered: number = this.multiPayForm.get('enteredAmount')?.value || 0;
+    const sumSelected = this.dataSource.data
+      .filter(x => this.selectedIds.has(x.saleId))
+      .reduce((acc, cur) => acc + (cur.amountPending || 0), 0);
+
+    const remaining = entered - sumSelected;
+    this.multiPayForm.get('remainingAmount')?.setValue(remaining);
+
+    // Marca error visual si es negativo (no bloquea el form, pero deshabilita el botón)
+    const ctrl = this.multiPayForm.get('remainingAmount');
+    if (remaining < 0) ctrl?.setErrors({ negative: true });
+    else ctrl?.setErrors(null);
+  }
+
+  applyMultiPayment(): void {
+    if (this.multiPayForm.invalid) {
+      this.multiPayForm.markAllAsTouched();
+      this.snackBar.open('Verifica el monto ingresado y la fecha.', 'Cerrar', { duration: 3000 });
+      return;
+    }
+
+    const remaining = this.multiPayForm.getRawValue().remainingAmount;
+
+    if (remaining < 0) {
+      this.snackBar.open('El monto restante no puede ser negativo. Ajusta tu selección.', 'Cerrar', { duration: 3000 });
+      return;
+    }
+
+    if (this.selectedIds.size === 0) {
+      this.snackBar.open('Selecciona al menos un ticket.', 'Cerrar', { duration: 3000 });
+      return;
+    }
+
+    const selectedRows = this.dataSource.data
+                                        .filter(x => this.selectedIds.has(x.saleId))
+                                        .map(x => ({ saleId: x.saleId, amount: x.amountPending }));
+
+    const dialogRef = this.dialog.open(MultiplePaymentDialogComponent, {
+      width: '720px',
+      data: {
+        enteredAmount: this.multiPayForm.get('enteredAmount')?.value,
+        paymentDate: this.multiPayForm.get('paymentDate')?.value,
+        selected: selectedRows,
+        paymentMethods: this.paymentMethods
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.applied) {
+        this.snackBar.open('Pago múltiple aplicado correctamente.', 'Cerrar', { duration: 3000 });
+        this.loadSalesPayments();
+        // opcional: salir de modo múltiple
+        this.multiPayActive = false;
+        this.updateDisplayedColumns();
+      }
+    });
   }
 
   exportToPDF(): void {
@@ -371,6 +451,18 @@ export class ListPageComponent {
         formatter.format(entry.amountPending),
         new Date(entry.saleDate).toLocaleString('es-MX')
       ]));
+
+      // Calcular subtotales
+      const totalAmount = this.dataSource.data.reduce((acc, curr) => acc + curr.totalAmount, 0);
+      const totalPending = this.dataSource.data.reduce((acc, curr) => acc + curr.amountPending, 0);
+      const totalRecords = this.dataSource.data.length;
+
+      rows.push([
+        'Total de registros:', totalRecords.toString(), '', '', 'Subtotal',
+        formatter.format(totalAmount),
+        formatter.format(totalPending),
+        ''
+      ]);
 
       autoTable(doc, {
         head: [columns],

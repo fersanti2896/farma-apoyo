@@ -31,3 +31,16 @@ export interface UserInfoCreditDTO {
     creditLimit: number;
     availableCredit: number;
 }
+
+export interface UpdateUserRequest {
+  userId: number;
+  firstName: string;
+  lastName?: string;
+  mLastName?: string;
+  email?: string;
+  username: string;
+  passwordHash?: string;
+  creditLimit: number;
+  availableCredit: number;
+  roleId: number;
+}

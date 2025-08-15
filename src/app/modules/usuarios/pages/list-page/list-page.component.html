@@ -70,6 +70,10 @@
           <button mat-icon-button class="cursor-pointer" [matTooltip]="user.status === 1 ? 'Bloquear usuario' : 'Desbloquear usuario'" aria-label="Bloquear/Desbloquear usuario" (click)="openConfirmDialog(user)">
             <mat-icon>{{ user.status === 1 ? 'lock' : 'lock_open' }}</mat-icon>
           </button>
+
+          <button mat-icon-button class="cursor-pointer" matTooltip="Editar Usuario" (click)="editUser(user)">
+            <mat-icon>edit</mat-icon>
+          </button>
         </td>
       </ng-container>
 

@@ -11,6 +11,8 @@ import { HistoricalCollectionComponent } from './pages/historical-collection/his
 import { PaidCollectionComponent } from './pages/paid-collection/paid-collection.component';
 import { CreditNotesCollectionComponent } from './pages/credit-notes-collection/credit-notes-collection.component';
 import { CancelSaleDialogComponent } from './components/cancel-sale-dialog/cancel-sale-dialog.component';
+import { MultiplePaymentDialogComponent } from './components/multiple-payment-dialog/multiple-payment-dialog.component';
+import { PaymentsHistoryDialogComponent } from './components/payments-history-dialog/payments-history-dialog.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +20,9 @@ import { CancelSaleDialogComponent } from './components/cancel-sale-dialog/cance
     HistoricalCollectionComponent,
     PaidCollectionComponent,
     CreditNotesCollectionComponent,
-    CancelSaleDialogComponent
+    CancelSaleDialogComponent,
+    MultiplePaymentDialogComponent,
+    PaymentsHistoryDialogComponent
   ],
   imports: [
     CommonModule,

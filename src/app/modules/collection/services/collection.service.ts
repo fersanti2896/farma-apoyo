@@ -3,11 +3,11 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { ApiResponse } from '../../../auth/interfaces/auth.interface';
-import { GlobalStateService } from '../../../shared/services';
+import { ApplyMultiplePaymentRequest, CancelledCommentsRequest, CancelledSaleCommentDTO, PaymentsSaleDTO, PaymentStatusDTO, SalesHistoricalRequest, SalesPendingPaymentRequest } from '../../interfaces/collection.interface';
+import { ApplyPaymentRequest, CancelSaleRequest, DetailSaleByIdRequest, SalesPendingPaymentDTO } from '../../interfaces/sale.interface';
 import { environment } from '../../../enviroments/enviroment';
-import { ApplyPaymentRequest, CancelSaleRequest, SalesPendingPaymentDTO } from '../../interfaces/sale.interface';
+import { GlobalStateService } from '../../../shared/services';
 import { ReplyResponse } from '../../interfaces/reply.interface';
-import { CancelledCommentsRequest, CancelledSaleCommentDTO, PaymentStatusDTO, SalesHistoricalRequest, SalesPendingPaymentRequest } from '../../interfaces/collection.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -36,6 +36,10 @@ export class CollectionService {
     return this.http.post<ApiResponse<ReplyResponse>>(`${ this.api }/Collection/ApplyPayment`, data, { headers: this.getHeaders() });
   }
 
+  applicationMultiplePayment( data: ApplyMultiplePaymentRequest ): Observable<ApiResponse<ReplyResponse>> {
+    return this.http.post<ApiResponse<ReplyResponse>>(`${ this.api }/Collection/ApplyMultiplePayments`, data, { headers: this.getHeaders() });
+  }
+
   listStatusPayment(): Observable<ApiResponse<PaymentStatusDTO[]>> {
     return this.http.get<ApiResponse<PaymentStatusDTO[]>>(`${ this.api }/Collection/GetAllPaymentStatus`,  { headers: this.getHeaders() });
   }
@@ -50,6 +54,10 @@ export class CollectionService {
 
   getCommentsSaleCancelled( data: CancelledCommentsRequest ): Observable<ApiResponse<CancelledSaleCommentDTO[]>> {
     return this.http.post<ApiResponse<CancelledSaleCommentDTO[]>>(`${ this.api }/Collection/GetSaleCancelledComments`, data, { headers: this.getHeaders() });
+  }
+
+  getPaymentsHistorySaleById( data: DetailSaleByIdRequest ): Observable<ApiResponse<PaymentsSaleDTO>> {
+    return this.http.post<ApiResponse<PaymentsSaleDTO>>(`${ this.api }/Collection/PaymentsSaleBySaleId`, data, { headers: this.getHeaders() });
   }
 
   private getHeaders(): HttpHeaders {

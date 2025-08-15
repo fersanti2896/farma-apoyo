@@ -14,6 +14,7 @@ import { UserService } from '../../services/user.service';
 import { UsersDTO } from '../../../../auth/interfaces/auth.interface';
 import { StatusUserRequest } from '../../../../dashboard/interfaces/user.interface';
 import { ConfirmationDialogComponent } from '../../../../shared/components/confirmation-dialog/confirmation-dialog.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'modules-user-list-page',
@@ -31,7 +32,8 @@ export class ListPageComponent implements OnInit, AfterViewInit {
   constructor(
     private userService: UserService,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -96,6 +98,10 @@ export class ListPageComponent implements OnInit, AfterViewInit {
         this.snackBar.open('Error al actualizar el estado del usuario.', 'Cerrar', { duration: 3000 });
       }
     });
+  }
+
+  editUser(user: UsersDTO): void {
+      this.router.navigate(['/sic/inicio/usuarios/editar', user.userId]);
   }
 
   exportToPDF(): void {

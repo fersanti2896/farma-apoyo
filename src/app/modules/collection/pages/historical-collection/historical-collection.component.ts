@@ -24,6 +24,7 @@ import { TicketDialogComponent } from '../../../packaging/components/ticket-dial
 import { UsersDTO } from '../../../../auth/interfaces/auth.interface';
 import { UserService } from '../../../usuarios/services/user.service';
 import { CancelSaleDialogComponent } from '../../components/cancel-sale-dialog/cancel-sale-dialog.component';
+import { PaymentsHistoryDialogComponent } from '../../components/payments-history-dialog/payments-history-dialog.component';
 
 @Component({
   selector: 'app-historical-collection',
@@ -68,42 +69,6 @@ export class HistoricalCollectionComponent {
     this.rol = roleId;
 
     this.displayedColumns = [ 'saleId', 'businessName', 'salesPerson', 'saleStatus', 'paymentStatus', 'totalAmount', 'amountPending', 'saleDate', 'actions' ];
-    
-    // Se limpia todos los select si se escoge el select de cliente
-    this.filterForm.get('clientId')?.valueChanges.subscribe(val => {
-      if (val !== null) {
-        this.filterForm.get('salesPersonId')?.setValue(null, { emitEvent: false });
-        this.filterForm.get('saleStatusId')?.setValue(null, { emitEvent: false });
-        this.filterForm.get('paymentStatusId')?.setValue(null, { emitEvent: false });
-      }
-    });
-
-    // Se limpia todos los select si se escoge el select de vendedor
-    this.filterForm.get('salesPersonId')?.valueChanges.subscribe(val => {
-      if (val !== null) {
-        this.filterForm.get('clientId')?.setValue(null, { emitEvent: false });
-        this.filterForm.get('saleStatusId')?.setValue(null, { emitEvent: false });
-        this.filterForm.get('paymentStatusId')?.setValue(null, { emitEvent: false });
-      }
-    });
-
-    // Se limpia todos los select si se escoge el select de estado del ticket
-    this.filterForm.get('saleStatusId')?.valueChanges.subscribe(val => {
-      if (val !== null) {
-        this.filterForm.get('clientId')?.setValue(null, { emitEvent: false });
-        this.filterForm.get('salesPersonId')?.setValue(null, { emitEvent: false });
-        this.filterForm.get('paymentStatusId')?.setValue(null, { emitEvent: false });
-      }
-    });
-
-    // Se limpia todos los select si se escoge pago de cobranza
-    this.filterForm.get('paymentStatusId')?.valueChanges.subscribe(val => {
-      if (val !== null) {
-        this.filterForm.get('clientId')?.setValue(null, { emitEvent: false });
-        this.filterForm.get('salesPersonId')?.setValue(null, { emitEvent: false });
-        this.filterForm.get('saleStatusId')?.setValue(null, { emitEvent: false });
-      }
-    });
   }
 
   ngAfterViewInit(): void {
@@ -287,6 +252,37 @@ export class HistoricalCollectionComponent {
     });
   }
 
+  clearFilters(): void {
+    this.filterForm.patchValue({
+      clientId: null,
+      salesPersonId: null,
+      saleStatusId: null,
+      paymentStatusId: null
+    });
+
+    this.loadSalesPayments();
+  }
+
+  openPaymentsHistory(sale: SaleDTO): void {
+    const request = { saleId: sale.saleId };
+
+    this.collectionService.getPaymentsHistorySaleById(request).subscribe({
+      next: (response) => {
+        if (response.result) {
+          console.log(response)
+          this.dialog.open(PaymentsHistoryDialogComponent, {
+            width: '800px',
+            data: response.result
+          });
+        } else {
+          this.snackBar.open('No se encontraron pagos para este ticket.', 'Cerrar', { duration: 3000 });
+        }
+      },
+      error: () => {
+        this.snackBar.open('Error al obtener el histórico de pagos de la venta.', 'Cerrar', { duration: 3000 });
+      }
+    });  
+  }
 
   exportToPDF(): void {
     const doc = new jsPDF();
@@ -329,6 +325,18 @@ export class HistoricalCollectionComponent {
         formatter.format(entry.amountPending),
         new Date(entry.saleDate).toLocaleString('es-MX')
       ]));
+
+      // Calcular subtotales
+      const totalAmount = this.dataSource.data.reduce((acc, curr) => acc + curr.totalAmount, 0);
+      const totalPending = this.dataSource.data.reduce((acc, curr) => acc + curr.amountPending, 0);
+      const totalRecords = this.dataSource.data.length;
+
+      rows.push([
+        'Total de registros:', totalRecords.toString(), '', '', 'Subtotal',
+        formatter.format(totalAmount),
+        formatter.format(totalPending),
+        ''
+      ]);
 
       autoTable(doc, {
         head: [columns],

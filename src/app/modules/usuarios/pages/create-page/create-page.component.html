@@ -6,7 +6,7 @@
   </button>
 </div>
 
-<h2 class="text-2xl text-center md:w-full mb-10">Alta de Usuario</h2>
+<h2 class="text-2xl text-center md:w-full mb-10">{{ isEditMode ? 'Editar Usuario' : 'Alta de Usuario' }}</h2>
 
 <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="grid grid-cols-1 md:grid-cols-3 gap-2">
   <mat-form-field appearance="fill" class="h-17 mat-input-sm">
@@ -45,7 +45,7 @@
 
   <mat-form-field appearance="fill" class="h-17 mat-input-sm">
     <mat-label>Contraseña</mat-label>
-    <input matInput type="password" formControlName="passwordHash" required />
+    <input matInput type="password" formControlName="passwordHash" />
     <mat-error *ngIf="isValidField('passwordHash')">
       La Contraseña es obligatorio
     </mat-error>
@@ -72,7 +72,7 @@
 
   <div class="md:col-span-3 flex justify-center mt-10">
     <button mat-raised-button class="btn-success" type="submit">
-      Crear Usuario
+      {{ isEditMode ? 'Actualizar Usuario' : 'Crear Usuario' }}
     </button>
   </div>
 </form>

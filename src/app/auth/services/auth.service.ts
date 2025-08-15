@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 
-import { environment } from '../../enviroments/enviroment';
 import { ApiResponse, LoginDTO, LoginRequest, RefreshTokenRequest } from '../interfaces/auth.interface';
+import { environment } from '../../enviroments/enviroment';
 import { GlobalStateService } from '../../shared/services/global-state.service';
 
 @Injectable({

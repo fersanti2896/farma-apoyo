@@ -1,0 +1,28 @@
+<h2 class="text-2xl mt-5 mb-4 text-center">Historial de Pagos</h2>
+
+<div class="overflow-x-auto mx-6">
+  <table class="min-w-full text-sm border border-gray-200">
+    <thead class="bg-gray-100">
+      <tr>
+        <th class="text-left px-4 py-2 border-b w-48">Fecha</th>
+        <th class="text-left px-4 py-2 border-b">Monto</th>
+        <th class="text-left px-4 py-2 border-b">Comentarios</th>
+        <th class="text-left px-4 py-2 border-b">Usuario</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let payment of data" class="hover:bg-gray-50">
+        <td class="px-4 py-2 border-b whitespace-nowrap">
+          {{ payment.paymentDate | date: 'short' }}
+        </td>
+        <td class="px-4 py-2 border-b">{{ payment.amount | currency }}</td>
+        <td class="px-4 py-2 border-b">{{ payment.comments || 'Sin comentario' }}</td>
+        <td class="px-4 py-2 border-b">{{ payment.username }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="flex justify-center mt-4 mx-6 mb-10">
+  <button mat-button mat-dialog-close class="btn-cancel">Cerrar</button>
+</div>
