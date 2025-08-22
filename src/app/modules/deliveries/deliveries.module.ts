@@ -8,13 +8,15 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { PackagingModule } from '../packaging/packaging.module';
 import { AssignmentDeliveryComponent } from './components/assignment-delivery/assignment-delivery.component';
 import { MovementsDialogComponent } from './components/movements-dialog/movements-dialog.component';
+import { CreditNoteDialogComponent } from './components/credit-note-dialog/credit-note-dialog.component';
 
 
 @NgModule({
   declarations: [
     ListPageComponent,
     AssignmentDeliveryComponent,
-    MovementsDialogComponent
+    MovementsDialogComponent,
+    CreditNoteDialogComponent
   ],
   imports: [
     CommonModule,

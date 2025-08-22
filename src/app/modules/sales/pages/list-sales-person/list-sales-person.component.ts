@@ -54,20 +54,6 @@ export class ListSalesPersonComponent {
     this.rol = roleId;
 
     this.displayedColumns = ['saleId', 'businessName', 'totalAmount', 'statusName', 'namePayment', 'saleDate', 'actions'];
-  
-    // Se limpia el select de pagos de cobranza si se escoge el select de estado del ticket
-    this.filterForm.get('saleStatusId')?.valueChanges.subscribe(val => {
-      if (val !== null) {
-        this.filterForm.get('paymentStatusId')?.setValue(null, { emitEvent: false });
-      }
-    });
-
-    // Se limpia el select del estado del ticket si se escoge el select de pagos de cobranza
-    this.filterForm.get('paymentStatusId')?.valueChanges.subscribe(val => {
-      if (val !== null) {
-        this.filterForm.get('saleStatusId')?.setValue(null, { emitEvent: false });
-      }
-    });
   }
 
   initFilters(): void {

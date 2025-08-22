@@ -1,3 +1,4 @@
+import { CreditNoteListDTO } from './collection.interface';
 import { ProductSale } from './product.interface';
 
 export interface CreateSaleRequest {
@@ -119,4 +120,44 @@ export interface SalesByUserDTO {
     statusName: string;
     paymentStatusId: number;
     namePayment: string;
+}
+
+export interface CreditNoteProductDTO {
+    productId: number;
+    quantity: number;
+    unitPrice: number;
+}
+
+export interface CreditNoteRequest {
+    saleId: number;
+    comments: string;
+    products: CreditNoteProductDTO[]
+}
+
+export interface ConfirmCreditNoteRequest {
+    noteCreditId: number;
+    commentsDevolution: string;
+}
+
+export interface DetailsNoteCreditRequest {
+    noteCreditId: number;
+}
+
+export interface DetailsNoteCreditDTO {
+    noteCreditId: number;
+    saleId: number;
+    productId: number;
+    productName: string;
+    quantity: number;
+    unitPrice: number;
+    subTotal: number;
+    createDate: string;
+    createUser: number;
+    creadoPor: string;
+    FinalCreditAmount: number;
+}
+
+export interface NoteCreditData {
+    sale: CreditNoteListDTO;
+    details: DetailsNoteCreditDTO[];
 }

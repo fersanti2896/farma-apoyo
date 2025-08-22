@@ -14,6 +14,26 @@ export interface PaymentsSaleDTO {
     amount: number;
     comments: string;
     username: string;
+    paymentMethod: string;
+}
+
+export interface CreditNoteListRequest {
+    startDate: string;
+    endDate: string;
+    clientId?: number;
+    salesPersonId?: number;
+    saleStatusId?: number;
+}
+
+export interface CreditNoteListDTO {
+    noteCreditId: number;
+    saleId: number;
+    finalCreditAmount: number;
+    comments: string;
+    createDate: string;
+    createdBy: string;
+    vendedor: string;
+    clientName: string;
 }
 
 export interface SalesPendingPaymentRequest {
@@ -55,4 +75,9 @@ export interface MultiplePaymentDialogData {
   paymentDate: Date;
   selected: SalePaymentDTO[];
   paymentMethods: { value: string; label: string }[];
+}
+
+export interface ApproveCreditNoteRequest {
+    noteCreditId: number;
+    commentsCollection: string;
 }

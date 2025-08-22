@@ -98,6 +98,26 @@
                 <button *ngIf="selectedTabIndex === 2" matTooltip="Actualizar Entrega Completada" mat-icon-button class="text-green-600 cursor-pointer ml-1" (click)="openStatusDialog(entry)">
                   <mat-icon>send</mat-icon>
                 </button>
+
+                <button *ngIf="selectedTabIndex === 2"
+                        mat-icon-button
+                        matTooltip="Más acciones"
+                        [matMenuTriggerFor]="moreMenu"
+                        class="cursor-pointer">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+
+                <mat-menu #moreMenu="matMenu">
+                  <button mat-menu-item (click)="openCreditNote(entry)">
+                    <mat-icon>receipt_long</mat-icon>
+                    <span>Nota de Crédito</span>
+                  </button>
+
+                  <button mat-menu-item (click)="openExchange(entry)">
+                    <mat-icon>swap_horiz</mat-icon>
+                    <span>Canje</span>
+                  </button>
+                </mat-menu>
             </td>
         </ng-container>
 

@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 
 import { ApiResponse } from '../../../auth/interfaces/auth.interface';
 import { ClientByUserDTO } from '../../interfaces/client.interface';
-import { CancelSaleRequest, CreateSaleRequest, DetailSaleByIdRequest, MovementsSaleDTO, SalesByUserDTO, SalesByUserRequest, SalesStatusDTO } from '../../interfaces/sale.interface';
+import { CancelSaleRequest, ConfirmCreditNoteRequest, CreateSaleRequest, CreditNoteRequest, DetailSaleByIdRequest, DetailsNoteCreditDTO, DetailsNoteCreditRequest, MovementsSaleDTO, SalesByUserDTO, SalesByUserRequest, SalesStatusDTO } from '../../interfaces/sale.interface';
 import { environment } from '../../../enviroments/enviroment';
 import { GlobalStateService } from '../../../shared/services';
 import { ProductStockDTO } from '../../interfaces/product.interface';
@@ -52,6 +52,18 @@ export class SalesService {
 
   confirmCancellationSale( data: CancelSaleRequest ): Observable<ApiResponse<ReplyResponse>> {
     return this.http.post<ApiResponse<ReplyResponse>>(`${ this.api }/Sales/ConfirmCancellationSale`, data, { headers: this.getHeaders() });
+  }
+
+  createCreditNote( data: CreditNoteRequest ): Observable<ApiResponse<ReplyResponse>> {
+    return this.http.post<ApiResponse<ReplyResponse>>(`${ this.api }/Sales/CreateCreditNoteRequest`, data, { headers: this.getHeaders() });
+  }
+
+  confirmCreditNoteByWarehouse( data: ConfirmCreditNoteRequest ): Observable<ApiResponse<ReplyResponse>> {
+    return this.http.post<ApiResponse<ReplyResponse>>(`${ this.api }/Warehouse/ConfirmCreditNoteByWarehouse`, data, { headers: this.getHeaders() });
+  }
+
+  detailsNoteCreditById( data: DetailsNoteCreditRequest ): Observable<ApiResponse<DetailsNoteCreditDTO[]>> {
+    return this.http.post<ApiResponse<DetailsNoteCreditDTO[]>>(`${ this.api }/Sales/DetailsNoteCreditById`, data, { headers: this.getHeaders() });
   }
 
   private getHeaders(): HttpHeaders {

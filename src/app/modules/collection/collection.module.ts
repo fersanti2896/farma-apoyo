@@ -13,6 +13,8 @@ import { CreditNotesCollectionComponent } from './pages/credit-notes-collection/
 import { CancelSaleDialogComponent } from './components/cancel-sale-dialog/cancel-sale-dialog.component';
 import { MultiplePaymentDialogComponent } from './components/multiple-payment-dialog/multiple-payment-dialog.component';
 import { PaymentsHistoryDialogComponent } from './components/payments-history-dialog/payments-history-dialog.component';
+import { DetailsCreditNoteComponent } from './components/details-credit-note/details-credit-note.component';
+import { ConfirmNoteCreditComponent } from './components/confirm-note-credit/confirm-note-credit.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +24,9 @@ import { PaymentsHistoryDialogComponent } from './components/payments-history-di
     CreditNotesCollectionComponent,
     CancelSaleDialogComponent,
     MultiplePaymentDialogComponent,
-    PaymentsHistoryDialogComponent
+    PaymentsHistoryDialogComponent,
+    DetailsCreditNoteComponent,
+    ConfirmNoteCreditComponent
   ],
   imports: [
     CommonModule,
@@ -30,7 +34,11 @@ import { PaymentsHistoryDialogComponent } from './components/payments-history-di
     DeliveriesModule,
     PackagingModule,
     SharedModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+  ],
+  exports: [
+    DetailsCreditNoteComponent,
+    ConfirmNoteCreditComponent
   ]
 })
 export class CollectionModule { }

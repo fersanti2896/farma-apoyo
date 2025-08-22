@@ -1,0 +1,75 @@
+<div id="credit-note-content"
+     style="width: 58mm; font-family: monospace;"
+     class="md:w-[4.5cm] md:p-2 p-10 text-[11px] text-black bg-white mx-auto font-mono">
+
+  <!-- Logo -->
+  <div class="text-center mb-2">
+    <img src="assets/logos/inventory.png" alt="Farma Apoyo" class="h-10 mx-auto" />
+  </div>
+
+  <div class="text-center leading-tight mb-1">
+    <p>DISTRIBUIDORA</p>
+    <p>FARMACÉUTICA</p>
+  </div>
+
+  <hr class="border-t border-dashed border-gray-600 my-2" />
+
+  <!-- Datos -->
+  <div class="text-[11px] leading-tight mb-2 space-y-[2px]">
+    <span class="text-xl">NOTA CRÉDITO: {{ sale.noteCreditId }}</span>
+    <p><strong>HORA:</strong> {{ details[0].createDate | date:'shortTime' }}</p>
+    <p><strong>FECHA:</strong> {{ details[0].createDate | date:'shortDate' }}</p>
+    <p><strong>SOLICITADO POR:</strong> {{ sale.createdBy || details[0].creadoPor }}</p>
+    <p><strong>TICKET A CARGAR:</strong> {{ sale.saleId }}</p>
+  </div>
+
+  <hr class="border-t border-dashed border-gray-600 my-2" />
+
+  <!-- Lista de productos -->
+  <div *ngFor="let item of details">
+    <p>{{ item.productName }}</p>
+    <div class="flex justify-between">
+      <span>{{ item.quantity }} x {{ item.unitPrice | currency:'MXN' }}</span>
+      <span>{{ item.subTotal | currency:'MXN' }}</span>
+    </div>
+  </div>
+
+  <hr class="border-t border-dashed border-gray-600 my-2" />
+
+  <!-- Total -->
+  <div class="flex justify-between font-bold">
+    <span>TOTAL:</span>
+    <span>{{ sale.finalCreditAmount | currency:'MXN' }}</span>
+  </div>
+
+  <!-- Total en letra -->
+  <p class="text-center text-[10px] italic mb-1">{{ getTotalEnLetra() }}</p>
+
+  <!-- Cliente -->
+  <div class="text-center mb-1">
+    <p><strong>CLIENTE:</strong> {{ sale.clientName }}</p>
+  </div>
+
+  <hr class="border-t border-dashed border-gray-600 my-2" />
+
+  <!-- Pie de página -->
+  <div class="text-center text-[10px] leading-tight mb-1">
+    <p>DUDAS O ACLARACIONES</p>
+    <p>{{ 'farma.apoyo.oficial@gmail.com' }}</p>
+    <p>OFICINA: 55-83-24-81-85</p>
+  </div>
+
+  <div class="text-center text-[11px] font-semibold mt-2">
+    ¡GRACIAS!
+  </div>
+</div>
+
+<!-- Botones -->
+<div class="flex justify-center gap-4 mt-4">
+  <button (click)="printNote()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 rounded shadow text-sm">
+    Imprimir
+  </button>
+  <button (click)="downloadNote()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-1 rounded shadow text-sm">
+    Descargar
+  </button>
+</div>

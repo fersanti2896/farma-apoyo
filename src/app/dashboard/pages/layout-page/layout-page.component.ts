@@ -90,8 +90,7 @@ export class LayoutPageComponent implements OnInit {
         children: [
           { label: 'Usuarios', icon: 'supervisor_account', url: '/sic/inicio/usuarios', roles: [1] },
           { label: 'Proveedores', icon: 'local_mall', url: '/sic/inicio/proveedores', roles: [1, 2] },  
-          { label: 'Clientes', icon: 'groups', url: '/sic/inicio/clientes', roles: [1, 2] },      
-          // { label: 'Productos', icon: 'category', url: '/sic/inicio/productos', roles: [1, 2] },  
+          { label: 'Clientes', icon: 'groups', url: '/sic/inicio/clientes', roles: [1, 2] }
         ]
       },
       {

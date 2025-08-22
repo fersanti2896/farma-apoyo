@@ -17,6 +17,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatMenuModule } from '@angular/material/menu'
 
 import { LoadingPageComponent } from './components/loading-page/loading-page.component';
 import { ConfirmationDialogComponent } from './components/confirmation-dialog/confirmation-dialog.component';
@@ -44,7 +45,8 @@ import { ConfirmationDialogComponent } from './components/confirmation-dialog/co
     MatTabsModule,
     MatTooltipModule,
     MatCheckboxModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatMenuModule
   ],
   exports: [
     ConfirmationDialogComponent,
@@ -65,7 +67,8 @@ import { ConfirmationDialogComponent } from './components/confirmation-dialog/co
     MatTabsModule,
     MatTooltipModule,
     MatCheckboxModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatMenuModule
   ]
 })
 export class SharedModule { }

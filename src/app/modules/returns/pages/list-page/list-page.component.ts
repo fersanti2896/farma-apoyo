@@ -6,17 +6,19 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 
+import { CancelSaleRequest, ConfirmCreditNoteRequest, SaleDTO, SalesPendingPaymentDTO, SalesStatusDTO } from '../../../interfaces/sale.interface';
 import { ClientDTO } from '../../../interfaces/client.interface';
+import { CollectionService } from '../../../collection/services/collection.service';
+import { ConfirmDevolutionDialogComponent } from '../../components/confirm-devolution-dialog/confirm-devolution-dialog.component';
 import { GlobalStateService } from '../../../../shared/services';
+import { MovementsDialogComponent } from '../../../deliveries/components/movements-dialog/movements-dialog.component';
 import { PackagingService } from '../../../packaging/services/packaging.service';
-import { PaymentStatusDTO, SalesPendingPaymentRequest } from '../../../interfaces/collection.interface';
-import { CancelSaleRequest, SaleDTO, SalesPendingPaymentDTO, SalesStatusDTO } from '../../../interfaces/sale.interface';
+import { CreditNoteListDTO, CreditNoteListRequest, PaymentStatusDTO, SalesPendingPaymentRequest } from '../../../interfaces/collection.interface';
 import { SalesService } from '../../../sales/services/sales.service';
 import { TicketDialogComponent } from '../../../packaging/components/ticket-dialog/ticket-dialog.component';
 import { UsersDTO } from '../../../../auth/interfaces/auth.interface';
-import { CollectionService } from '../../../collection/services/collection.service';
-import { MovementsDialogComponent } from '../../../deliveries/components/movements-dialog/movements-dialog.component';
-import { ConfirmDevolutionDialogComponent } from '../../components/confirm-devolution-dialog/confirm-devolution-dialog.component';
+import { DetailsCreditNoteComponent } from '../../../collection/components/details-credit-note/details-credit-note.component';
+import { ConfirmNoteCreditComponent } from '../../../collection/components/confirm-note-credit/confirm-note-credit.component';
 
 @Component({
   selector: 'app-list-page',
@@ -33,6 +35,18 @@ export class ListPageComponent {
   public paymentStatuses: PaymentStatusDTO[] = [];
   public users: UsersDTO[] = [];
   public clients: ClientDTO[] = [];
+  public selectedTabIndex = 0;
+
+  public dataSourceReturns = new MatTableDataSource<SalesPendingPaymentDTO>([]);
+  public displayedColumnsReturns: string[] = [
+    'saleId','businessName','salesPerson','saleStatus','paymentStatus','totalAmount','saleDate','actions'
+  ];
+
+  // Notas de crédito
+  public dataSourceNotes = new MatTableDataSource<CreditNoteListDTO>([]);
+  public displayedColumnsNotes: string[] = [
+    'noteCreditId','saleId','clientName','vendedor','finalCreditAmount','comments','createDate','createdBy','actions'
+  ];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -49,12 +63,13 @@ export class ListPageComponent {
 
   ngOnInit(): void {
     this.initFilters();
-    this.loadSalesPayments();
+    // this.loadSalesPayments();
 
     const { roleId } = this.globalStateService.getUser();
     this.rol = roleId;
 
-    this.displayedColumns = [ 'saleId', 'businessName', 'salesPerson', 'saleStatus', 'paymentStatus', 'totalAmount', 'saleDate', 'actions' ];
+    // this.displayedColumns = [ 'saleId', 'businessName', 'salesPerson', 'saleStatus', 'paymentStatus', 'totalAmount', 'saleDate', 'actions' ];
+    this.loadCurrentTab();
   }
 
   ngAfterViewInit(): void {
@@ -82,10 +97,20 @@ export class ListPageComponent {
   }
 
   filterSales(): void {
-    this.loadSalesPayments();
+    // this.loadSalesPayments();
+    this.loadCurrentTab();
   }
 
-  loadSalesPayments(): void {
+  onTabChange(): void {
+    this.loadCurrentTab();
+  }
+
+  private loadCurrentTab(): void {
+    if (this.selectedTabIndex === 0) this.loadReturns();
+    else this.loadCreditNotes();
+  }
+
+  loadReturns(): void {
     this.isLoading = true;
     const { startDate, endDate } = this.filterForm.value;
 
@@ -107,6 +132,32 @@ export class ListPageComponent {
     });
   }
 
+  loadCreditNotes(): void {
+    this.isLoading = true;
+
+    const { startDate, endDate } = this.filterForm.value;
+    const req: CreditNoteListRequest = {
+      startDate: new Date(startDate).toISOString(),
+      endDate: new Date(endDate).toISOString(),
+      saleStatusId: 12
+    };
+
+    this.collectionService.getCreditNotesByStatus(req).subscribe({
+      next: (res) => {
+        this.dataSourceNotes.data = res.result ?? [];
+        setTimeout(() => {
+          this.dataSourceNotes.paginator = this.paginator;
+          this.dataSourceNotes.sort = this.sort;
+        });
+        this.isLoading = false;
+      },
+      error: () => {
+        this.isLoading = false;
+        this.snackBar.open('Error al cargar notas de crédito.', 'Cerrar', { duration: 3000 });
+      }
+    });
+  }
+
   openDetailsTicket(sale: SalesPendingPaymentDTO): void {
     const request = { saleId: sale.saleId };
 
@@ -118,6 +169,41 @@ export class ListPageComponent {
             height: '70%',
             data: {
               sale: sale,             // Info general del ticket
+              details: response.result // Lista de productos vendidos
+            }
+          });
+        }
+      },
+      error: () => {
+        this.snackBar.open('Error al obtener detalles del ticket.', 'Cerrar', { duration: 3000 });
+      }
+    });
+  }
+
+  openDetailsTicketForNC(sale: CreditNoteListDTO): void {
+    const request = { saleId: sale.saleId };
+
+    this.packingService.postDetailSaleById(request).subscribe({
+      next: (response) => {
+        if (response.result) {
+          const totalAmount = response.result.reduce((acc, item) => acc + item.subTotal, 0);
+
+          const newSale: SaleDTO = {
+            saleId: sale.saleId,
+            clientId: 0,
+            businessName: sale.clientName,
+            saleStatusId: 0,
+            statusName: '',
+            totalAmount: totalAmount,
+            saleDate: sale.createDate,
+            vendedor: sale.vendedor,
+            repartidor: ''
+          }
+          this.dialog.open(TicketDialogComponent, {
+            width: '200px',
+            height: '70%',
+            data: {
+              sale: newSale,             // Info general del ticket
               details: response.result // Lista de productos vendidos
             }
           });
@@ -164,7 +250,7 @@ export class ListPageComponent {
         next: (res) => {
           if (res.result?.status) {
             this.snackBar.open('Cancelación exitosa.', 'Cerrar', { duration: 3000 });
-            this.loadSalesPayments(); // Refrescar la tabla
+            this.loadReturns(); // Refrescar la tabla
           } else {
             this.snackBar.open(res.result?.msg ?? 'Error al cancelar.', 'Cerrar', { duration: 3000 });
           }
@@ -173,6 +259,55 @@ export class ListPageComponent {
           this.snackBar.open('Error al procesar la cancelación.', 'Cerrar', { duration: 3000 });
         }
       });
+    });
+  }
+
+  openDetailsNoteCredit(note: CreditNoteListDTO): void {
+    const request = { noteCreditId: note.noteCreditId };
+    this.salesService.detailsNoteCreditById(request).subscribe({
+      next: (response) => {
+        if (response.result) {
+          this.dialog.open(DetailsCreditNoteComponent, {
+            width: '200px',
+            height: '70%',
+            data: { sale: note, details: response.result }
+          });
+        }
+      },
+      error: () => this.snackBar.open('Error al obtener detalles de la nota de crédito.', 'Cerrar', { duration: 3000 })
+    });
+  }
+
+  openStatusDialog(note: CreditNoteListDTO): void {
+    const dialogRef = this.dialog.open(ConfirmNoteCreditComponent, {
+      width: '400px',
+      data: { noteCreditId: note.noteCreditId, saleId: note.saleId, isWarehouse: true }
+    });
+
+    dialogRef.afterClosed().subscribe((comment: string | undefined) => {
+      if (comment !== undefined) {
+        const request: ConfirmCreditNoteRequest = {
+          noteCreditId: note.noteCreditId,
+          commentsDevolution: comment
+        }
+
+        this.isLoading = true;
+        
+        this.salesService.confirmCreditNoteByWarehouse(request).subscribe({
+          next: (response) => {
+            if (response.result) {
+              this.snackBar.open('Nota de Crédito Aprobada, se retornaron los productos al stock.', 'Cerrar', { duration: 3000 });
+              this.loadCreditNotes();
+            }
+
+            this.isLoading = false;
+          },
+          error: () => {
+            this.snackBar.open('Error al actualizar estatus', 'Cerrar', { duration: 3000 });
+            this.isLoading = false;
+          }
+        });
+      }
     });
   }
 

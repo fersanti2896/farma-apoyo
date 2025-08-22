@@ -1,0 +1,16 @@
+<h2 mat-dialog-title class="text-2xl text-center">Aprobar Nota de Crédito: #{{ noteCreditId }} para el ticket: #{{ saleId }}</h2>
+
+<mat-dialog-content [formGroup]="confirmForm">
+    <p *ngIf="!isWarehouse" class="text-sm text-center">¿Deseas aprobar la nota de crédito #{{ noteCreditId }}? Este pasará a almacén para su verificación.</p>
+    <p *ngIf="isWarehouse" class="text-sm text-center">¿Deseas aprobar la nota de crédito #{{ noteCreditId }}? Esto retornará los productos al stock, y se ajustará el total del ticket.</p>
+    <mat-form-field appearance="fill" class="w-full mt-4">
+        <mat-label>Comentarios</mat-label>
+        <textarea matInput formControlName="comment" placeholder="Comentarios"></textarea>
+        <mat-error *ngIf="isValidField('comment')">Los comentarios son requeridos.</mat-error>
+    </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="center">
+    <button mat-raised-button class="btn-success " (click)="confirm()">Aceptar</button>
+    <button mat-button class="h-9 btn-cancel ml-4" (click)="cancel()">Cancelar</button>
+</mat-dialog-actions>

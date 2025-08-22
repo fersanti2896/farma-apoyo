@@ -3,8 +3,8 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { ApiResponse } from '../../../auth/interfaces/auth.interface';
-import { ApplyMultiplePaymentRequest, CancelledCommentsRequest, CancelledSaleCommentDTO, PaymentsSaleDTO, PaymentStatusDTO, SalesHistoricalRequest, SalesPendingPaymentRequest } from '../../interfaces/collection.interface';
-import { ApplyPaymentRequest, CancelSaleRequest, DetailSaleByIdRequest, SalesPendingPaymentDTO } from '../../interfaces/sale.interface';
+import { ApplyMultiplePaymentRequest, ApproveCreditNoteRequest, CancelledCommentsRequest, CancelledSaleCommentDTO, CreditNoteListDTO, CreditNoteListRequest, PaymentsSaleDTO, PaymentStatusDTO, SalesHistoricalRequest, SalesPendingPaymentRequest } from '../../interfaces/collection.interface';
+import { ApplyPaymentRequest, CancelSaleRequest, DetailSaleByIdRequest, SalesByStatusRequest, SalesPendingPaymentDTO } from '../../interfaces/sale.interface';
 import { environment } from '../../../enviroments/enviroment';
 import { GlobalStateService } from '../../../shared/services';
 import { ReplyResponse } from '../../interfaces/reply.interface';
@@ -58,6 +58,14 @@ export class CollectionService {
 
   getPaymentsHistorySaleById( data: DetailSaleByIdRequest ): Observable<ApiResponse<PaymentsSaleDTO>> {
     return this.http.post<ApiResponse<PaymentsSaleDTO>>(`${ this.api }/Collection/PaymentsSaleBySaleId`, data, { headers: this.getHeaders() });
+  }
+
+  getCreditNotesByStatus( data: CreditNoteListRequest ): Observable<ApiResponse<CreditNoteListDTO[]>> {
+    return this.http.post<ApiResponse<CreditNoteListDTO[]>>(`${ this.api }/Collection/GetCreditNotesByStatus`, data, { headers: this.getHeaders() });
+  }
+
+  approveCreditNoteByCollection( data: ApproveCreditNoteRequest ): Observable<ApiResponse<ReplyResponse>> {
+    return this.http.post<ApiResponse<ReplyResponse>>(`${ this.api }/Collection/ApproveCreditNoteByCollection`, data, { headers: this.getHeaders() });
   }
 
   private getHeaders(): HttpHeaders {

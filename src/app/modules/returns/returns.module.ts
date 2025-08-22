@@ -6,6 +6,7 @@ import { ListPageComponent } from './pages/list-page/list-page.component';
 import { ReturnsRoutingModule } from './returns-routing.module';
 import { SharedModule } from '../../shared/shared.module';
 import { ConfirmDevolutionDialogComponent } from './components/confirm-devolution-dialog/confirm-devolution-dialog.component';
+import { CollectionModule } from '../collection/collection.module';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { ConfirmDevolutionDialogComponent } from './components/confirm-devolutio
     CommonModule,
     ReactiveFormsModule,
     ReturnsRoutingModule, 
-    SharedModule, 
+    SharedModule,
+    CollectionModule
   ]
 })
 export class ReturnsModule { }

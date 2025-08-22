@@ -151,7 +151,7 @@ export class ListPageComponent {
   loadSalesStatus(): void {
     this.salesService.listSalesStatus().subscribe({
       next: (res) => {
-        if (res.result) this.salesStatuses = res.result.filter(p => [2, 3, 4, 5, 7].includes(p.saleStatusId));
+        if (res.result) this.salesStatuses = res.result.filter(p => [2, 3, 4, 5, 7, 11, 12, 13].includes(p.saleStatusId));
       }
     });
   }

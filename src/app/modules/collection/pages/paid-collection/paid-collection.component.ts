@@ -17,13 +17,13 @@ import { CollectionService } from '../../services/collection.service';
 import { GlobalStateService } from '../../../../shared/services';
 import { MovementsDialogComponent } from '../../../deliveries/components/movements-dialog/movements-dialog.component';
 import { PackagingService } from '../../../packaging/services/packaging.service';
-import { PaymentStatusDTO, SalesPendingPaymentRequest } from '../../../interfaces/collection.interface';
-import { SaleDTO, SalesPendingPaymentDTO, SalesStatusDTO } from '../../../interfaces/sale.interface';
+import { PaymentsHistoryDialogComponent } from '../../components/payments-history-dialog/payments-history-dialog.component';
+import { SaleDTO, SalesPendingPaymentDTO } from '../../../interfaces/sale.interface';
+import { SalesPendingPaymentRequest } from '../../../interfaces/collection.interface';
 import { SalesService } from '../../../sales/services/sales.service';
 import { TicketDialogComponent } from '../../../packaging/components/ticket-dialog/ticket-dialog.component';
 import { UsersDTO } from '../../../../auth/interfaces/auth.interface';
 import { UserService } from '../../../usuarios/services/user.service';
-import { PaymentsHistoryDialogComponent } from '../../components/payments-history-dialog/payments-history-dialog.component';
 
 @Component({
   selector: 'app-paid-collection',
@@ -185,7 +185,6 @@ export class PaidCollectionComponent {
     this.collectionService.getPaymentsHistorySaleById(request).subscribe({
       next: (response) => {
         if (response.result) {
-          console.log(response)
           this.dialog.open(PaymentsHistoryDialogComponent, {
             width: '800px',
             data: response.result

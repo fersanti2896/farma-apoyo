@@ -20,6 +20,7 @@ import { DeliveriesService } from '../../services/deliveries.service';
 import { SalesService } from '../../../sales/services/sales.service';
 import { MovementsDialogComponent } from '../../components/movements-dialog/movements-dialog.component';
 import { UpdateStatusDialogComponent } from '../../../packaging/components/update-status-dialog/update-status-dialog.component';
+import { CreditNoteDialogComponent } from '../../components/credit-note-dialog/credit-note-dialog.component';
 
 @Component({
   selector: 'app-list-page',
@@ -265,6 +266,36 @@ export class ListPageComponent implements OnInit {
       }
     });
   }
+
+  openCreditNote(sale: SaleDTO): void {
+    const request = { saleId: sale.saleId };
+    this.packingService.postDetailSaleById(request).subscribe({
+      next: (response) => {
+        if (response.result) {
+          this.dialog.open(CreditNoteDialogComponent, {
+            width: '720px',
+            data: {
+              sale,
+              details: response.result
+            }
+          }).afterClosed().subscribe(res => {
+            if (res?.applied) {
+              this.snackBar.open('Nota de crédito solicitada.', 'Cerrar', { duration: 3000 });
+              this.loadSalesDelivery(4);
+            }
+          });
+        }
+      },
+      error: () => {
+        this.snackBar.open('Error al obtener productos del ticket.', 'Cerrar', { duration: 3000 });
+      }
+    });
+  }
+
+  openExchange(sale: SaleDTO): void {
+    this.snackBar.open('Función de Canje pendiente de implementar.', 'Cerrar', { duration: 2500 });
+  }
+
 
   exportToPDF(): void {
     const doc = new jsPDF();

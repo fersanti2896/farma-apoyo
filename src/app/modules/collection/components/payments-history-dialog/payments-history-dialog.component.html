@@ -6,6 +6,7 @@
       <tr>
         <th class="text-left px-4 py-2 border-b w-48">Fecha</th>
         <th class="text-left px-4 py-2 border-b">Monto</th>
+        <th class="text-left px-4 py-2 border-b">Forma de Pago</th>
         <th class="text-left px-4 py-2 border-b">Comentarios</th>
         <th class="text-left px-4 py-2 border-b">Usuario</th>
       </tr>
@@ -16,6 +17,7 @@
           {{ payment.paymentDate | date: 'short' }}
         </td>
         <td class="px-4 py-2 border-b">{{ payment.amount | currency }}</td>
+        <td class="px-4 py-2 border-b">{{ payment.paymentMethod }}</td>
         <td class="px-4 py-2 border-b">{{ payment.comments || 'Sin comentario' }}</td>
         <td class="px-4 py-2 border-b">{{ payment.username }}</td>
       </tr>
