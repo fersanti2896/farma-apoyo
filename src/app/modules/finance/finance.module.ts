@@ -5,10 +5,12 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { FinanceRoutingModule } from './finance-routing.module';
 import { SharedModule } from '../../shared/shared.module';
 import { BuildPageComponent } from './pages/build-page/build-page.component';
+import { ExpensesPageComponent } from './pages/expenses-page/expenses-page.component';
 
 @NgModule({
   declarations: [
-    BuildPageComponent
+    BuildPageComponent,
+    ExpensesPageComponent
   ],
   imports: [
     CommonModule,

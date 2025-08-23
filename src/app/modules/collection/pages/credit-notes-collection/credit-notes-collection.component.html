@@ -59,12 +59,12 @@
 </form>
 
 <div class="flex items-center mb-4 -mt-2 w-full gap-4">
-  <button mat-raised-button class="btn-cancel h-10 flex items-center gap-x-1">
+  <button mat-raised-button class="btn-cancel h-10 flex items-center gap-x-1" (click)="exportToPDF()">
     <span>Descargar</span>
     <mat-icon>picture_as_pdf</mat-icon>
   </button>
 
-  <button mat-raised-button class="btn-success h-10 flex items-center gap-x-1">
+  <button mat-raised-button class="btn-success h-10 flex items-center gap-x-1" (click)="exportToExcel()">
     <span>Descargar</span>
     <mat-icon>explicit</mat-icon>
   </button>

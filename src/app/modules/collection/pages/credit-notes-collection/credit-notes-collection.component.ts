@@ -7,18 +7,23 @@ import { MatSort } from '@angular/material/sort';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { MatTableDataSource } from '@angular/material/table';
 
+import { jsPDF } from 'jspdf';
+import * as FileSaver from 'file-saver';
+import * as XLSX from 'xlsx';
+import autoTable from 'jspdf-autotable';
+
+import { ApproveCreditNoteRequest, CreditNoteListDTO, CreditNoteListRequest } from '../../../interfaces/collection.interface';
 import { ClientDTO } from '../../../interfaces/client.interface';
 import { ClientesService } from '../../../clientes/services/clientes.service';
 import { CollectionService } from '../../services/collection.service';
-import { ApproveCreditNoteRequest, CreditNoteListDTO, CreditNoteListRequest } from '../../../interfaces/collection.interface';
+import { ConfirmNoteCreditComponent } from '../../components/confirm-note-credit/confirm-note-credit.component';
 import { DetailsCreditNoteComponent } from '../../components/details-credit-note/details-credit-note.component';
 import { PackagingService } from '../../../packaging/services/packaging.service';
+import { SaleDTO } from '../../../interfaces/sale.interface';
 import { SalesService } from '../../../sales/services/sales.service';
 import { TicketDialogComponent } from '../../../packaging/components/ticket-dialog/ticket-dialog.component';
 import { UsersDTO } from '../../../../auth/interfaces/auth.interface';
 import { UserService } from '../../../usuarios/services/user.service';
-import { ConfirmNoteCreditComponent } from '../../components/confirm-note-credit/confirm-note-credit.component';
-import { SaleDTO } from '../../../interfaces/sale.interface';
 
 @Component({
   selector: 'app-credit-notes-collection',
@@ -27,7 +32,6 @@ import { SaleDTO } from '../../../interfaces/sale.interface';
 })
 export class CreditNotesCollectionComponent {
   public isLoading = false;
-
   public dataSource = new MatTableDataSource<CreditNoteListDTO>([]);
   public displayedColumns: string[] = [
     'noteCreditId',
@@ -43,7 +47,6 @@ export class CreditNotesCollectionComponent {
 
   public filterForm!: FormGroup;
   public selectedTabIndex = 0; // 0: Pendientes (11), 1: Confirmadas (13)
-
   public users: UsersDTO[] = [];
   public clients: ClientDTO[] = [];
 
@@ -66,7 +69,7 @@ export class CreditNotesCollectionComponent {
   ngOnInit(): void {
     this.loadUsers();
     this.loadClients();
-    this.loadCreditNotes(); // carga pestaña inicial = Pendientes
+    this.loadCreditNotes();
   }
 
   ngAfterViewInit(): void {
@@ -78,7 +81,7 @@ export class CreditNotesCollectionComponent {
   initFilters(): void {
     const today = new Date();
     const twoMonthsAgo = new Date(today);
-    twoMonthsAgo.setMonth(today.getMonth() - 2);
+    twoMonthsAgo.setMonth(today.getMonth() - 1);
 
     this.filterForm = this.fb.group({
       startDate: [twoMonthsAgo],
@@ -127,7 +130,6 @@ export class CreditNotesCollectionComponent {
 
   // ---------- Carga de notas ----------
   private currentStatusId(): number {
-    // 0 => Pendientes(11); 1 => Confirmadas(13)
     return this.selectedTabIndex === 0 ? 11 : 13;
   }
 
@@ -138,7 +140,7 @@ export class CreditNotesCollectionComponent {
       endDate: new Date(endDate).toISOString(),
       clientId: clientId || 20,
       salesPersonId: salesPersonId || 20,
-      saleStatusId: this.currentStatusId(), // <- importante
+      saleStatusId: this.currentStatusId(),
     };
   }
 
@@ -247,5 +249,160 @@ export class CreditNotesCollectionComponent {
         });
       }
     });
+  }
+
+  tabTitle(): string {
+    return this.selectedTabIndex === 0 ? 'Pendientes' : 'Confirmadas';
+  }
+
+  exportToPDF(): void {
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const formatter = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', minimumFractionDigits: 2 });
+
+    const logoImg = new Image();
+    logoImg.src = 'assets/logos/inventory.png';
+
+    logoImg.onload = () => {
+      const start = new Date(this.filterForm.value.startDate);
+      const end   = new Date(this.filterForm.value.endDate);
+
+      const fechaInicio = start.toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' });
+      const fechaFin    = end.toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' });
+
+      // Encabezado
+      doc.addImage(logoImg, 'PNG', 10, 7, 36, 30);
+      doc.setFontSize(16);
+      doc.setFont('helvetica', 'bold');
+      doc.text('FARMA APOYO', pageWidth / 2, 20, { align: 'center' });
+
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Cobranza - Notas de Crédito (${this.tabTitle()})`, pageWidth / 2, 28, { align: 'center' });
+
+      doc.setFontSize(10);
+      doc.text(`Del ${fechaInicio} al ${fechaFin}`, pageWidth / 2, 38, { align: 'center' });
+
+      // Columnas (de tu displayedColumns para notas)
+      const columns = [
+        'No. Nota',          // noteCreditId
+        'No. Ticket',        // saleId
+        'Cliente',           // clientName
+        'Vendedor',          // vendedor
+        'Monto Nota',        // finalCreditAmount
+        'Comentarios',       // comments
+        'Fecha',             // createDate
+        'Creado por'         // createdBy
+      ];
+
+      // Filas
+      const rows = this.dataSource.data.map(n => ([
+        n.noteCreditId,
+        n.saleId,
+        n.clientName,
+        n.vendedor,
+        formatter.format(n.finalCreditAmount),
+        n.comments ?? '',
+        new Date(n.createDate).toLocaleString('es-MX'),
+        n.createdBy
+      ]));
+
+      // Subtotales
+      const totalNotas = this.dataSource.data.length;
+      const totalMonto = this.dataSource.data.reduce((acc, n) => acc + (n.finalCreditAmount || 0), 0);
+
+      rows.push([
+        'Total de registros:',
+        totalNotas.toString(),
+        '',
+        'Subtotal',
+        formatter.format(totalMonto),
+        '',
+        '',
+        ''
+      ]);
+
+      autoTable(doc, {
+        head: [columns],
+        body: rows,
+        startY: 45,
+        margin: { bottom: 30 },
+        styles: { fontSize: 9 },
+        headStyles: { halign: 'center' },
+        columnStyles: {
+          0: { halign: 'center' }, // No. Nota
+          1: { halign: 'center' }, // No. Ticket
+          4: { halign: 'right' },  // Monto Nota
+          6: { halign: 'center' }, // Fecha
+        },
+        didDrawPage: () => {
+          const str = `Página ${doc.getNumberOfPages()}`;
+          doc.setFontSize(10);
+          doc.text(str, pageWidth / 2, doc.internal.pageSize.getHeight() - 10, { align: 'center' });
+        }
+      });
+
+      const nombreArchivo = `NotasCredito_${this.tabTitle()}_${new Date().toLocaleDateString('es-MX')}.pdf`;
+      doc.save(nombreArchivo);
+    };
+  }
+
+  // ---------- Excel ----------
+  exportToExcel(): void {
+    const date = new Date().toLocaleDateString('es-MX', {
+      day: 'numeric', month: 'long', year: 'numeric'
+    });
+
+    // Mapea datos
+    const dataToExport = this.dataSource.data.map(n => ({
+      'No. Nota': n.noteCreditId,
+      'No. Ticket': n.saleId,
+      'Cliente': n.clientName,
+      'Vendedor': n.vendedor,
+      'Monto Nota': n.finalCreditAmount,   // numérico
+      'Comentarios': n.comments ?? '',
+      'Fecha': new Date(n.createDate),     // date
+      'Creado por': n.createdBy
+    }));
+
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(dataToExport, { cellDates: true });
+
+    // Formatos de columnas: E = Monto Nota (índice 4), G = Fecha (índice 6)
+    const range = XLSX.utils.decode_range(ws['!ref'] || '');
+    for (let R = 1; R <= range.e.r; ++R) {
+      const montoCell = ws[XLSX.utils.encode_cell({ r: R, c: 4 })];
+      const fechaCell = ws[XLSX.utils.encode_cell({ r: R, c: 6 })];
+
+      if (montoCell) {
+        montoCell.t = 'n';
+        montoCell.z = '"$"#,##0.00';
+      }
+      if (fechaCell) {
+        fechaCell.z = 'dd/mm/yyyy hh:mm';
+      }
+    }
+
+    // Fila de totales al final
+    const totalReg = this.dataSource.data.length;
+    const totalMonto = this.dataSource.data.reduce((acc, n) => acc + (n.finalCreditAmount || 0), 0);
+
+    const lastRow = (range.e.r ?? 0) + 2; // +1 por 1-based +1 para siguiente fila
+    XLSX.utils.sheet_add_aoa(ws, [[
+      'Total de registros:', totalReg, '', 'Subtotal', totalMonto, '', '', ''
+    ]], { origin: `A${lastRow}` });
+
+    // Formatea la celda del total de monto (col E) de la fila de totales
+    const totalMontoCell = XLSX.utils.encode_cell({ r: lastRow - 1, c: 4 });
+    if (ws[totalMontoCell]) {
+      ws[totalMontoCell].t = 'n';
+      ws[totalMontoCell].z = '"$"#,##0.00';
+    }
+
+    const sheetName = `Notas (${this.tabTitle()})`;
+    const wb: XLSX.WorkBook = { Sheets: { [sheetName]: ws }, SheetNames: [sheetName] };
+    const excelBuffer: any = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+    const blob: Blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+
+    FileSaver.saveAs(blob, `NotasCredito_${this.tabTitle()}_${date}.xlsx`);
   }
 }

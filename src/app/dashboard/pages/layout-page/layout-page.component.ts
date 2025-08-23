@@ -122,7 +122,8 @@ export class LayoutPageComponent implements OnInit {
         expanded: false,
         roles: [1, 2],
         children: [
-          { label: 'Resumen', icon: 'history', url: '/sic/inicio/finanzas', roles: [1, 2] },         
+          { label: 'Ingresos', icon: 'price_check', url: '/sic/inicio/finanzas/ingresos', roles: [1, 2] }, 
+          { label: 'Egresos', icon: 'payments', url: '/sic/inicio/finanzas/egresos', roles: [1, 2] },
         ]
       }
     ];
