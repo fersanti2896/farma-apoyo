@@ -6,7 +6,7 @@ import { GlobalStateService } from '../../../shared/services';
 import { environment } from '../../../enviroments/enviroment';
 import { ReplyResponse, StatusRequest } from '../../interfaces/reply.interface';
 import { ApiResponse } from '../../../auth/interfaces/auth.interface';
-import { ClientDTO, CreateClientRequest, UpdateClientRequest } from '../../interfaces/client.interface';
+import { ClientByUserDTO, ClientDTO, CreateClientRequest, UpdateClientRequest } from '../../interfaces/client.interface';
 import { CPRequest, CPResponse, MunicipalityReponse, MunicipalityRequest, StatesResponse, TownReponse, TownRequest } from '../../interfaces/catalogs.interface';
 
 @Injectable({
@@ -50,6 +50,10 @@ export class ClientesService {
 
   activeClient( data: StatusRequest ): Observable<ApiResponse<ReplyResponse>> {
     return this.http.post<ApiResponse<ReplyResponse>>(`${ this.api }/Client/DeactivateClient`, data, { headers: this.getHeaders() });
+  }
+
+  getClientsByUser(): Observable<ApiResponse<ClientByUserDTO[]>> {
+    return this.http.get<ApiResponse<ClientByUserDTO[]>>(`${ this.api }/Client/GetClientsByUser`, { headers: this.getHeaders() });
   }
 
   private getHeaders(): HttpHeaders {

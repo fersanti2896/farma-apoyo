@@ -7,11 +7,13 @@ import { SharedModule } from '../../shared/shared.module';
 
 import { ListPageComponent } from './pages/list-page/list-page.component';
 import { CreatePageComponent } from './pages/create-page/create-page.component';
+import { MyClientsComponent } from './pages/my-clients/my-clients.component';
 
 @NgModule({
   declarations: [
     ListPageComponent,
-    CreatePageComponent
+    CreatePageComponent,
+    MyClientsComponent
   ],
   imports: [
     CommonModule,

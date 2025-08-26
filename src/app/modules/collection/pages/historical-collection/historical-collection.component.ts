@@ -299,6 +299,7 @@ export class HistoricalCollectionComponent {
 
       const fechaInicio = start.toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' });
       const fechaFin = end.toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' });
+      const fechaGeneracion = new Date().toLocaleString('es-MX');
 
       doc.addImage(logoImg, 'PNG', 10, 7, 36, 30);
       doc.setFontSize(16);
@@ -312,6 +313,7 @@ export class HistoricalCollectionComponent {
       doc.setFontSize(10);
       doc.setFont('helvetica', 'normal');
       doc.text(`Del ${fechaInicio} al ${fechaFin}`, pageWidth / 2, 38, { align: 'center' });
+      doc.text(`Generado el: ${fechaGeneracion}`, pageWidth / 2, 42, { align: 'center' });
 
       const columns = ['No. Ticket', 'Cliente', 'Vendedor', 'Estatus Ticket', 'Estatus Cobranza', 'Monto Ticket', 'Monto Pendiente', 'Fecha de Venta'];
 

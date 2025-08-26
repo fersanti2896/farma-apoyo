@@ -6,11 +6,11 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { map, Observable, startWith } from 'rxjs';
 
 import { ClientesService } from '../../services/clientes.service';
-import { ValidatorsService } from '../../../../shared/services';
-import { CreateClientRequest, UpdateClientRequest } from '../../../interfaces/client.interface';
 import { CPRequest, Municipality, States, Town, TownRequest } from '../../../interfaces/catalogs.interface';
-import { UserService } from '../../../usuarios/services/user.service';
+import { CreateClientRequest, UpdateClientRequest } from '../../../interfaces/client.interface';
 import { UsersDTO } from '../../../../auth/interfaces/auth.interface';
+import { UserService } from '../../../usuarios/services/user.service';
+import { ValidatorsService } from '../../../../shared/services';
 
 @Component({
   selector: 'app-create-page',
@@ -232,7 +232,6 @@ export class CreatePageComponent implements OnInit {
 
     return new Promise((resolve) => {
       this.clientsService.getTownByStateAndMunicipality(data).subscribe(response => {
-        console.log('loadTowns', response)
         this.towns = response.result;
         this.filteredColonia = this.coloniaControl.valueChanges.pipe(
           startWith(''),
@@ -267,7 +266,6 @@ export class CreatePageComponent implements OnInit {
     this.clientsService.getCP(data).subscribe({
       next: (response) => {
         if (response && response.result) {
-          console.log('GetCP', response)
           const result = response.result;
 
           const estadoObj = this.states.find(s => s.c_estado === result.c_estado);
@@ -304,7 +302,6 @@ export class CreatePageComponent implements OnInit {
         }
       },
       error: (err) => {
-        console.error('Error al consultar el CP:', err);
         this.snackBar.open('Ocurrió un error al buscar el código postal. Intenta nuevamente.', 'Cerrar', { duration: 3000 });
         this.isLoading = false;
       }
@@ -361,7 +358,7 @@ export class CreatePageComponent implements OnInit {
         );
         this.clientForm.reset();
         this.isLoading = false;
-        setTimeout(() => this.router.navigate(['/sic/inicio/clientes']), 100);
+        setTimeout(() => this.router.navigate(['/sic/inicio/clientes/list']), 100);
       },
       error: () => {
         this.isLoading = false;

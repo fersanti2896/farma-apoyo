@@ -121,7 +121,7 @@ export class ListPageComponent implements OnInit, AfterViewInit {
 
       doc.setFontSize(12);
       doc.setFont('helvetica', 'normal');
-      doc.text('Compras a Proveedores', pageWidth / 2, 28, { align: 'center' });
+      doc.text('Listado de Usuarios', pageWidth / 2, 28, { align: 'center' });
 
 
       doc.setFontSize(10);

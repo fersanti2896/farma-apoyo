@@ -30,6 +30,7 @@ export class PosPageComponent {
   public posForm!: FormGroup;
   public productsStock: ProductStockDTO[] = [];
   public sellerName: string = '';
+  public showClientAlert = false;
 
   constructor(
     private dialog: MatDialog,
@@ -55,6 +56,7 @@ export class PosPageComponent {
 
     this.posForm.get('selectedClientId')?.valueChanges.subscribe(() => {
       this.onClientChange();
+      this.showClientAlert = false;
       this.validateSaleConditions();
     });
   }
@@ -146,6 +148,16 @@ export class PosPageComponent {
   }
 
   openProductDialog(): void {
+    const selectedClientId = this.posForm.get('selectedClientId')?.value;
+    if (!selectedClientId) {
+      this.showClientAlert = true; // muestra mensaje rojo bajo el selector
+      this.snackBar.open('Selecciona un cliente antes de agregar productos.', 'Cerrar', {
+        duration: 3000,
+        panelClass: 'snack-warn'
+      });
+      return;
+    }
+    
     this.salesService.getProductStock().subscribe({
       next: (response) => {
         const productList = response.result;

@@ -6,13 +6,17 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 
-import { SalesService } from '../../services/sales.service';
-import { GlobalStateService } from '../../../../shared/services';
-import { SalesByUserDTO, SalesByUserRequest, SalesStatusDTO } from '../../../interfaces/sale.interface';
-import { PackagingService } from '../../../packaging/services/packaging.service';
-import { TicketDialogComponent } from '../../../packaging/components/ticket-dialog/ticket-dialog.component';
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
+
 import { CollectionService } from '../../../collection/services/collection.service';
+import { GlobalStateService } from '../../../../shared/services';
+import { PackagingService } from '../../../packaging/services/packaging.service';
+import { PaymentsHistoryDialogComponent } from '../../../collection/components/payments-history-dialog/payments-history-dialog.component';
 import { PaymentStatusDTO } from '../../../interfaces/collection.interface';
+import { SaleDTO, SalesByUserDTO, SalesByUserRequest, SalesStatusDTO } from '../../../interfaces/sale.interface';
+import { SalesService } from '../../services/sales.service';
+import { TicketDialogComponent } from '../../../packaging/components/ticket-dialog/ticket-dialog.component';
 
 @Component({
   selector: 'app-list-sales-person',
@@ -30,6 +34,7 @@ export class ListSalesPersonComponent {
   public salesStatuses: SalesStatusDTO[] = [];
   public paymentStatuses: PaymentStatusDTO[] = [];
   public filterForm!: FormGroup;
+  public fullName: string = '';
 
   @ViewChild(MatPaginatorIntl) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -42,7 +47,7 @@ export class ListSalesPersonComponent {
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
     private fb: FormBuilder
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.initFilters();
@@ -50,8 +55,9 @@ export class ListSalesPersonComponent {
     this.loadPaymentStatus();
     this.loadSalesByUser();
 
-    const { roleId } = this.globalStateService.getUser();
+    const { roleId, fullName } = this.globalStateService.getUser();
     this.rol = roleId;
+    this.fullName = fullName;
 
     this.displayedColumns = ['saleId', 'businessName', 'totalAmount', 'statusName', 'namePayment', 'saleDate', 'actions'];
   }
@@ -117,8 +123,8 @@ export class ListSalesPersonComponent {
       saleStatusId: saleStatusId || 20,
       PaymentStatusId: paymentStatusId || 20
     }
-    
-    this.salesService.listSalesByUser( data ).subscribe({
+
+    this.salesService.listSalesByUser(data).subscribe({
       next: (response) => {
         if (response.result) {
           let filteredStock = response.result ?? [];
@@ -150,5 +156,132 @@ export class ListSalesPersonComponent {
         this.snackBar.open('Error al obtener detalles del ticket.', 'Cerrar', { duration: 3000 });
       }
     });
+  }
+
+  openPaymentsHistory(sale: SaleDTO): void {
+    const request = { saleId: sale.saleId };
+
+    this.collectionService.getPaymentsHistorySaleById(request).subscribe({
+      next: (response) => {
+        if (response.result) {
+          this.dialog.open(PaymentsHistoryDialogComponent, {
+            width: '800px',
+            data: response.result
+          });
+        } else {
+          this.snackBar.open('No se encontraron pagos para este ticket.', 'Cerrar', { duration: 3000 });
+        }
+      },
+      error: () => {
+        this.snackBar.open('Error al obtener el histórico de pagos de la venta.', 'Cerrar', { duration: 3000 });
+      }
+    });
+  }
+
+  getChipStyle(statusId: number): { [klass: string]: any } {
+    switch (statusId) {
+      case 1: // Sin Pago
+        return { backgroundColor: '#87D5E8', color: '#1e293b', border: 'none' };
+      case 2: // Pago Parcial
+        return { backgroundColor: '#E8E587', color: '#92400e', border: 'none' };
+      case 3: // Pagado
+        return { backgroundColor: '#78E876', color: '#065f46', border: 'none' };
+      case 4: // Vencido
+        return { backgroundColor: '#E8A987', color: '#991b1b', border: 'none' };
+      case 5: // Cancelado
+        return { backgroundColor: '#FF8166', color: '#4c1d95', border: 'none' };
+      default:
+        return { backgroundColor: '#e5e7eb', color: '#374151', border: 'none' };
+    }
+  }
+
+  exportToPDF(): void {
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+
+    const formatter = new Intl.NumberFormat('es-MX', {
+      style: 'currency',
+      currency: 'MXN',
+      minimumFractionDigits: 2
+    });
+
+    const logoImg = new Image();
+    logoImg.src = 'assets/logos/inventory.png';
+
+    logoImg.onload = () => {
+      // Fechas (del filtro) y fecha de generación
+      const start = new Date(this.filterForm.value.startDate);
+      const end   = new Date(this.filterForm.value.endDate);
+
+      const fechaInicio     = start.toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' });
+      const fechaFin        = end.toLocaleDateString('es-MX',   { day: 'numeric', month: 'long', year: 'numeric' });
+      const fechaGeneracion = new Date().toLocaleString('es-MX');
+
+      // Encabezado
+      doc.addImage(logoImg, 'PNG', 10, 7, 36, 30);
+      doc.setFontSize(16);
+      doc.setFont('helvetica', 'bold');
+      doc.text('FARMA APOYO', pageWidth / 2, 20, { align: 'center' });
+
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Mis Ventas - Vendedor: ${this.fullName}`, pageWidth / 2, 28, { align: 'center' });
+
+      doc.setFontSize(10);
+      doc.text(`Del ${fechaInicio} al ${fechaFin}`, pageWidth / 2, 38, { align: 'center' });
+      doc.text(`Generado el: ${fechaGeneracion}`, pageWidth / 2, 42, { align: 'center' });
+
+      // Columnas según los datos de la tabla de este componente
+      const columns = [
+        'No. Ticket',
+        'Cliente',
+        'Estatus Ticket',
+        'Estatus Cobranza',
+        'Monto Ticket',
+        'Fecha de Venta'
+      ];
+
+      // Filas
+      const rows = this.dataSource.data.map(entry => ([
+        entry.saleId,
+        entry.businessName,
+        entry.statusName,
+        entry.namePayment,
+        formatter.format(entry.totalAmount),
+        new Date(entry.saleDate).toLocaleString('es-MX')
+      ]));
+
+      // Totales
+      const totalRecords = this.dataSource.data.length;
+      const totalAmount  = this.dataSource.data.reduce((acc, curr) => acc + (curr.totalAmount || 0), 0);
+
+      rows.push([
+        'Total de registros:', totalRecords.toString(), '', 'Subtotal',
+        formatter.format(totalAmount), ''
+      ]);
+
+      // Tabla
+      autoTable(doc, {
+        head: [columns],
+        body: rows,
+        startY: 45,
+        margin: { bottom: 30 },
+        styles: { fontSize: 9 },
+        headStyles: { halign: 'center' },
+        columnStyles: {
+          0: { halign: 'center' }, // No. Ticket
+          4: { halign: 'right' },  // Monto Ticket
+          5: { halign: 'center' }, // Fecha
+        },
+        didDrawPage: () => {
+          const str = `Página ${doc.getNumberOfPages()}`;
+          doc.setFontSize(10);
+          doc.text(str, pageWidth / 2, doc.internal.pageSize.getHeight() - 10, { align: 'center' });
+        }
+      });
+
+      const nombreArchivo = `MisVentas_${new Date().toLocaleDateString('es-MX')}.pdf`;
+      doc.save(nombreArchivo);
+    };
   }
 }

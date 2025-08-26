@@ -38,7 +38,8 @@ import { ConfirmNoteCreditComponent } from './components/confirm-note-credit/con
   ],
   exports: [
     DetailsCreditNoteComponent,
-    ConfirmNoteCreditComponent
+    ConfirmNoteCreditComponent,
+    PaymentsHistoryDialogComponent
   ]
 })
 export class CollectionModule { }

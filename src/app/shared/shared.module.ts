@@ -21,12 +21,14 @@ import { MatMenuModule } from '@angular/material/menu'
 
 import { LoadingPageComponent } from './components/loading-page/loading-page.component';
 import { ConfirmationDialogComponent } from './components/confirmation-dialog/confirmation-dialog.component';
+import { LandingComponent } from './components/landing/landing.component';
 
 
 @NgModule({
   declarations: [
     LoadingPageComponent,
-    ConfirmationDialogComponent
+    ConfirmationDialogComponent,
+    LandingComponent
   ],
   imports: [
     CommonModule,

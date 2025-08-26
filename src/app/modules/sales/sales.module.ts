@@ -9,6 +9,7 @@ import { ProductDialogComponent } from './components/product-dialog/product-dial
 import { SalesAlertDialogComponent } from './components/sales-alert-dialog/sales-alert-dialog.component';
 import { SalesRoutingModule } from './sales-routing.module';
 import { SharedModule } from '../../shared/shared.module';
+import { CollectionModule } from '../collection/collection.module';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { SharedModule } from '../../shared/shared.module';
   ],
   imports: [
     CommonModule,
+    CollectionModule,
     PackagingModule,
     ReactiveFormsModule,
     SalesRoutingModule,

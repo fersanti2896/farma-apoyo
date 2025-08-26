@@ -269,6 +269,7 @@ export class CreditNotesCollectionComponent {
 
       const fechaInicio = start.toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' });
       const fechaFin    = end.toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' });
+      const fechaGeneracion = new Date().toLocaleString('es-MX');
 
       // Encabezado
       doc.addImage(logoImg, 'PNG', 10, 7, 36, 30);
@@ -282,6 +283,7 @@ export class CreditNotesCollectionComponent {
 
       doc.setFontSize(10);
       doc.text(`Del ${fechaInicio} al ${fechaFin}`, pageWidth / 2, 38, { align: 'center' });
+      doc.text(`Generado el: ${fechaGeneracion}`, pageWidth / 2, 42, { align: 'center' });
 
       // Columnas (de tu displayedColumns para notas)
       const columns = [

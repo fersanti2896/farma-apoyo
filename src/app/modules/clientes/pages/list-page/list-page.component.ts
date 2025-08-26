@@ -68,7 +68,7 @@ export class ListPageComponent {
   }
 
   editClient(client: ClientDTO) {
-    this.router.navigate(['/sic/inicio/clientes/editar'], {
+    this.router.navigate(['/sic/inicio/clientes/list/editar'], {
       state: { client }
     });
   }
@@ -117,7 +117,7 @@ export class ListPageComponent {
 
     logoImg.onload = () => {
       const date = new Date().toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' });
-
+      const fechaGeneracion = new Date().toLocaleString('es-MX');
       doc.addImage(logoImg, 'PNG', 10, 7, 36, 30);
       doc.setFontSize(16);
       doc.setFont('helvetica', 'bold');
@@ -125,7 +125,7 @@ export class ListPageComponent {
 
       doc.setFontSize(12);
       doc.setFont('helvetica', 'normal');
-      doc.text('Compras a Proveedores', pageWidth / 2, 28, { align: 'center' });
+      doc.text('Listado de Clientes', pageWidth / 2, 28, { align: 'center' });
 
 
       doc.setFontSize(10);
@@ -141,6 +141,9 @@ export class ListPageComponent {
         entry.phoneNumber,
         formatter.format(entry.creditLimit)
       ]);
+
+      const totalRecords = this.dataSource.data.length;
+      rows.push(['Total de registros:', totalRecords.toString(), '', '', '', '' ]);
 
       autoTable(doc, {
         head: [columns],

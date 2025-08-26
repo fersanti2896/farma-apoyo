@@ -12,12 +12,14 @@
 
 <h2 class="text-2xl text-center md:w-full mb-4 -mt-6">Entregas Tickets</h2>
 <div class="flex items-center mb-4 w-full gap-4">
-  <button *ngIf="rol != 4 && rol != 5" mat-raised-button class="btn-cancel h-10 flex items-center gap-x-1" (click)="exportToPDF()">
+  <button *ngIf="rol != 4 && rol != 5" mat-raised-button class="btn-cancel h-10 flex items-center gap-x-1"
+    (click)="exportToPDF()">
     <span>Descargar</span>
     <mat-icon>picture_as_pdf</mat-icon>
   </button>
 
-  <button *ngIf="rol != 4 && rol != 5" mat-raised-button class="btn-success h-10 flex items-center gap-x-1" (click)="exportToExcel()">
+  <button *ngIf="rol != 4 && rol != 5" mat-raised-button class="btn-success h-10 flex items-center gap-x-1"
+    (click)="exportToExcel()">
     <span>Descargar</span>
     <mat-icon>explicit</mat-icon>
   </button>
@@ -33,100 +35,102 @@
   <div class="min-w-[700px]">
     <table mat-table [dataSource]="dataSource" matSort>
 
-        <!-- ID Column -->
-        <ng-container matColumnDef="saleId">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> No. Ticket </th>
-            <td mat-cell *matCellDef="let entry"> {{ entry.saleId }}</td>
-        </ng-container>
+      <!-- ID Column -->
+      <ng-container matColumnDef="saleId">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> No. Ticket </th>
+        <td mat-cell *matCellDef="let entry"> {{ entry.saleId }}</td>
+      </ng-container>
 
-        <!-- BusinessName Column -->
-        <ng-container matColumnDef="businessName">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Cliente </th>
-            <td mat-cell *matCellDef="let entry"> {{ entry.businessName }} </td>
-        </ng-container>
+      <!-- BusinessName Column -->
+      <ng-container matColumnDef="businessName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Cliente </th>
+        <td mat-cell *matCellDef="let entry"> {{ entry.businessName }} </td>
+      </ng-container>
 
-        <!-- Vendedor Column -->
-        <ng-container matColumnDef="vendedor">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Vendedor </th>
-            <td mat-cell *matCellDef="let entry"> {{ entry.vendedor }} </td>
-        </ng-container>
+      <!-- Vendedor Column -->
+      <ng-container matColumnDef="vendedor">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Vendedor </th>
+        <td mat-cell *matCellDef="let entry"> {{ entry.vendedor }} </td>
+      </ng-container>
 
-        <!-- Repartidor Column (solo en tab En Tránsito) -->
-        <ng-container *ngIf="selectedTabIndex === 1 || selectedTabIndex === 2" matColumnDef="repartidor">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Repartidor </th>
-            <td mat-cell *matCellDef="let entry"> {{ entry.repartidor }} </td>
-        </ng-container>
+      <!-- Repartidor Column (solo en tab En Tránsito) -->
+      <ng-container *ngIf="selectedTabIndex === 1 || selectedTabIndex === 2" matColumnDef="repartidor">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Repartidor </th>
+        <td mat-cell *matCellDef="let entry"> {{ entry.repartidor }} </td>
+      </ng-container>
 
-        <!-- StatusName Column -->
-        <ng-container matColumnDef="statusName">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Estatus Ticket </th>
-            <td mat-cell *matCellDef="let entry"> {{ entry.statusName }} </td>
-        </ng-container>
+      <!-- StatusName Column -->
+      <ng-container matColumnDef="statusName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Estatus Ticket </th>
+        <td mat-cell *matCellDef="let entry"> {{ entry.statusName }} </td>
+      </ng-container>
 
-        <!-- totalAmount Column -->
-        <ng-container matColumnDef="totalAmount">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Monto Ticket </th>
-            <td mat-cell *matCellDef="let entry"> {{ entry.totalAmount | currency}} </td>
-        </ng-container>
+      <!-- totalAmount Column -->
+      <ng-container matColumnDef="totalAmount">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Monto Ticket </th>
+        <td mat-cell *matCellDef="let entry"> {{ entry.totalAmount | currency}} </td>
+      </ng-container>
 
-        <!-- SaleDate Column -->
-        <ng-container matColumnDef="saleDate">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Fecha de Creación </th>
-            <td mat-cell *matCellDef="let entry"> {{ entry.saleDate | date: 'short' }} </td>
-        </ng-container>
+      <!-- SaleDate Column -->
+      <ng-container matColumnDef="saleDate">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Fecha de Creación </th>
+        <td mat-cell *matCellDef="let entry"> {{ entry.saleDate | date: 'short' }} </td>
+      </ng-container>
 
-        <!-- Actions Column -->
-        <ng-container matColumnDef="actions">
-            <th mat-header-cell *matHeaderCellDef> Acciones </th>
-            <td mat-cell *matCellDef="let entry">
-                <button mat-icon-button class="cursor-pointer" matTooltip="Ver Detalles del Ticket" (click)="openDetailsTicket(entry)">
-                    <mat-icon>visibility</mat-icon>
-                </button>
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef> Acciones </th>
+        <td mat-cell *matCellDef="let entry">
+          <button mat-icon-button class="cursor-pointer" matTooltip="Ver Detalles del Ticket"
+            (click)="openDetailsTicket(entry)">
+            <mat-icon>visibility</mat-icon>
+          </button>
 
-                <button *ngIf="selectedTabIndex === 0" matTooltip="Asignar Repartidor" mat-icon-button class="text-blue-600 cursor-pointer ml-1" (click)="openAssigmentDialog(entry)">
-                    <mat-icon>inventory_2</mat-icon>
-                </button>
+          <button *ngIf="selectedTabIndex === 0" matTooltip="Asignar Repartidor" mat-icon-button
+            class="text-blue-600 cursor-pointer ml-1" (click)="openAssigmentDialog(entry)">
+            <mat-icon>inventory_2</mat-icon>
+          </button>
 
-                <button *ngIf="selectedTabIndex !== 0" matTooltip="Ver Movimientos" mat-icon-button class="text-blue-600 cursor-pointer ml-1" (click)="openMovementsDialog(entry)">
-                    <mat-icon>article</mat-icon>
-                </button>
+          <button *ngIf="selectedTabIndex !== 0" matTooltip="Ver Movimientos" mat-icon-button
+            class="text-blue-600 cursor-pointer ml-1" (click)="openMovementsDialog(entry)">
+            <mat-icon>article</mat-icon>
+          </button>
 
-                <button *ngIf="selectedTabIndex === 1" matTooltip="Reasignar Repartidor" mat-icon-button class="text-blue-600 cursor-pointer ml-1" (click)="openReAssigmentDialog(entry)">
-                    <mat-icon>group_add</mat-icon>
-                </button>
+          <button *ngIf="selectedTabIndex === 1" matTooltip="Reasignar Repartidor" mat-icon-button
+            class="text-blue-600 cursor-pointer ml-1" (click)="openReAssigmentDialog(entry)">
+            <mat-icon>group_add</mat-icon>
+          </button>
 
-                <button *ngIf="selectedTabIndex === 2" matTooltip="Actualizar Entrega Completada" mat-icon-button class="text-green-600 cursor-pointer ml-1" (click)="openStatusDialog(entry)">
-                  <mat-icon>send</mat-icon>
-                </button>
+          <button *ngIf="selectedTabIndex === 2" matTooltip="Actualizar Entrega Completada" mat-icon-button
+            class="text-green-600 cursor-pointer ml-1" (click)="openStatusDialog(entry)">
+            <mat-icon>send</mat-icon>
+          </button>
 
-                <button *ngIf="selectedTabIndex === 2"
-                        mat-icon-button
-                        matTooltip="Más acciones"
-                        [matMenuTriggerFor]="moreMenu"
-                        class="cursor-pointer">
-                  <mat-icon>more_vert</mat-icon>
-                </button>
+          <button *ngIf="selectedTabIndex === 2" mat-icon-button matTooltip="Más acciones"
+            [matMenuTriggerFor]="moreMenu" class="cursor-pointer">
+            <mat-icon>more_vert</mat-icon>
+          </button>
 
-                <mat-menu #moreMenu="matMenu">
-                  <button mat-menu-item (click)="openCreditNote(entry)">
-                    <mat-icon>receipt_long</mat-icon>
-                    <span>Nota de Crédito</span>
-                  </button>
+          <mat-menu #moreMenu="matMenu">
+            <button mat-menu-item (click)="openCreditNote(entry)">
+              <mat-icon>receipt_long</mat-icon>
+              <span>Nota de Crédito</span>
+            </button>
 
-                  <button mat-menu-item (click)="openExchange(entry)">
-                    <mat-icon>swap_horiz</mat-icon>
-                    <span>Canje</span>
-                  </button>
-                </mat-menu>
-            </td>
-        </ng-container>
+            <button mat-menu-item (click)="openExchange(entry)">
+              <mat-icon>swap_horiz</mat-icon>
+              <span>Canje</span>
+            </button>
+          </mat-menu>
+        </td>
+      </ng-container>
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
-        <tr class="mat-row" *matNoDataRow>
-            <td class="mat-cell" colspan="4">No hay datos que coincidan con "{{ input.value }}"</td>
-        </tr>
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="4">No hay datos que coincidan con "{{ input.value }}"</td>
+      </tr>
     </table>
   </div>
   <mat-paginator [pageSizeOptions]="[25, 50, 100]" aria-label="Selector de página"></mat-paginator>

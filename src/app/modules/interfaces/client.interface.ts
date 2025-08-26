@@ -54,4 +54,5 @@ export interface ClientByUserDTO {
     availableCredit: number;
     paymentDays: number;
     isBlocked: number;
+    address: string;
 }

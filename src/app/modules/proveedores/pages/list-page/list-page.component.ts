@@ -117,7 +117,7 @@ export class ListPageComponent {
 
       doc.setFontSize(12);
       doc.setFont('helvetica', 'normal');
-      doc.text('Proveedores', pageWidth / 2, 28, { align: 'center' });
+      doc.text('Listado de Proveedores', pageWidth / 2, 28, { align: 'center' });
 
 
       doc.setFontSize(10);

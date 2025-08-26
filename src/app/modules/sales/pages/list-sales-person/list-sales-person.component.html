@@ -69,6 +69,13 @@
   </div>
 </form>
 
+<div class="flex items-center mb-6 -mt-2 w-full gap-4">
+  <button mat-raised-button class="btn-cancel h-10 flex items-center gap-x-1" (click)="exportToPDF()">
+    <span>Descargar</span>
+    <mat-icon>picture_as_pdf</mat-icon>
+  </button>
+</div>
+
 <div class="mat-elevation-z8 overflow-x-auto">
   <div class="min-w-[700px]">
     <table mat-table [dataSource]="dataSource" matSort>
@@ -96,11 +103,14 @@
             <td mat-cell *matCellDef="let entry"> {{ entry.statusName }} </td>
         </ng-container>
 
-        
-        <!-- StatusName Column -->
+        <!-- NamePayment Column -->
         <ng-container matColumnDef="namePayment">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Estatus Cobranza</th>
-            <td mat-cell *matCellDef="let entry"> {{ entry.namePayment }} </td>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Estatus Cobranza </th>
+          <td mat-cell *matCellDef="let entry">
+            <mat-chip [ngStyle]="getChipStyle(entry.paymentStatusId)" style="border: transparent;" selected>
+              {{ entry.namePayment }}
+            </mat-chip>
+          </td>
         </ng-container>
         
         <!-- SaleDate Column -->
@@ -116,11 +126,15 @@
                 <button mat-icon-button matTooltip="Ver Detalles del Ticket" class="cursor-pointer" (click)="openDetailsTicket(entry)">
                     <mat-icon>visibility</mat-icon>
                 </button>
+
+                <button *ngIf="entry.paymentStatusId == 2 || entry.paymentStatusId == 3" matTooltip="Ver Pagos del Ticket" mat-icon-button class="text-green-600 cursor-pointer" (click)="openPaymentsHistory(entry)">
+                  <mat-icon>price_change</mat-icon>
+                </button>
             </td>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{ 'row-expired': row.paymentStatusId === 4 }"></tr>
 
         <tr class="mat-row" *matNoDataRow>
             <td class="mat-cell" colspan="4">No hay datos que coincidan con "{{ input.value }}"</td>

@@ -36,7 +36,7 @@ const routes: Routes = [
       { path: 'clientes', 
         loadChildren: () => import('../modules/clientes/clientes.module').then(m => m.ClientesModule),
         canActivate: [ AuthGuard ],
-        data: { roles: [1, 2] } 
+        data: { roles: [1, 2, 3, 5] } 
       },
       { path: 'ventas', 
         loadChildren: () => import('../modules/sales/sales.module').then(m => m.SalesModule),

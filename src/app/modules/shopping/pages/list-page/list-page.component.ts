@@ -146,6 +146,19 @@ export class ListPageComponent {
         return this.showPrices ? [...base, formatter.format(entry.totalAmount)] : base;
       });
 
+      const totalRecords = this.dataSource.data.length;
+      if (this.showPrices) {
+        const totalAmount = this.dataSource.data
+          .reduce((acc: number, curr: any) => acc + (curr.totalAmount || 0), 0);
+
+        // Fila de totales cuando hay columna Monto
+        rows.push([
+          'Total de registros:', totalRecords.toString(), '', '', 'Subtotal', formatter.format(totalAmount)
+        ]);
+      } else {
+        // Solo total de registros (sin monto)
+        rows.push(['Total de registros:', totalRecords.toString(), '', '', '']);
+      }
 
       autoTable(doc, {
         head: [columns],

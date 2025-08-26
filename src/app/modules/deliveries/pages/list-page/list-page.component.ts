@@ -253,7 +253,7 @@ export class ListPageComponent implements OnInit {
           next: (response) => {
             if (response.result) {
               this.snackBar.open('Estatus actualizado a Completado', 'Cerrar', { duration: 3000 });
-              this.loadSales();
+              this.loadSalesDelivery(4);
             }
 
             this.isLoading = false;

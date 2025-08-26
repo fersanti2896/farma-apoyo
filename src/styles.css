@@ -40,6 +40,14 @@
     @apply cursor-pointer w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white
 }
 
+.row-expired {
+  background-color: rgba(255, 49, 49, 0.15) !important; /* Rojo tenue para no perder legibilidad */
+  color: #b71c1c; /* Texto rojo oscuro */
+  font-weight: 500;
+}
+
+
+
 html, body {
   max-width: 100%;
   overflow-x: hidden;

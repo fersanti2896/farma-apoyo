@@ -90,7 +90,7 @@ export class LayoutPageComponent implements OnInit {
         children: [
           { label: 'Usuarios', icon: 'supervisor_account', url: '/sic/inicio/usuarios', roles: [1] },
           { label: 'Proveedores', icon: 'local_mall', url: '/sic/inicio/proveedores', roles: [1, 2] },  
-          { label: 'Clientes', icon: 'groups', url: '/sic/inicio/clientes', roles: [1, 2] }
+          { label: 'Clientes', icon: 'groups', url: '/sic/inicio/clientes/list', roles: [1, 2] }
         ]
       },
       {
@@ -101,7 +101,8 @@ export class LayoutPageComponent implements OnInit {
         children: [
           { label: 'Punto de Venta', icon: 'point_of_sale', url: '/sic/inicio/ventas/venta', roles: [1, 2, 3, 5] }, 
           { label: 'Catálogo de Precios', icon: 'category', url: '/sic/inicio/productos', roles: [1, 2, 3, 5] },
-          { label: 'Mis Ventas', icon: 'price_check', url: '/sic/inicio/ventas/list', roles: [ 5 ] },           
+          { label: 'Mis Ventas', icon: 'price_check', url: '/sic/inicio/ventas/list', roles: [ 5 ] },
+          { label: 'Mis Clientes', icon: '3p', url: '/sic/inicio/clientes/my-list', roles: [ 5 ] }     
         ]
       },
       {

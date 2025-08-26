@@ -1,14 +1,10 @@
+import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import {
-  HttpEvent,
-  HttpHandler,
-  HttpInterceptor,
-  HttpRequest,
-} from '@angular/common/http';
 import { Observable, catchError, switchMap, throwError } from 'rxjs';
-import { GlobalStateService } from './global-state.service';
+import { Router } from '@angular/router';
+
 import { AuthService } from '../../auth/services/auth.service';
+import { GlobalStateService } from './global-state.service';
 import { RefreshTokenRequest } from '../../auth/interfaces/auth.interface';
 
 @Injectable()
