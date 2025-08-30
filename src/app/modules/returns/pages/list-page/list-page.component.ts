@@ -10,15 +10,15 @@ import { CancelSaleRequest, ConfirmCreditNoteRequest, SaleDTO, SalesPendingPayme
 import { ClientDTO } from '../../../interfaces/client.interface';
 import { CollectionService } from '../../../collection/services/collection.service';
 import { ConfirmDevolutionDialogComponent } from '../../components/confirm-devolution-dialog/confirm-devolution-dialog.component';
+import { ConfirmNoteCreditComponent } from '../../../collection/components/confirm-note-credit/confirm-note-credit.component';
+import { CreditNoteListDTO, CreditNoteListRequest, PaymentStatusDTO, SalesPendingPaymentRequest } from '../../../interfaces/collection.interface';
+import { DetailsCreditNoteComponent } from '../../../collection/components/details-credit-note/details-credit-note.component';
 import { GlobalStateService } from '../../../../shared/services';
 import { MovementsDialogComponent } from '../../../deliveries/components/movements-dialog/movements-dialog.component';
 import { PackagingService } from '../../../packaging/services/packaging.service';
-import { CreditNoteListDTO, CreditNoteListRequest, PaymentStatusDTO, SalesPendingPaymentRequest } from '../../../interfaces/collection.interface';
 import { SalesService } from '../../../sales/services/sales.service';
 import { TicketDialogComponent } from '../../../packaging/components/ticket-dialog/ticket-dialog.component';
 import { UsersDTO } from '../../../../auth/interfaces/auth.interface';
-import { DetailsCreditNoteComponent } from '../../../collection/components/details-credit-note/details-credit-note.component';
-import { ConfirmNoteCreditComponent } from '../../../collection/components/confirm-note-credit/confirm-note-credit.component';
 
 @Component({
   selector: 'app-list-page',
@@ -123,8 +123,9 @@ export class ListPageComponent {
     this.collectionService.listSalesHistorical( data ).subscribe({
       next: (response) => {
         if (response.result) {
+          
           let filteredStock = response.result;
-          this.dataSource.data = filteredStock;
+          this.dataSourceReturns.data = filteredStock;
         }
         this.isLoading = false;
       },
@@ -322,7 +323,7 @@ export class ListPageComponent {
       case 4: // Vencido
         return { backgroundColor: '#E8A987', color: '#991b1b', border: 'none' };
       case 5: // Cancelado
-        return { backgroundColor: '#9B8AE6', color: '#4c1d95', border: 'none' };
+        return { backgroundColor: '#FF8166', color: '#4c1d95', border: 'none' };
       default:
         return { backgroundColor: '#e5e7eb', color: '#374151', border: 'none' };
     }

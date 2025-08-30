@@ -202,13 +202,13 @@ export class PaidCollectionComponent {
   getChipStyle(statusId: number): { [klass: string]: any } {
     switch (statusId) {
       case 1: // Sin Pago
-        return { backgroundColor: '#87D5E8', color: '#1e293b', border: 'none' };
+        return { backgroundColor: '#F2E550', color: '#1e293b', border: 'none' };
       case 2: // Pago Parcial
-        return { backgroundColor: '#E8E587', color: '#92400e', border: 'none' };
+        return { backgroundColor: '#87D5E8', color: '#92400e', border: 'none' };
       case 3: // Pagado
         return { backgroundColor: '#78E876', color: '#065f46', border: 'none' };
       case 4: // Vencido
-        return { backgroundColor: '#E8A987', color: '#991b1b', border: 'none' };
+        return { backgroundColor: '#F2AD50', color: '#991b1b', border: 'none' };
       case 5: // Cancelado
         return { backgroundColor: '#FF8166', color: '#4c1d95', border: 'none' };
       default:

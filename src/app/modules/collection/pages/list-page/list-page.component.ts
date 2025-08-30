@@ -41,6 +41,7 @@ export class ListPageComponent {
   public paymentStatuses: PaymentStatusDTO[] = [];
   public users: UsersDTO[] = [];
   public clients: ClientDTO[] = [];
+  private readonly THIRD_PARTY_METHOD = 'Pago Cuenta de Tercero';
 
   public paymentMethods = [
     { value: 'Efectivo', label: 'Efectivo' },
@@ -54,8 +55,8 @@ export class ListPageComponent {
 
   // ---- NUEVO: Pago múltiple ----
   public multiPayActive = false;
-  public multiPayForm!: FormGroup; // {enteredAmount, remainingAmount, paymentDate}
-  public selectedIds = new Set<number>(); // saleId seleccionados
+  public multiPayForm!: FormGroup;
+  public selectedIds = new Set<number>();
 
   constructor(
     private collectionService: CollectionService,
@@ -91,7 +92,6 @@ export class ListPageComponent {
     const { roleId } = this.globalStateService.getUser();
     this.rol = roleId;
 
-    // this.displayedColumns = [ 'saleId', 'businessName', 'salesPerson', 'saleStatus', 'paymentStatus', 'totalAmount', 'amountPending', 'saleDate', 'paymentAmount', 'paymentMethod', 'actions' ];
     this.updateDisplayedColumns();
   }
 
@@ -285,6 +285,30 @@ export class ListPageComponent {
       comments: `Se registra pago.`
     };
 
+    //  Si es "Pago Cuenta de Tercero" abre el diálogo para elegir proveedor (requerido)
+  if (paymentData.paymentMethod === this.THIRD_PARTY_METHOD) {
+    const dialogRef = this.dialog.open(MultiplePaymentDialogComponent, {
+      width: '720px',
+      data: {
+        singleMode: true,                                    // <<-- modo individual
+        lockedMethod: this.THIRD_PARTY_METHOD,               // <<-- método preseleccionado
+        enteredAmount: paymentData.paymentAmount,
+        paymentDate: new Date(),                             
+        selected: [{ saleId: paymentData.saleId, amount: paymentData.paymentAmount }],
+        paymentMethods: []                                   // no se usará; el método irá bloqueado
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.applied) {
+        this.snackBar.open('Pago registrado exitosamente.', 'Cerrar', { duration: 3000 });
+        this.loadSalesPayments();
+      }
+    });
+
+    return;
+  }
+
     this.collectionService.applicationPayment(request).subscribe({
       next: (response) => {
         this.snackBar.open('Pago registrado exitosamente.', 'Cerrar', { duration: 3000 });
@@ -299,13 +323,13 @@ export class ListPageComponent {
   getChipStyle(statusId: number): { [klass: string]: any } {
     switch (statusId) {
       case 1: // Sin Pago
-        return { backgroundColor: '#87D5E8', color: '#1e293b', border: 'none' };
+        return { backgroundColor: '#F2E550', color: '#1e293b', border: 'none' };
       case 2: // Pago Parcial
-        return { backgroundColor: '#E8E587', color: '#92400e', border: 'none' };
+        return { backgroundColor: '#87D5E8', color: '#92400e', border: 'none' };
       case 3: // Pagado
         return { backgroundColor: '#78E876', color: '#065f46', border: 'none' };
       case 4: // Vencido
-        return { backgroundColor: '#E8A987', color: '#991b1b', border: 'none' };
+        return { backgroundColor: '#F2AD50', color: '#991b1b', border: 'none' };
       case 5: // Cancelado
         return { backgroundColor: '#FF8166', color: '#4c1d95', border: 'none' };
       default:
@@ -392,6 +416,7 @@ export class ListPageComponent {
     const dialogRef = this.dialog.open(MultiplePaymentDialogComponent, {
       width: '720px',
       data: {
+        singleMode: false,
         enteredAmount: this.multiPayForm.get('enteredAmount')?.value,
         paymentDate: this.multiPayForm.get('paymentDate')?.value,
         selected: selectedRows,
@@ -403,7 +428,6 @@ export class ListPageComponent {
       if (result?.applied) {
         this.snackBar.open('Pago múltiple aplicado correctamente.', 'Cerrar', { duration: 3000 });
         this.loadSalesPayments();
-        // opcional: salir de modo múltiple
         this.multiPayActive = false;
         this.updateDisplayedColumns();
       }

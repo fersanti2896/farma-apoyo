@@ -209,6 +209,15 @@ export class PosPageComponent {
     }, 0);
   }
 
+  // Método con los precios minimos de venta
+  getTotalMin(): number {
+    return this.products.controls.reduce((sum, group) => {
+      const { quantity, defaultPrice } = group.value;
+
+      return sum + quantity * defaultPrice; 
+    }, 0)
+  }
+
   registerSale(): void {
     const selectedClientId = this.posForm.get('selectedClientId')?.value;
 
@@ -231,6 +240,7 @@ export class PosPageComponent {
     });
 
     const totalAmount = this.getTotal();
+    const totalAmountMin = this.getTotalMin();
 
     if (totalAmount > this.availableCredit) {
       this.openWarning(`El total de la venta ($${totalAmount.toLocaleString()}) excede el crédito disponible del cliente ($${this.availableCredit.toLocaleString()}).`);
@@ -240,7 +250,8 @@ export class PosPageComponent {
     const request: CreateSaleRequest = {
       clientId: +selectedClientId,
       totalAmount,
-      products
+      products,
+      totalAmountMin
     };
 
     this.isLoading = true;

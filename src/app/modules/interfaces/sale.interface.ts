@@ -4,6 +4,7 @@ import { ProductSale } from './product.interface';
 export interface CreateSaleRequest {
     clientId: number;
     totalAmount: number;
+    totalAmountMin: number;
     products: ProductSale[];
 }
 
@@ -15,6 +16,7 @@ export interface SaleDTO {
     statusName: string;
     totalAmount: number;
     saleDate: string;
+    salesPersonId?: number;
     vendedor: string;
     repartidor: string;
 }
@@ -34,6 +36,8 @@ export interface DetailsSaleDTO {
 
 export interface SalesByStatusRequest {
     saleStatusId: number;
+    clientId?: number;
+    salesPersonId?: number;
 }
 
 export interface DetailSaleByIdRequest {
@@ -160,4 +164,31 @@ export interface DetailsNoteCreditDTO {
 export interface NoteCreditData {
     sale: CreditNoteListDTO;
     details: DetailsNoteCreditDTO[];
+}
+
+export interface DetailsMultipleSalesRequest {
+    saleId: number[];
+}
+
+export interface DetailsMultipleSaleDTO {
+    saleId: number;
+    createDate: string;
+    bussinessName: string;
+    vendedor: string;
+    totalAmount: number;
+    products: ProductsDTO[]
+}
+
+export interface ProductsDTO {
+    saleId: number;
+    productId: number;
+    productName: string;
+    quantity: number;
+    unitPrice: number;
+    subTotal: number;
+    lot: string;
+    expirationDate: string;
+    createDate: string;
+    vendedor: string;
+    repartidor: string;
 }

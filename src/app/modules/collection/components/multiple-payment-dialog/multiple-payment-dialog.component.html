@@ -38,13 +38,33 @@
     <form [formGroup]="form" class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
         <mat-form-field appearance="fill">
             <mat-label>Método de pago</mat-label>
-            <mat-select formControlName="method" placeholder="Seleccionar">
+            <mat-select formControlName="method">
+                <!-- Opción fija si viene bloqueado -->
+                <mat-option *ngIf="data.lockedMethod" [value]="data.lockedMethod">
+                {{ data.lockedMethod }}
+                </mat-option>
+
+                <!-- Opciones normales cuando NO viene bloqueado -->
+                <ng-container *ngIf="!data.lockedMethod">
                 <mat-option *ngFor="let m of data.paymentMethods" [value]="m.value">
                     {{ m.label }}
                 </mat-option>
+                </ng-container>
             </mat-select>
-            <mat-error *ngIf="isValidField('method')">
-                Método de Pago es Requerido.
+            <mat-error *ngIf="isValidField('method')">Método de Pago es Requerido.</mat-error>
+        </mat-form-field>
+
+
+        <!-- Proveedor (solo para Pago Cuenta de Tercero) -->
+        <mat-form-field appearance="fill" *ngIf="isThirdParty">
+            <mat-label>Proveedor (Cuenta de Tercero)</mat-label>
+            <mat-select formControlName="thirdPartySupplierId" placeholder="Seleccionar proveedor">
+            <mat-option *ngFor="let p of suppliers" [value]="p.supplierId">
+                {{ p.businessName }}
+            </mat-option>
+            </mat-select>
+            <mat-error *ngIf="isValidField('thirdPartySupplierId')">
+            Proveedor es requerido para PCT.
             </mat-error>
         </mat-form-field>
 

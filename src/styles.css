@@ -41,12 +41,10 @@
 }
 
 .row-expired {
-  background-color: rgba(255, 49, 49, 0.15) !important; /* Rojo tenue para no perder legibilidad */
+  background-color: rgba(255, 212, 155, 0.615) !important; /* Rojo tenue para no perder legibilidad */
   color: #b71c1c; /* Texto rojo oscuro */
   font-weight: 500;
 }
-
-
 
 html, body {
   max-width: 100%;
