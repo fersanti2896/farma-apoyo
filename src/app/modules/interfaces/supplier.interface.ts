@@ -7,6 +7,7 @@ export interface SupplierDTO {
     address: string;
     status: number;
     descriptionStatus: string;
+    balance: number;
 }
 
 export interface CreateSupplierRequest {

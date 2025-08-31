@@ -150,11 +150,12 @@ export class PosPageComponent {
   openProductDialog(): void {
     const selectedClientId = this.posForm.get('selectedClientId')?.value;
     if (!selectedClientId) {
-      this.showClientAlert = true; // muestra mensaje rojo bajo el selector
+      this.showClientAlert = true;
       this.snackBar.open('Selecciona un cliente antes de agregar productos.', 'Cerrar', {
         duration: 3000,
         panelClass: 'snack-warn'
       });
+      
       return;
     }
     

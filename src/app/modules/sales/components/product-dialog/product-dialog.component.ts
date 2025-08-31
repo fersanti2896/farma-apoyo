@@ -4,7 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { map, Observable, startWith } from 'rxjs';
 
 import { ProductStockDTO } from '../../../interfaces/product.interface';
-import { ValidatorsService } from '../../../../shared/services';
+import { GlobalStateService, ValidatorsService } from '../../../../shared/services';
 
 @Component({
   selector: 'app-product-dialog',
@@ -18,11 +18,15 @@ export class ProductDialogComponent {
   public filteredProducts!: Observable<ProductStockDTO[]>;
   public invalidPrice: boolean = false;
   public invalidStock: boolean = false;
+  public canBypassPrice = false;
+
+  private readonly PRICE_BYPASS_USER_IDS: number[] = [ 2, 8, 26 ];
 
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<ProductDialogComponent>,
     private validatorsService: ValidatorsService,
+    private globalStateService: GlobalStateService,
     @Inject(MAT_DIALOG_DATA) public data: ProductStockDTO[]
   ) {
     this.products = data;
@@ -34,6 +38,10 @@ export class ProductDialogComponent {
       stockReal: [null],
       defaultPrice: [null]
     });
+
+    const user = this.globalStateService.getUser();
+    const uid = Number(user?.userId ?? 0);
+    this.canBypassPrice = this.PRICE_BYPASS_USER_IDS.includes(uid);
   }
 
   isValidField = ( field: string ) => {
@@ -79,7 +87,7 @@ export class ProductDialogComponent {
     const { customPrice, defaultPrice, stockReal, quantity } = this.form.value;
 
     // Validación de precio mínimo
-    if (customPrice < defaultPrice) {
+    if (!this.canBypassPrice && customPrice < defaultPrice) {
       this.invalidPrice = true;
       return;
     }

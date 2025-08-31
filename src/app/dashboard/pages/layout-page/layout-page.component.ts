@@ -73,9 +73,9 @@ export class LayoutPageComponent implements OnInit {
         label: 'Almacén',
         icon: 'inventory_2',
         expanded: false,
-        roles: [1, 2, 4, 5],
+        roles: [1, 2, 4, 5, 6],
         children: [
-          { label: 'Inventario', icon: 'inventory', url: '/sic/inicio/stock', roles: [1, 2, 4, 5] },
+          { label: 'Inventario', icon: 'inventory', url: '/sic/inicio/stock', roles: [1, 2, 4, 5, 6] },
           { label: 'Compras', icon: 'shopping_cart', url: '/sic/inicio/compras', roles: [1, 2, 4] },
           { label: 'Surtido', icon: 'trolley', url: '/sic/inicio/surtido', roles: [1, 2, 4] },
           { label: 'Entregas', icon: 'outbox', url: '/sic/inicio/entregas', roles: [1, 2, 4, 5, 6] },
@@ -97,12 +97,12 @@ export class LayoutPageComponent implements OnInit {
         label: 'Ventas',
         icon: 'sell',
         expanded: false,
-        roles: [1, 2, 3, 5],
+        roles: [1, 2, 3, 5, 6],
         children: [
-          { label: 'Punto de Venta', icon: 'point_of_sale', url: '/sic/inicio/ventas/venta', roles: [1, 2, 3, 5] }, 
-          { label: 'Catálogo de Precios', icon: 'category', url: '/sic/inicio/productos', roles: [1, 2, 3, 5] },
-          { label: 'Mis Ventas', icon: 'price_check', url: '/sic/inicio/ventas/list', roles: [ 1, 2, 3, 5 ] },
-          { label: 'Mis Clientes', icon: '3p', url: '/sic/inicio/clientes/my-list', roles: [ 5 ] }     
+          { label: 'Punto de Venta', icon: 'point_of_sale', url: '/sic/inicio/ventas/venta', roles: [1, 2, 3, 5, 6] }, 
+          { label: 'Catálogo de Precios', icon: 'category', url: '/sic/inicio/productos', roles: [1, 2, 3, 5, 6] },
+          { label: 'Mis Ventas', icon: 'price_check', url: '/sic/inicio/ventas/list', roles: [ 1, 2, 3, 5, 6 ] },
+          { label: 'Mis Clientes', icon: '3p', url: '/sic/inicio/clientes/my-list', roles: [ 5, 6 ] }     
         ]
       },
       {

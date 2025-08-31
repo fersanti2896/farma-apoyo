@@ -243,9 +243,7 @@ export class CreatePageComponent {
       return;
     }
 
-    // flujo de creación
     const { supplierId, invoiceNumber } = this.form.value;
-    // const totalAmount = this.getTotalAmount();
 
     const createPayload: CreateWarehouseRequest = {
       supplierId,

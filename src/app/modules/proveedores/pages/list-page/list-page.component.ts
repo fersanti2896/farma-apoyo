@@ -21,7 +21,7 @@ import { SupplierDTO } from '../../../interfaces/supplier.interface';
   templateUrl: './list-page.component.html'
 })
 export class ListPageComponent {
-  public displayedColumns: string[] = ['businessName', 'contactName', 'phone', 'address', 'descriptionStatus', 'actions'];
+  public displayedColumns: string[] = ['businessName', 'contactName', 'balance', 'phone', 'address', 'descriptionStatus', 'actions'];
   public dataSource = new MatTableDataSource<SupplierDTO>();
   public isLoading: boolean = false;
 
@@ -101,14 +101,13 @@ export class ListPageComponent {
   exportToPDF(): void {
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
-
     const formatter = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', minimumFractionDigits: 2} );
 
     const logoImg = new Image();
     logoImg.src = 'assets/logos/inventory.png';
-
     logoImg.onload = () => {
       const date = new Date().toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' });
+      
 
       doc.addImage(logoImg, 'PNG', 10, 7, 36, 30);
       doc.setFontSize(16);
@@ -124,10 +123,11 @@ export class ListPageComponent {
       doc.setFont('helvetica', 'normal');
       doc.text(`Fecha: ${date}`, pageWidth - 14, 28, { align: 'right' });
 
-      const columns = ['Nombre', 'Contacto', 'Teléfono', 'Dirección'];
+      const columns = ['Nombre', 'Contacto', 'Saldo', 'Teléfono', 'Dirección'];
       const rows = this.dataSource.data.map(entry => [
         entry.businessName,
         entry.contactName,
+        formatter.format(entry.balance),
         entry.phone,
         entry.address
       ]);
@@ -168,6 +168,7 @@ export class ListPageComponent {
     const dataToExport = this.dataSource.data.map(entry => ({
       Nombre: entry.businessName,
       Contacto: entry.contactName,
+      Saldo: entry.balance,
       Telefono: entry.phone,
       Dirección: entry.address
     }));
