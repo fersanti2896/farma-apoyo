@@ -124,7 +124,7 @@ export class PosPageComponent {
   loadClientsByUser(): void {
     this.isLoading = true;
 
-    this.salesService.getClienteByUser().subscribe({
+    this.salesService.getClientsByUser().subscribe({
       next: (response) => {
         if(response.result) 
           this.clientsByUser = response.result;

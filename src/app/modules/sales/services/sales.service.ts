@@ -29,6 +29,10 @@ export class SalesService {
   getClienteByUser(): Observable<ApiResponse<ClientByUserDTO[]>> {
     return this.http.get<ApiResponse<ClientByUserDTO[]>>(`${ this.api }/Client/GetClientsByUser`, { headers: this.getHeaders() });
   }
+
+  getClientsByUser(): Observable<ApiResponse<ClientByUserDTO[]>> {
+    return this.http.get<ApiResponse<ClientByUserDTO[]>>(`${ this.api }/Client/GetClientsNotAddressByUser`, { headers: this.getHeaders() });
+  }
   
   getProductStock(): Observable<ApiResponse<ProductStockDTO[]>> {
     return this.http.get<ApiResponse<ProductStockDTO[]>>(`${ this.api }/Warehouse/GetStockReal`, { headers: this.getHeaders() });

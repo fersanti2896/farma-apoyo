@@ -169,6 +169,7 @@ export class CreatePageComponent implements OnInit {
 
       this.isLoading = true;
 
+      console.log(data)
       this.clientsService.getMunicipalityByState(data).subscribe(response => {
         this.municipalitys = response.result;
         this.filteredMunicipality = this.municipalityControl.valueChanges.pipe(
@@ -371,45 +372,143 @@ export class CreatePageComponent implements OnInit {
     this.location.back();
   }
 
-  private patchClientForm(client: any): void {
+  // private patchClientForm(client: any): void {
+  //   this.clientForm.patchValue({
+  //     businessName: client.businessName,
+  //     contactName: client.contactName,
+  //     phone: client.phoneNumber,
+  //     email: client.email,
+  //     paymentDays: client.paymentDays,
+  //     creditLimit: client.creditLimit,
+  //     notes: client.notes,
+  //     street: client.street ?? '',
+  //     outsideNumber: client.extNbr ?? '',
+  //     interiorNumber: client.innerNbr ?? '',
+  //     zipCode: client.cve_CodigoPostal ?? '',
+  //     state: client.cve_Estado ?? '',
+  //     municipality: client.cve_Municipio ?? '',
+  //     colonia: client.cve_Colonia ?? '',
+  //     userId: client.userId
+  //   });
+
+  //   const estadoObj = this.states.find(s => s.c_estado === client.cve_Estado);
+  //   if (estadoObj) this.stateControl.setValue(estadoObj, { emitEvent: false });
+
+  //   this.loadMunicipality(client.cve_Estado).then(() => {
+  //     const municipioObj = this.municipalitys.find(m => m.c_mnpio === client.cve_Municipio);
+  //     if (municipioObj) {
+  //       this.municipalityControl.setValue(municipioObj, { emitEvent: false });
+  //       this.clientForm.get('municipality')?.setValue(municipioObj.c_mnpio);
+  //     }
+
+  //     return this.loadTowns(client.cve_Estado, client.cve_Municipio);
+  //   }).then(() => {
+  //     const coloniaObj = this.towns.find(t => t.id_asenta_cpcons === client.cve_Colonia);
+  //     if (coloniaObj) {
+  //       this.coloniaControl.setValue(coloniaObj, { emitEvent: false });
+  //       this.clientForm.get('colonia')?.setValue(coloniaObj.id_asenta_cpcons);
+  //     }
+  //   });
+
+  //   const userObj = this.users.find(u => u.userId === client.userId);
+  //   if (userObj) this.userControl.setValue(userObj, { emitEvent: false });
+  // }
+
+  private async patchClientForm(client: any): Promise<void> {
+    // Patch con fallback
     this.clientForm.patchValue({
-      businessName: client.businessName,
-      contactName: client.contactName,
-      phone: client.phoneNumber,
-      email: client.email,
-      paymentDays: client.paymentDays,
-      creditLimit: client.creditLimit,
-      notes: client.notes,
-      street: client.street,
-      outsideNumber: client.extNbr,
-      interiorNumber: client.innerNbr,
-      zipCode: client.cve_CodigoPostal,
-      state: client.cve_Estado,
-      municipality: client.cve_Municipio,
-      colonia: client.cve_Colonia,
-      userId: client.userId
+      businessName: client?.businessName ?? '',
+      contactName: client?.contactName ?? '',
+      phone: client?.phoneNumber ?? '',
+      email: client?.email ?? '',
+      paymentDays: client?.paymentDays ?? '',
+      creditLimit: client?.creditLimit ?? '',
+      notes: client?.notes ?? '',
+      street: client?.street ?? '',
+      outsideNumber: client?.extNbr ?? '',
+      interiorNumber: client?.innerNbr ?? '',
+      zipCode: client?.cve_CodigoPostal ?? '',
+      state: client?.cve_Estado ?? '',
+      // municipality/colonia se setean después únicamente si hay códigos
+      userId: client?.userId ?? null
     });
 
-    const estadoObj = this.states.find(s => s.c_estado === client.cve_Estado);
-    if (estadoObj) this.stateControl.setValue(estadoObj, { emitEvent: false });
-
-    this.loadMunicipality(client.cve_Estado).then(() => {
-      const municipioObj = this.municipalitys.find(m => m.c_mnpio === client.cve_Municipio);
-      if (municipioObj) {
-        this.municipalityControl.setValue(municipioObj, { emitEvent: false });
-        this.clientForm.get('municipality')?.setValue(municipioObj.c_mnpio);
-      }
-
-      return this.loadTowns(client.cve_Estado, client.cve_Municipio);
-    }).then(() => {
-      const coloniaObj = this.towns.find(t => t.id_asenta_cpcons === client.cve_Colonia);
-      if (coloniaObj) {
-        this.coloniaControl.setValue(coloniaObj, { emitEvent: false });
-        this.clientForm.get('colonia')?.setValue(coloniaObj.id_asenta_cpcons);
-      }
-    });
-
-    const userObj = this.users.find(u => u.userId === client.userId);
+    // Usuario
+    const userObj = this.users.find(u => u.userId === client?.userId);
     if (userObj) this.userControl.setValue(userObj, { emitEvent: false });
+
+    // ESTADO
+    const cveEstado = client?.cve_Estado ?? null;
+    if (cveEstado) {
+      const estadoObj = this.states.find(s => s.c_estado === cveEstado);
+      if (estadoObj) {
+        this.stateControl.setValue(estadoObj, { emitEvent: false });
+        this.clientForm.get('state')?.setValue(estadoObj.c_estado, { emitEvent: false });
+      }
+
+      // MUNICIPIO
+      await this.loadMunicipality(cveEstado);
+
+      // Habilita municipio si hay catálogo
+      const hasMunicipios = (this.municipalitys?.length ?? 0) > 0;
+      this.clientForm.get('municipality')?.setValue('', { emitEvent: false });
+      if (hasMunicipios) {
+        this.clientForm.get('municipality')?.enable({ emitEvent: false });
+        this.municipalityControl.enable({ emitEvent: false });
+
+        const cveMunicipio = client?.cve_Municipio ?? null;
+        if (cveMunicipio) {
+          const municipioObj = this.municipalitys.find(m => m.c_mnpio === cveMunicipio);
+          if (municipioObj) {
+            this.municipalityControl.setValue(municipioObj, { emitEvent: false });
+            this.clientForm.get('municipality')?.setValue(municipioObj.c_mnpio, { emitEvent: false });
+
+            // COLONIA
+            await this.loadTowns(cveEstado, cveMunicipio);
+
+            const hasTowns = (this.towns?.length ?? 0) > 0;
+            this.clientForm.get('colonia')?.setValue('', { emitEvent: false });
+            if (hasTowns) {
+              this.clientForm.get('colonia')?.enable({ emitEvent: false });
+              this.coloniaControl.enable({ emitEvent: false });
+
+              const cveColonia = client?.cve_Colonia ?? null;
+              if (cveColonia) {
+                const coloniaObj = this.towns.find(t => t.id_asenta_cpcons === cveColonia);
+                if (coloniaObj) {
+                  this.coloniaControl.setValue(coloniaObj, { emitEvent: false });
+                  this.clientForm.get('colonia')?.setValue(coloniaObj.id_asenta_cpcons, { emitEvent: false });
+                }
+              }
+            } else {
+              this.clientForm.get('colonia')?.disable({ emitEvent: false });
+              this.coloniaControl.disable({ emitEvent: false });
+            }
+          }
+        } else {
+          // No hay municipio válido: deshabilita dependientes
+          this.clientForm.get('municipality')?.disable({ emitEvent: false });
+          this.municipalityControl.disable({ emitEvent: false });
+          this.clientForm.get('colonia')?.disable({ emitEvent: false });
+          this.coloniaControl.disable({ emitEvent: false });
+        }
+      } else {
+        this.clientForm.get('municipality')?.disable({ emitEvent: false });
+        this.municipalityControl.disable({ emitEvent: false });
+        this.clientForm.get('colonia')?.disable({ emitEvent: false });
+        this.coloniaControl.disable({ emitEvent: false });
+      }
+    } else {
+      // Sin estado: limpia y deshabilita todo lo dependiente
+      this.municipalitys = [];
+      this.towns = [];
+      this.clientForm.get('municipality')?.reset();
+      this.clientForm.get('colonia')?.reset();
+      // this.clientForm.get('municipality')?.disable({ emitEvent: false });
+      // this.municipalityControl.disable({ emitEvent: false });
+      // this.clientForm.get('colonia')?.disable({ emitEvent: false });
+      // this.coloniaControl.disable({ emitEvent: false });
+    }
   }
+
 }
