@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
+
+import { map, Observable, startWith } from 'rxjs';
 
 import { ClientByUserDTO } from '../../../interfaces/client.interface';
 import { CreateSaleRequest, SaleDTO } from '../../../interfaces/sale.interface';
@@ -32,6 +34,9 @@ export class PosPageComponent {
   public sellerName: string = '';
   public showClientAlert = false;
 
+  public clientControl = new FormControl<ClientByUserDTO | string | null>(null, Validators.required);
+  public filteredClients!: Observable<ClientByUserDTO[]>;
+
   constructor(
     private dialog: MatDialog,
     private fb: FormBuilder, 
@@ -58,6 +63,18 @@ export class PosPageComponent {
       this.onClientChange();
       this.showClientAlert = false;
       this.validateSaleConditions();
+    });
+
+    // Listener para clientControl (texto o selección)
+    this.clientControl.valueChanges.subscribe(val => {
+      // Cuando el usuario borra el texto manualmente, limpiamos el selectedClientId
+      if (typeof val === 'string') {
+        // Limpia selectedClientId si solo hay texto
+        this.posForm.get('selectedClientId')?.setValue('', { emitEvent: true });
+        this.availableCredit = 0;
+        this.isBlocked = 'Desconocido';
+        this.isRegisterDisabled = true;
+      }
     });
   }
 
@@ -121,18 +138,65 @@ export class PosPageComponent {
     });
   }
 
+  // loadClientsByUser(): void {
+  //   this.isLoading = true;
+
+  //   this.salesService.getClientsByUser().subscribe({
+  //     next: (response) => {
+  //       if(response.result) 
+  //         this.clientsByUser = response.result;
+        
+  //       this.isLoading = false;
+  //     },
+  //     error: () => this.isLoading = false
+  //   });
+  // }
+
   loadClientsByUser(): void {
     this.isLoading = true;
 
     this.salesService.getClientsByUser().subscribe({
       next: (response) => {
-        if(response.result) 
+        if (response.result) {
           this.clientsByUser = response.result;
-        
+
+          // Configuración del filtro (similar a productos)
+          this.filteredClients = this.clientControl.valueChanges.pipe(
+            startWith(''),
+            map(value => {
+              const text = typeof value === 'string'
+                ? value.toLowerCase()
+                : (value?.businessName ?? '').toLowerCase();
+
+              return this.clientsByUser.filter(c =>
+                (c.businessName ?? '').toLowerCase().includes(text)
+              );
+            })
+          );
+        }
+
         this.isLoading = false;
       },
       error: () => this.isLoading = false
     });
+  }
+
+  displayClientFn = (client: ClientByUserDTO | string | null): string => {
+    if (!client || typeof client === 'string') return client ?? '';
+    return client.businessName ?? '';
+  }
+
+  onClientSelected(client: ClientByUserDTO): void {
+    // Sincroniza el hidden del formulario
+    this.posForm.get('selectedClientId')?.setValue(client.clientId);
+
+    // Actualiza info visual
+    this.availableCredit  = client?.availableCredit ?? 0;
+    this.isBlocked = client?.isBlocked == 0 ? 'Activo' : 'Bloqueado';
+
+    // Quita alertas y revalida
+    this.showClientAlert = false;
+    this.validateSaleConditions();
   }
 
   get products(): FormArray {
@@ -300,6 +364,7 @@ export class PosPageComponent {
 
   resetForm(): void {
     this.posForm.get('selectedClientId')?.reset('');
+    this.clientControl.reset(null);
     this.products.clear();
     this.availableCredit = 0;
     this.isBlocked = 'Desconocido';

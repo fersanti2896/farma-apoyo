@@ -9,26 +9,53 @@
       <p><strong>Vendedor:</strong> {{ sellerName }}</p>
       <p><strong>Crédito Vendedor:</strong> ${{ availableCreditUser | number:'1.0-2' }}</p>
     </div>
-    <div>
+
+    <!-- <div>
       <label for="client"><strong>Cliente:</strong></label>
-      <select
-        id="client"
-        formControlName="selectedClientId"
-        (change)="onClientChange()"
-        class="w-full border rounded px-2 py-1 mt-1"
-      >
+      <select id="client" formControlName="selectedClientId" (change)="onClientChange()" class="w-full border rounded px-2 py-1 mt-1">
         <option value="">Cliente</option>
         <option *ngFor="let client of clientsByUser" [value]="client.clientId">
           {{ client.businessName }}
         </option>
       </select>
-      <!-- AVISO en rojo si presionó "Agregar producto" sin cliente -->
       <div *ngIf="showClientAlert" class="text-red-600 text-sm mt-1 flex items-center gap-1">
         <mat-icon>error_outline</mat-icon>
         Selecciona un cliente antes de agregar productos.
       </div>
 
       <p class="mt-2"><strong>Crédito Disponible:</strong> ${{ availableCredit  | number:'1.0-2' }}</p>
+      <p class="mt-2"><strong>Estado:</strong> {{ isBlocked }} </p>
+    </div> -->
+    <div>
+      <label for="client"><strong>Cliente:</strong></label>
+
+      <mat-form-field appearance="fill" class="w-full mt-1">
+        <mat-label>Cliente</mat-label>
+        <input type="text" matInput [formControl]="clientControl" [matAutocomplete]="autoClient"
+          placeholder="Buscar cliente por nombre" />
+
+        <mat-autocomplete #autoClient="matAutocomplete" [displayWith]="displayClientFn"
+          (optionSelected)="onClientSelected($event.option.value)">
+          <mat-option *ngFor="let c of filteredClients | async" [value]="c">
+            {{ c.businessName }}
+          </mat-option>
+        </mat-autocomplete>
+
+        <mat-error *ngIf="clientControl.invalid && clientControl.touched">
+          Debes seleccionar un cliente.
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Campo oculto para seguir usando selectedClientId en el form -->
+      <input type="hidden" formControlName="selectedClientId" />
+
+      <!-- AVISO en rojo si presionó "Agregar producto" sin cliente -->
+      <div *ngIf="showClientAlert" class="text-red-600 text-sm mt-1 flex items-center gap-1">
+        <mat-icon>error_outline</mat-icon>
+        Selecciona un cliente antes de agregar productos.
+      </div>
+
+      <p class="mt-2"><strong>Crédito Disponible:</strong> ${{ availableCredit | number:'1.0-2' }}</p>
       <p class="mt-2"><strong>Estado:</strong> {{ isBlocked }} </p>
     </div>
   </div>
@@ -64,7 +91,7 @@
           </td>
           <td class="px-2 sm:px-4 py-2 text-center">
             <button mat-icon-button class="cursor-pointer text-red-600 font-bold" (click)="removeProduct(i)">
-                <mat-icon>delete</mat-icon>
+              <mat-icon>delete</mat-icon>
             </button>
           </td>
         </tr>

@@ -1,31 +1,24 @@
 <h2 mat-dialog-title class="text-center text-2xl">Agregar Producto</h2>
 
-<div *ngIf="canBypassPrice"
-     class="mb-2 px-3 py-3 rounded bg-blue-50 text-blue-700 border border-blue-200 text-sm">
-  <strong>Permiso activo:</strong> puedes establecer el <em>precio de venta</em> libremente.
-  No se validará contra el precio sugerido.
+<div *ngIf="canBypassPrice" class="mb-2 px-3 py-3 rounded bg-blue-50 text-blue-700 border border-blue-200 text-sm">
+    <strong>Permiso activo:</strong> puedes establecer el <em>precio de venta</em> libremente.
+    No se validará contra el precio sugerido.
 </div>
 
 <mat-dialog-content [formGroup]="form">
     <div class="flex flex-col md:flex-row gap-4">
         <mat-form-field appearance="fill" class="flex-1">
-        <mat-label>Producto</mat-label>
-        <input
-            type="text"
-            matInput
-            [formControl]="productControl"
-            [matAutocomplete]="auto"
-            required
-        />
-        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayProductFn">
-            <mat-option *ngFor="let product of filteredProducts | async" [value]="product">
-            {{ product.productName }}
-            </mat-option>
-        </mat-autocomplete>
+            <mat-label>Producto</mat-label>
+            <input type="text" matInput [formControl]="productControl" [matAutocomplete]="auto" required />
+            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayProductFn">
+                <mat-option *ngFor="let product of filteredProducts | async" [value]="product">
+                    {{ product.productName }}
+                </mat-option>
+            </mat-autocomplete>
 
-        <mat-error *ngIf="isValidField('productName')">
-            El producto es requerido.
-        </mat-error>
+            <mat-error *ngIf="isValidField('productName')">
+                El producto es requerido.
+            </mat-error>
         </mat-form-field>
     </div>
 
@@ -69,13 +62,13 @@
         No se puede añadir el producto porque es menor al precio mínimo de venta.
     </div>
 
-        <!-- Mensaje de error de validación de precio -->
+    <!-- Mensaje de error de validación de precio -->
     <div *ngIf="invalidStock" class="text-red-600 text-sm mt-1">
         No se puede añadir el producto porque la cantidad solicitada es mayor al Stock Disponible.
     </div>
 </mat-dialog-content>
 
 <mat-dialog-actions align="center">
-  <button mat-flat-button class="btn-success" (click)="onSave()">Agregar</button>
-  <button mat-button class="h-9 btn-warn ml-4" (click)="onCancel()">Cancelar</button>
+    <button mat-flat-button class="btn-success" (click)="onSave()">Agregar</button>
+    <button mat-button class="h-9 btn-warn ml-4" (click)="onCancel()">Cancelar</button>
 </mat-dialog-actions>
