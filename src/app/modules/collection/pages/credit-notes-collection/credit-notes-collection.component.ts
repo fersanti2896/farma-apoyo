@@ -138,8 +138,8 @@ export class CreditNotesCollectionComponent {
     return {
       startDate: new Date(startDate).toISOString(),
       endDate: new Date(endDate).toISOString(),
-      clientId: clientId || 20,
-      salesPersonId: salesPersonId || 20,
+      clientId: clientId || 20000,
+      salesPersonId: salesPersonId || 20000,
       saleStatusId: this.currentStatusId(),
     };
   }

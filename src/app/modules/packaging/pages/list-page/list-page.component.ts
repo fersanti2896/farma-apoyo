@@ -114,8 +114,8 @@ export class ListPageComponent {
 
     const data: SalesByStatusRequest = {
       saleStatusId: 2,
-      clientId: clientId || 20,
-      salesPersonId: salesPersonId || 20,
+      clientId: clientId || 20000,
+      salesPersonId: salesPersonId || 20000,
     }
 
     this.packingService.listSales(data).subscribe({

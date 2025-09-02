@@ -177,7 +177,7 @@ export class ListPageComponent implements OnInit, AfterViewInit {
         Nombre: `${entry.firstName} ${entry.lastName} ${entry.mLastName}`,
         Username: entry.username,
         Rol: entry.role,
-        Estatus: entry.status == 0 ? 'Activo' : 'Inactivo' 
+        Estatus: entry.status == 1 ? 'Activo' : 'Inactivo' 
     }));
 
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(dataToExport, { cellDates: true });

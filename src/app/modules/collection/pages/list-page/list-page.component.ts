@@ -175,10 +175,10 @@ export class ListPageComponent {
     const data: SalesPendingPaymentRequest = {
       startDate: new Date(startDate).toISOString(),
       endDate: new Date(endDate).toISOString(),
-      clientId: clientId || 20,
-      salesPersonId: salesPersonId || 20,
-      saleStatusId: saleStatusId || 20,
-      paymentStatusId: paymentStatusId || 20,
+      clientId: clientId || 20000,
+      salesPersonId: salesPersonId || 20000,
+      saleStatusId: saleStatusId || 20000,
+      paymentStatusId: paymentStatusId || 20000,
     }
 
     this.collectionService.listSalesPayments( data ).subscribe({
