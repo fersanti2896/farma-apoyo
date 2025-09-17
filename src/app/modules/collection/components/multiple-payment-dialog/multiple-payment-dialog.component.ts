@@ -1,11 +1,12 @@
 import { Component, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+
 import { CollectionService } from '../../services/collection.service';
 import { MultiplePaymentDialogData } from '../../../interfaces/collection.interface';
-import { ValidatorsService } from '../../../../shared/services';
-import { SupplierDTO } from '../../../interfaces/supplier.interface';
 import { ProveedoresService } from '../../../proveedores/services/proveedores.service';
+import { SupplierDTO } from '../../../interfaces/supplier.interface';
+import { ValidatorsService } from '../../../../shared/services';
 
 @Component({
   selector: 'app-multiple-payment-dialog',

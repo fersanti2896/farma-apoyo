@@ -1,0 +1,54 @@
+<shared-loading-page *ngIf="isLoading"></shared-loading-page>
+
+<div class="flex justify-between items-center mb-4 w-full">
+    <div class="w-full md:w-2/6">
+        <mat-form-field class="h-17 md:w-full w-40 -ml-4">
+            <mat-label>Buscar</mat-label>
+            <input matInput (keyup)="applyFilter($event)" placeholder="Buscar" #input />
+        </mat-form-field>
+    </div>
+</div>
+
+<div class="mat-elevation-z8 overflow-x-auto">
+    <div class="min-w-[900px]">
+        <table mat-table [dataSource]="dataSource" matSort>
+            <!-- mismas columnas -->
+            <ng-container matColumnDef="entryId">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
+                <td mat-cell *matCellDef="let r"> {{ r.entryId }} </td>
+            </ng-container>
+            <ng-container matColumnDef="businessName">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Proveedor </th>
+                <td mat-cell *matCellDef="let r"> {{ r.businessName }} </td>
+            </ng-container>
+            <ng-container matColumnDef="invoiceNumber">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> # Factura </th>
+                <td mat-cell *matCellDef="let r"> {{ r.invoiceNumber || '-' }} </td>
+            </ng-container>
+            <ng-container matColumnDef="totalAmount">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Total </th>
+                <td mat-cell *matCellDef="let r"> {{ r.totalAmount | currency }} </td>
+            </ng-container>
+            <ng-container matColumnDef="entryDate">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Fecha Creación </th>
+                <td mat-cell *matCellDef="let r"> {{ r.entryDate | date:'short' }} </td>
+            </ng-container>
+            <ng-container matColumnDef="expectedPaymentDate">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Fecha Pago </th>
+                <td mat-cell *matCellDef="let r"> {{ r.expectedPaymentDate | date:'short' }} </td>
+            </ng-container>
+            <ng-container matColumnDef="statusName">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Estatus </th>
+                <td mat-cell *matCellDef="let r"> {{ r.statusName }} </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+            <tr class="mat-row" *matNoDataRow>
+                <td class="mat-cell" colspan="7">No hay datos que coincidan con "{{ input.value }}"</td>
+            </tr>
+        </table>
+    </div>
+    <mat-paginator [pageSizeOptions]="[25, 50, 100]" aria-label="Selector de página"></mat-paginator>
+</div>

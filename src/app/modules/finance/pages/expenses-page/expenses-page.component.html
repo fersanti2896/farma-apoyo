@@ -1,1 +1,18 @@
-<p>Módulo en construcción</p>
+
+<h2 class="text-2xl text-center md:w-full mb-6 mt-4">Finanzas - Egresos</h2>
+
+<mat-tab-group [(selectedIndex)]="selectedIndex" (selectedIndexChange)="onTabChange($event)">
+  <mat-tab label="Costos">
+    <!-- Render perezoso: solo se instancia cuando está seleccionada -->
+    <div class="p-4" *ngIf="selectedIndex === 0">
+      <finance-costs-exp></finance-costs-exp>
+    </div>
+  </mat-tab>
+
+  <mat-tab label="Gastos">
+    <!-- Render perezoso: solo se instancia cuando está seleccionada -->
+    <div class="p-4" *ngIf="selectedIndex === 1">
+      <finance-expenses-exp></finance-expenses-exp>
+    </div>
+  </mat-tab>
+</mat-tab-group>

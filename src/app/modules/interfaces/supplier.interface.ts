@@ -20,3 +20,14 @@ export interface CreateSupplierRequest {
     paymentTerms: string;
     notes: string;
 }
+
+export interface BalanceSupplierRequest {
+    supplierId: number;
+}
+
+export interface BalaceTSupplierDTO {
+    supplierId: number;
+    businessName: string;
+    balance: number;
+    thirdPartyBalance: number;
+}

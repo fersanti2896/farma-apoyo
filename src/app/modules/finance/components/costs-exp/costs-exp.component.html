@@ -1,0 +1,88 @@
+<shared-loading-page *ngIf="isLoading"></shared-loading-page>
+
+<form [formGroup]="filterForm" (ngSubmit)="filterSales()" class="mb-4">
+    <div class="flex flex-col md:flex-row gap-4 w-full">
+        <div class="flex flex-row gap-4 w-full md:w-auto">
+            <mat-form-field appearance="fill" class="w-full sm:w-1/2 md:w-36">
+                <mat-label>Desde</mat-label>
+                <input matInput [matDatepicker]="picker1" formControlName="startDate" />
+                <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                <mat-datepicker #picker1></mat-datepicker>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill" class="w-full sm:w-1/2 md:w-36">
+                <mat-label>Hasta</mat-label>
+                <input matInput [matDatepicker]="picker2" formControlName="endDate" />
+                <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                <mat-datepicker #picker2></mat-datepicker>
+            </mat-form-field>
+        </div>
+
+        <div class="flex flex-row gap-4 w-full md:w-auto">
+            <mat-form-field appearance="fill" class="w-full sm:w-1/2 md:w-48">
+                <mat-label>Proveedor</mat-label>
+                <mat-select formControlName="supplierId">
+                    <mat-option [value]="null">Todos</mat-option>
+                    <mat-option *ngFor="let p of suppliers" [value]="p.supplierId">
+                        {{ p.businessName }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill" class="w-full sm:w-1/2 md:w-48">
+                <mat-label>Estatus</mat-label>
+                <mat-select formControlName="statusId">
+                    <mat-option [value]="null">Todos</mat-option>
+                    <mat-option [value]="1">Pendiente de Pagar</mat-option>
+                    <mat-option [value]="2">Pagado</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+
+        <div class="w-full sm:w-1/2 md:w-48 mb-5 flex items-end">
+            <button mat-raised-button class="btn-success h-10 md:w-auto" type="submit">
+                Filtrar
+            </button>
+            <button mat-raised-button class="btn-cancel h-10 ml-2 md:h-10" type="button" (click)="clearFilters()">
+                Limpiar
+            </button>
+        </div>
+    </div>
+</form>
+
+<div class="flex items-center mb-6 -mt-2 w-full gap-4">
+    <button mat-raised-button class="btn-cancel h-10 flex items-center gap-x-1" (click)="exportToPDF()">
+        <span>Descargar</span>
+        <mat-icon>picture_as_pdf</mat-icon>
+    </button>
+
+    <button mat-raised-button class="btn-success h-10 flex items-center gap-x-1" (click)="exportToExcel()">
+        <span>Descargar</span>
+        <mat-icon>explicit</mat-icon>
+    </button>
+</div>
+
+<!-- (Tus filtros existentes arriba) -->
+
+<mat-tab-group [(selectedIndex)]="selectedIndex" (selectedIndexChange)="onTabChange($event)">
+    <mat-tab label="Histórico">
+        <div class="pt-4">
+            <finance-costs-historical-table [data]="dataHistorical" [isLoading]="isLoading">
+            </finance-costs-historical-table>
+        </div>
+    </mat-tab>
+
+    <mat-tab label="Por Pagar">
+        <div class="pt-4">
+            <finance-costs-to-pay-table [title]="'Por Pagar'" [data]="dataToPay" [isLoading]="isLoading" (refresh)="loadCostsForActiveTab()">
+            </finance-costs-to-pay-table>
+        </div>
+    </mat-tab>
+
+    <mat-tab label="Pagado">
+        <div class="pt-4">
+            <finance-costs-paid-table [title]="'Pagado'" [data]="dataPaid" [isLoading]="isLoading">
+            </finance-costs-paid-table>
+        </div>
+    </mat-tab>
+</mat-tab-group>

@@ -84,7 +84,7 @@
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{ 'row-expired': row.totalAmount === 0 }"></tr>
 
       <tr class="mat-row" *matNoDataRow>
         <td class="mat-cell" colspan="4">No hay datos que coincidan con "{{ input.value }}"</td>
