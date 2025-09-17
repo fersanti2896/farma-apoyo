@@ -21,7 +21,7 @@ import { SupplierDTO } from '../../../interfaces/supplier.interface';
   templateUrl: './list-page.component.html'
 })
 export class ListPageComponent {
-  public displayedColumns: string[] = ['businessName', 'contactName', 'balance', 'phone', 'address', 'descriptionStatus', 'actions'];
+  public displayedColumns: string[] = ['businessName', 'contactName', 'balance', 'thirdPartyBalance', 'phone', 'address', 'descriptionStatus', 'actions'];
   public dataSource = new MatTableDataSource<SupplierDTO>();
   public isLoading: boolean = false;
 
@@ -123,11 +123,12 @@ export class ListPageComponent {
       doc.setFont('helvetica', 'normal');
       doc.text(`Fecha: ${date}`, pageWidth - 14, 28, { align: 'right' });
 
-      const columns = ['Nombre', 'Contacto', 'Saldo', 'Teléfono', 'Dirección'];
+      const columns = ['Nombre', 'Contacto', 'Saldo', 'Saldo Cuenta Tercero', 'Teléfono', 'Dirección'];
       const rows = this.dataSource.data.map(entry => [
         entry.businessName,
         entry.contactName,
         formatter.format(entry.balance),
+        formatter.format(entry.thirdPartyBalance),
         entry.phone,
         entry.address
       ]);
@@ -169,6 +170,7 @@ export class ListPageComponent {
       Nombre: entry.businessName,
       Contacto: entry.contactName,
       Saldo: entry.balance,
+      SaldoCuentaTercero: entry.thirdPartyBalance,
       Telefono: entry.phone,
       Dirección: entry.address
     }));

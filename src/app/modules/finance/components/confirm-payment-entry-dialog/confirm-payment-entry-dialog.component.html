@@ -1,19 +1,35 @@
 <h2 mat-dialog-title class="text-center text-2xl">Confirmar Pago</h2>
 
 <mat-dialog-content class="flex flex-col gap-4">
+    <!-- Stacked chips con info del proveedor -->
+    <div *ngIf="!loadingChips" class="space-y-2 mb-2">
+        <!-- Chip de proveedor ocupa todo el ancho -->
+        <mat-chip class="w-full !justify-between !bg-green-300 !text-blue-800">
+            <span class="font-medium">Proveedor: </span>
+            <span>{{ (supplierBalance?.businessName || data.businessName) }}</span>
+        </mat-chip>
+
+        <!-- Fila para los saldos -->
+        <div class="flex gap-2">
+            <mat-chip class="flex-1 !justify-between !bg-green-300 !text-blue-800">
+                <span class="font-medium">Saldo: </span>
+                <span>{{ (supplierBalance?.balance || 0) | currency:'MXN' }}</span>
+            </mat-chip>
+
+            <mat-chip class="flex-1 !justify-between !bg-green-300 !text-blue-800">
+                <span class="font-medium">Saldo Cta Tercero: </span>
+                <span>{{ (supplierBalance?.thirdPartyBalance || 0) | currency:'MXN' }}</span>
+            </mat-chip>
+        </div>
+    </div>
+
+    <mat-progress-bar *ngIf="loadingChips" mode="indeterminate"></mat-progress-bar>
+
     <!-- Resumen de la nota -->
     <div class="border rounded p-3">
         <div class="font-semibold mb-2">Nota seleccionada</div>
         <table class="w-full text-sm">
             <tbody>
-                <tr>
-                    <td class="py-1 font-medium">ID Nota</td>
-                    <td class="py-1 text-right">#{{ data.entryId }}</td>
-                </tr>
-                <tr>
-                    <td class="py-1 font-medium">Proveedor</td>
-                    <td class="py-1 text-right">{{ data.businessName }}</td>
-                </tr>
                 <tr>
                     <td class="py-1 font-medium"># Factura</td>
                     <td class="py-1 text-right">{{ data.invoiceNumber || '-' }}</td>
@@ -51,6 +67,27 @@
             </mat-select>
             <mat-error *ngIf="isValidField('method')">Método de pago es requerido.</mat-error>
         </mat-form-field>
+
+        <!-- Aviso solo para "Pago Cuenta de Tercero" -->
+        <div class="md:col-span-2 mt-1" *ngIf="isThirdParty" role="status" aria-live="polite">
+            <div
+                class="flex items-start gap-2 px-3 py-2 rounded bg-blue-50 border border-blue-200 text-blue-800 text-sm">
+                <mat-icon class="mt-0.5" color="primary">info</mat-icon>
+                <span>Se restará el saldo a pagar de <strong>Cuenta de Tercero</strong> del proveedor.</span>
+            </div>
+        </div>
+
+        <!-- Mensaje de error en rojo DEBAJO del aviso azul -->
+        <div class="md:col-span-2 -mt-2" *ngIf="isThirdParty && form.get('amount')?.hasError('exceedThirdParty')"
+            role="alert" aria-live="assertive">
+            <div class="flex items-start gap-2 px-3 py-2 rounded bg-red-50 border border-red-200 text-red-700 text-sm">
+                <mat-icon class="mt-0.5" color="warn">info</mat-icon>
+                <span>
+                    El monto supera el saldo disponible en <strong>Cuenta de Tercero</strong>
+                    ({{ supplierBalance?.thirdPartyBalance | currency:'MXN' }}).
+                </span>
+            </div>
+        </div>
 
         <!-- Comentarios (ocupa 2 columnas) -->
         <mat-form-field appearance="fill" class="md:col-span-2">

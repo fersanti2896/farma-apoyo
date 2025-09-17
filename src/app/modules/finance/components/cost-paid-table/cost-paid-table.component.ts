@@ -14,7 +14,7 @@ export class CostPaidTableComponent {
   @Input() title = 'Pagado';
   @Input() isLoading = false;
 
-  displayedColumns: string[] = ['entryId','businessName','invoiceNumber','totalAmount','entryDate','expectedPaymentDate','statusName'];
+  displayedColumns: string[] = ['entryId', 'businessName', 'invoiceNumber', 'totalAmount', 'entryDate', 'expectedPaymentDate', 'statusName'];
   dataSource = new MatTableDataSource<NotesSuppliersDTO>([]);
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -32,6 +32,9 @@ export class CostPaidTableComponent {
       });
     }
   }
-  applyFilter(e: Event){ const v=(e.target as HTMLInputElement).value||''; this.dataSource.filter=v.trim().toLowerCase(); if(this.dataSource.paginator) this.dataSource.paginator.firstPage(); }
 
+  applyFilter(e: Event) { 
+    const v = (e.target as HTMLInputElement).value || ''; this.dataSource.filter = v.trim().toLowerCase(); 
+    if (this.dataSource.paginator) this.dataSource.paginator.firstPage(); 
+  }
 }

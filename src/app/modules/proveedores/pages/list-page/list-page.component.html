@@ -57,6 +57,12 @@
         <td mat-cell *matCellDef="let supplier"> {{ supplier.balance | currency }} </td>
       </ng-container>
 
+      <!-- Balance Cuenta Tercero Column -->
+      <ng-container matColumnDef="thirdPartyBalance">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Saldo Cuenta Tercero </th>
+        <td mat-cell *matCellDef="let supplier"> {{ supplier.thirdPartyBalance | currency }} </td>
+      </ng-container>
+
       <!-- Phone Column -->
       <ng-container matColumnDef="phone">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Teléfono </th>
@@ -79,7 +85,9 @@
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef> Acciones </th>
         <td mat-cell *matCellDef="let supplier">
-          <button mat-icon-button class="cursor-pointer" [matTooltip]="supplier.status === 1 ? 'Bloquear Proveedor' : 'Desbloquear Proveedor'" (click)="openConfirmDialog(supplier)">
+          <button mat-icon-button class="cursor-pointer"
+            [matTooltip]="supplier.status === 1 ? 'Bloquear Proveedor' : 'Desbloquear Proveedor'"
+            (click)="openConfirmDialog(supplier)">
             <mat-icon>{{ supplier.status === 1 ? 'lock' : 'lock_open' }}</mat-icon>
           </button>
         </td>

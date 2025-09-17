@@ -10,10 +10,10 @@ import * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
 import autoTable from 'jspdf-autotable';
 
-import { FinanceService } from '../../services/finance.service';
-import { SupplierDTO } from '../../../interfaces/supplier.interface';
-import { ProveedoresService } from '../../../proveedores/services/proveedores.service';
 import { CostsHistoricalRequest, NotesSuppliersDTO } from '../../../interfaces/finance.interface';
+import { FinanceService } from '../../services/finance.service';
+import { ProveedoresService } from '../../../proveedores/services/proveedores.service';
+import { SupplierDTO } from '../../../interfaces/supplier.interface';
 
 @Component({
   selector: 'finance-costs-exp',
@@ -24,11 +24,8 @@ export class CostsExpComponent {
   public isLoading = false;
   public filterForm!: FormGroup;
   public suppliers: SupplierDTO[] = [];
+  public selectedIndex: number = 0;
 
-  // pestaña activa: 0=Histórico, 1=Por pagar, 2=Pagado
-  public selectedIndex = 0;
-
-  // datasets por tab
   public dataHistorical: NotesSuppliersDTO[] = [];
   public dataToPay: NotesSuppliersDTO[] = [];
   public dataPaid: NotesSuppliersDTO[] = [];
@@ -59,7 +56,7 @@ export class CostsExpComponent {
       startDate: [twoMonthsAgo],
       endDate: [today],
       supplierId: [null],
-      statusId: [null] // lo controlaremos según tab activo; aquí puedes dejarlo para export/depurar
+      statusId: [null]
     });
   }
 
@@ -69,11 +66,11 @@ export class CostsExpComponent {
     });
   }
 
-  // Mapea pestaña -> status
   private getStatusByTab(index: number): number | null {
     if (index === 1) return 1; // Por pagar
     if (index === 2) return 2; // Pagado
-    return null;               // Histórico (todos)
+
+    return null;               // Histórico
   }
 
   onTabChange(index: number): void {
@@ -82,7 +79,6 @@ export class CostsExpComponent {
   }
 
   filterSales(): void {
-    // Reaplica filtros para la pestaña actual
     this.loadCostsForActiveTab();
   }
 
@@ -114,7 +110,7 @@ export class CostsExpComponent {
       startDate: new Date(startDate).toISOString(),
       endDate: new Date(endDate).toISOString(),
       supplierId: supplierId || null,
-      status: status // clave: status depende del tab
+      status: status
     };
 
     this.financeService.costesSuppliers(data).subscribe({

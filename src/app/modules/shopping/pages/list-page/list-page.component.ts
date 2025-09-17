@@ -11,10 +11,10 @@ import * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
 import autoTable from 'jspdf-autotable';
 
-import { EntrySummaryDTO, FullEntryByIdRequest } from '../../../interfaces/entrey-sumarry.interface';
-import { ShoppingService } from '../../services/shopping.service';
 import { EntryDialogsComponent } from '../../components/entry-dialogs/entry-dialogs.component';
+import { EntrySummaryDTO, FullEntryByIdRequest } from '../../../interfaces/entrey-sumarry.interface';
 import { GlobalStateService } from '../../../../shared/services';
+import { ShoppingService } from '../../services/shopping.service';
 
 @Component({
   selector: 'modules-shopping-list-page',

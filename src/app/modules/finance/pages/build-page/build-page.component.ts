@@ -93,7 +93,7 @@ export class BuildPageComponent implements OnInit {
     return {
       startDate: new Date(startDate).toISOString(),
       endDate: new Date(endDate).toISOString(),
-      paymentMethod: this.selectedMethod ?? null as any // backend acepta null
+      paymentMethod: this.selectedMethod ?? null as any
     };
   }
 
