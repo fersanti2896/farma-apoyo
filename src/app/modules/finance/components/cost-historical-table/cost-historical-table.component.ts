@@ -1,8 +1,13 @@
 import { Component, Input, SimpleChanges, ViewChild } from '@angular/core';
-import { NotesSuppliersDTO } from '../../../interfaces/finance.interface';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
+
+import { FinanceService } from '../../services/finance.service';
+import { NotesSuppliersDTO } from '../../../interfaces/finance.interface';
+import { PaymentsHistoryDialogComponent } from '../../../collection/components/payments-history-dialog/payments-history-dialog.component';
 
 @Component({
   selector: 'finance-costs-historical-table',
@@ -15,13 +20,19 @@ export class CostHistoricalTableComponent {
 
   displayedColumns: string[] = [
     'entryId', 'businessName', 'invoiceNumber',
-    'totalAmount', 'entryDate', 'expectedPaymentDate', 'statusName'
+    'totalAmount', 'entryDate', 'expectedPaymentDate', 'statusName', 'actions'
   ];
 
   dataSource = new MatTableDataSource<NotesSuppliersDTO>([]);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
+
+  constructor(
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar,
+    private financeService: FinanceService
+  ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['data']) {
@@ -52,4 +63,24 @@ export class CostHistoricalTableComponent {
     this.dataSource.filter = filterValue.trim().toLowerCase();
     if (this.dataSource.paginator) this.dataSource.paginator.firstPage();
   }
+
+  openMovementsDialog(entry: NotesSuppliersDTO): void {
+      const request = { entryId: entry.entryId };
+  
+      this.financeService.movementsByEntryId(request).subscribe({
+        next: (response) => {
+          if (response.result) {
+            this.dialog.open(PaymentsHistoryDialogComponent, {
+              width: '800px',
+              data: response.result
+            });
+          } else {
+            this.snackBar.open('No se encontraron movimientos para esta factura.', 'Cerrar', { duration: 3000 });
+          }
+        },
+        error: () => {
+          this.snackBar.open('Error al obtener movimientos de la factura.', 'Cerrar', { duration: 3000 });
+        }
+      });
+    }
 }

@@ -12,6 +12,7 @@ import { CostHistoricalTableComponent } from './components/cost-historical-table
 import { CostToPayTableComponent } from './components/cost-to-pay-table/cost-to-pay-table.component';
 import { CostPaidTableComponent } from './components/cost-paid-table/cost-paid-table.component';
 import { ConfirmPaymentEntryDialogComponent } from './components/confirm-payment-entry-dialog/confirm-payment-entry-dialog.component';
+import { CollectionModule } from '../collection/collection.module';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { ConfirmPaymentEntryDialogComponent } from './components/confirm-payment
     CommonModule,
     FinanceRoutingModule, 
     ReactiveFormsModule,
+    CollectionModule,
     SharedModule, 
   ]
 })

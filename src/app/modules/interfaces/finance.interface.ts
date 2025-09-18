@@ -61,3 +61,15 @@ export interface ConfirmPaymentEntryData {
   amountPending: number;
   paymentMethods: { value: string; label: string }[];
 }
+
+export interface DetailByEntryIdRequest {
+    entryId: number;
+}
+
+export interface PaymentsEntryDTO {
+    paymentDate: string;
+    amount: number;
+    comments: string;
+    username: string;
+    paymentMethod: string;
+}
