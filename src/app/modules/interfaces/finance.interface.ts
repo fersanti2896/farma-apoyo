@@ -73,3 +73,32 @@ export interface PaymentsEntryDTO {
     username: string;
     paymentMethod: string;
 }
+
+export interface ExpensesCategoriesDTO {
+    expenseCategoryId: number;
+    name: string;
+}
+
+export interface ExpenseHistoricalRequest {
+    startDate: string;
+    endDate: string;
+    expenseCategoryId: number;
+    paymentMethod: string;
+}
+
+export interface ExpensePaymentDTO {
+    expensePaymentId: number;
+    expenseCategoryId: number;
+    expenseCategory: string;
+    amount: number;
+    paymentMethod: string;
+    paymentDate: string;
+    comments: string;
+}
+
+export interface ExpensePaymentRequest {
+    expenseCategoryId: number;
+    amount: number;
+    paymentMethod: string;
+    comments: string;
+}

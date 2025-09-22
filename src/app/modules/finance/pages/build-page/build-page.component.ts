@@ -309,5 +309,4 @@ export class BuildPageComponent implements OnInit {
 
     FileSaver.saveAs(blob, `Finanzas_Ingresos_${this.selectedMethod ? this.selectedMethod : 'Todos'}_${date}.xlsx`);
   }
-
 }

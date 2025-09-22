@@ -13,6 +13,7 @@ import { CostToPayTableComponent } from './components/cost-to-pay-table/cost-to-
 import { CostPaidTableComponent } from './components/cost-paid-table/cost-paid-table.component';
 import { ConfirmPaymentEntryDialogComponent } from './components/confirm-payment-entry-dialog/confirm-payment-entry-dialog.component';
 import { CollectionModule } from '../collection/collection.module';
+import { CreateExpenseDialogComponent } from './components/create-expense-dialog/create-expense-dialog.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { CollectionModule } from '../collection/collection.module';
     CostHistoricalTableComponent,
     CostToPayTableComponent,
     CostPaidTableComponent,
-    ConfirmPaymentEntryDialogComponent
+    ConfirmPaymentEntryDialogComponent,
+    CreateExpenseDialogComponent
   ],
   imports: [
     CommonModule,

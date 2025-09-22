@@ -1,0 +1,53 @@
+<h2 mat-dialog-title class="text-center text-2xl">Registrar Gasto</h2>
+
+<mat-dialog-content>
+    <form [formGroup]="form" class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+
+        <!-- Categoría -->
+        <mat-form-field appearance="fill">
+            <mat-label>Categoría</mat-label>
+            <mat-select formControlName="expenseCategoryId">
+                <mat-option *ngFor="let c of categories" [value]="c.expenseCategoryId">
+                    {{ c.name }}
+                </mat-option>
+            </mat-select>
+            <mat-error *ngIf="isInvalid('expenseCategoryId')">Categoría es requerida.</mat-error>
+        </mat-form-field>
+
+        <!-- Monto -->
+        <mat-form-field appearance="fill">
+            <mat-label>Monto</mat-label>
+            <input matInput type="number" min="0.01" step="0.01" formControlName="amount" />
+            <mat-error *ngIf="isInvalid('amount')">Monto es requerido y debe ser mayor a 0.</mat-error>
+        </mat-form-field>
+
+        <!-- Método de Pago -->
+        <mat-form-field appearance="fill">
+            <mat-label>Método de Pago</mat-label>
+            <mat-select formControlName="paymentMethod">
+                <mat-option *ngFor="let m of paymentMethods" [value]="m.value">
+                    {{ m.label }}
+                </mat-option>
+            </mat-select>
+            <mat-error *ngIf="isInvalid('paymentMethod')">Método de pago es requerido.</mat-error>
+        </mat-form-field>
+
+        <!-- Comentarios (2 columnas) -->
+        <mat-form-field appearance="fill" class="md:col-span-2">
+            <mat-label>Comentarios</mat-label>
+            <textarea matInput rows="3" formControlName="comments"></textarea>
+            <mat-error *ngIf="isInvalid('comments')">Comentarios es requerido.</mat-error>
+        </mat-form-field>
+    </form>
+
+    <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+</mat-dialog-content>
+
+<mat-dialog-actions align="center">
+    <button mat-raised-button class="btn-success h-10" (click)="guardar()" [disabled]="loading">
+        Guardar
+    </button>
+    <button mat-button class="btn-cancel ml-2 h-10" (click)="cancelar()" [disabled]="loading">
+        Cancelar
+    </button>
+</mat-dialog-actions>

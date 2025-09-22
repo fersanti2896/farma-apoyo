@@ -3,9 +3,9 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { ApiResponse } from '../../../auth/interfaces/auth.interface';
+import { ApplyPaymentEntryRequest, CostsHistoricalRequest, DetailByEntryIdRequest, ExpenseHistoricalRequest, ExpensePaymentDTO, ExpensePaymentRequest, ExpensesCategoriesDTO, FinanceBuildRequest, FinanceMethodTotalDTO, FinanceResumeDTO, FinanceResumeRequest, NotesSuppliersDTO, PaymentsEntryDTO } from '../../interfaces/finance.interface';
 import { environment } from '../../../enviroments/enviroment';
 import { GlobalStateService } from '../../../shared/services';
-import { ApplyPaymentEntryRequest, CostsHistoricalRequest, DetailByEntryIdRequest, FinanceBuildRequest, FinanceMethodTotalDTO, FinanceResumeDTO, FinanceResumeRequest, NotesSuppliersDTO, PaymentsEntryDTO } from '../../interfaces/finance.interface';
 import { ReplyResponse } from '../../interfaces/reply.interface';
 
 @Injectable({
@@ -37,6 +37,18 @@ export class FinanceService {
 
   movementsByEntryId( data: DetailByEntryIdRequest ): Observable<ApiResponse<PaymentsEntryDTO>> {
     return this.http.post<ApiResponse<PaymentsEntryDTO>>(`${this.api}/Finances/PaymentsByEntryId`, data, { headers: this.getHeaders() });
+  }
+
+  expenseCategories(): Observable<ApiResponse<ExpensesCategoriesDTO[]>> {
+    return this.http.get<ApiResponse<ExpensesCategoriesDTO[]>>(`${this.api}/Finances/GetExpensesCategories`, { headers: this.getHeaders() });
+  }
+
+  expensesPayments( data: ExpenseHistoricalRequest ): Observable<ApiResponse<ExpensePaymentDTO[]>> {
+    return this.http.post<ApiResponse<ExpensePaymentDTO[]>>(`${this.api}/Finances/GetExpensePaymentsHistorical`, data, { headers: this.getHeaders() });
+  }
+
+  createExpense( data: ExpensePaymentRequest ): Observable<ApiResponse<ReplyResponse>> {
+    return this.http.post<ApiResponse<ReplyResponse>>(`${this.api}/Finances/CreateExpensePayment`, data, { headers: this.getHeaders() });
   }
 
   private getHeaders(): HttpHeaders {
