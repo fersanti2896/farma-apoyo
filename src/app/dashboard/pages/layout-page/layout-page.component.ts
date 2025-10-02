@@ -73,10 +73,10 @@ export class LayoutPageComponent implements OnInit {
         label: 'Almacén',
         icon: 'inventory_2',
         expanded: false,
-        roles: [1, 2, 4, 5, 6],
+        roles: [1, 2, 4, 5, 6, 7],
         children: [
-          { label: 'Inventario', icon: 'inventory', url: '/sic/inicio/stock', roles: [1, 2, 4, 5, 6] },
-          { label: 'Compras', icon: 'shopping_cart', url: '/sic/inicio/compras', roles: [1, 2, 4] },
+          { label: 'Inventario', icon: 'inventory', url: '/sic/inicio/stock', roles: [1, 2, 4, 5, 6, 7] },
+          { label: 'Compras', icon: 'shopping_cart', url: '/sic/inicio/compras', roles: [1, 2, 4, 7] },
           { label: 'Surtido', icon: 'trolley', url: '/sic/inicio/surtido', roles: [1, 2, 4] },
           { label: 'Entregas', icon: 'outbox', url: '/sic/inicio/entregas', roles: [1, 2, 4, 5, 6] },
           { label: 'Devoluciones', icon: 'assignment_return', url: '/sic/inicio/devoluciones', roles: [1, 4] },
@@ -109,23 +109,23 @@ export class LayoutPageComponent implements OnInit {
         label: 'Cobranza',
         icon: 'request_quote',
         expanded: false,
-        roles: [1, 2],
+        roles: [1, 2, 7],
         children: [
-          { label: 'Histórico', icon: 'history', url: '/sic/inicio/cobranza/historico', roles: [1, 2] },
-          { label: 'Por Cobrar', icon: 'payments', url: '/sic/inicio/cobranza/cobrar', roles: [1, 2] },         
-          { label: 'Pagado', icon: 'credit_score', url: '/sic/inicio/cobranza/pagado', roles: [1, 2] },         
-          { label: 'Notas de Crédito', icon: 'request_quote', url: '/sic/inicio/cobranza/credito', roles: [1, 2] },         
+          { label: 'Histórico', icon: 'history', url: '/sic/inicio/cobranza/historico', roles: [1, 2, 7] },
+          { label: 'Por Cobrar', icon: 'payments', url: '/sic/inicio/cobranza/cobrar', roles: [1, 2, 7] },         
+          { label: 'Pagado', icon: 'credit_score', url: '/sic/inicio/cobranza/pagado', roles: [1, 2, 7] },         
+          { label: 'Notas de Crédito', icon: 'request_quote', url: '/sic/inicio/cobranza/credito', roles: [1, 2, 7] },         
         ]
       },
       {
         label: 'Finanzas',
         icon: 'account_balance_wallet',
         expanded: false,
-        roles: [1, 2],
+        roles: [1, 2, 7],
         children: [
-          { label: 'Ingresos', icon: 'price_check', url: '/sic/inicio/finanzas/ingresos', roles: [1, 2] }, 
-          { label: 'Egresos', icon: 'payments', url: '/sic/inicio/finanzas/egresos', roles: [1, 2] },
-          { label: 'Reportes', icon: 'analytics', url: '/sic/inicio/finanzas/reportes', roles: [1, 2] },
+          { label: 'Ingresos', icon: 'price_check', url: '/sic/inicio/finanzas/ingresos', roles: [1, 2, 7] }, 
+          { label: 'Egresos', icon: 'payments', url: '/sic/inicio/finanzas/egresos', roles: [1, 2, 7] },
+          { label: 'Reportes', icon: 'analytics', url: '/sic/inicio/finanzas/reportes', roles: [1, 2, 7] },
         ]
       }
     ];

@@ -6,7 +6,7 @@ import { BalaceTSupplierDTO } from '../../../interfaces/supplier.interface';
 import { ConfirmPaymentEntryData } from '../../../interfaces/finance.interface';
 import { FinanceService } from '../../services/finance.service';
 import { ProveedoresService } from '../../../proveedores/services/proveedores.service';
-import { ValidatorsService } from '../../../../shared/services';
+import { GlobalStateService, ValidatorsService } from '../../../../shared/services';
 
 @Component({
   selector: 'app-confirm-payment-entry-dialog',
@@ -14,6 +14,7 @@ import { ValidatorsService } from '../../../../shared/services';
   templateUrl: './confirm-payment-entry-dialog.component.html',
 })
 export class ConfirmPaymentEntryDialogComponent implements OnInit {
+  public RolId: number = 0;
   public loading: boolean = false;
   public form!: FormGroup;
   public supplierBalance?: BalaceTSupplierDTO;
@@ -27,6 +28,7 @@ export class ConfirmPaymentEntryDialogComponent implements OnInit {
     private validatorsService: ValidatorsService,
     private proveedoresService: ProveedoresService,
     private dialogRef: MatDialogRef<ConfirmPaymentEntryDialogComponent>,
+    private globalStateService: GlobalStateService,
     @Inject(MAT_DIALOG_DATA) public data: ConfirmPaymentEntryData
   ) {
     this.form = this.fb.group({
@@ -45,6 +47,9 @@ export class ConfirmPaymentEntryDialogComponent implements OnInit {
     this.form.get('method')!.valueChanges.subscribe(() => {
       this.form.get('amount')!.updateValueAndValidity();
     });
+
+    const { roleId } = this.globalStateService.getUser()
+    this.RolId = roleId;
   }
 
   get isThirdParty(): boolean {

@@ -26,12 +26,12 @@ const routes: Routes = [
       { path: 'compras', 
         loadChildren: () => import('../modules/shopping/shopping.module').then(m => m.ShoppingModule),
         canActivate: [ AuthGuard ],
-        data: { roles: [1, 2, 4] } 
+        data: { roles: [1, 2, 4, 7] } 
       },
       { path: 'stock', 
         loadChildren: () => import('../modules/inventory/inventory.module').then(m => m.InventoryModule),
         canActivate: [ AuthGuard ],
-        data: { roles: [1, 2, 4, 5, 6] } 
+        data: { roles: [1, 2, 4, 5, 6, 7] } 
       },
       { path: 'clientes', 
         loadChildren: () => import('../modules/clientes/clientes.module').then(m => m.ClientesModule),
@@ -41,12 +41,12 @@ const routes: Routes = [
       { path: 'ventas', 
         loadChildren: () => import('../modules/sales/sales.module').then(m => m.SalesModule),
         canActivate: [ AuthGuard ],
-        data: { roles: [1, 2, 3, 4, 5, 6] } 
+        data: { roles: [1, 2, 3, 4, 5, 6, 7] } 
       },
       { path: 'surtido', 
         loadChildren: () => import('../modules/packaging/packaging.module').then(m => m.PackagingModule),
         canActivate: [ AuthGuard ],
-        data: { roles: [1, 2, 4] } 
+        data: { roles: [1, 2, 4, 7] } 
       },
       { path: 'entregas', 
         loadChildren: () => import('../modules/deliveries/deliveries.module').then(m => m.DeliveriesModule),
@@ -56,7 +56,7 @@ const routes: Routes = [
       { path: 'cobranza', 
         loadChildren: () => import('../modules/collection/collection.module').then(m => m.CollectionModule),
         canActivate: [ AuthGuard ],
-        data: { roles: [1, 2] } 
+        data: { roles: [1, 2, 7] } 
       },
       { path: 'devoluciones', 
         loadChildren: () => import('../modules/returns/returns.module').then(m => m.ReturnsModule),
@@ -66,7 +66,7 @@ const routes: Routes = [
       { path: 'finanzas', 
         loadChildren: () => import('../modules/finance/finance.module').then(m => m.FinanceModule),
         canActivate: [ AuthGuard ],
-        data: { roles: [1, 2] } 
+        data: { roles: [1, 2, 7] } 
       },
       { path: '**', redirectTo: 'list' },
     ] 

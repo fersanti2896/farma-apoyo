@@ -1,7 +1,8 @@
 import { Component, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { ValidatorsService } from '../../../../shared/services';
+
+import { GlobalStateService, ValidatorsService } from '../../../../shared/services';
 
 @Component({
   selector: 'app-confirm-note-credit',
@@ -10,12 +11,14 @@ import { ValidatorsService } from '../../../../shared/services';
 })
 export class ConfirmNoteCreditComponent {
   public confirmForm!: FormGroup;
-  public noteCreditId: number = 0;
-  public saleId: number = 0;
   public isWarehouse: boolean = false;
+  public noteCreditId: number = 0;
+  public RolId: number = 0;
+  public saleId: number = 0;
 
   constructor(
     private fb: FormBuilder,
+    private globalStateService: GlobalStateService,
     private dialogRef: MatDialogRef<ConfirmNoteCreditComponent>,
     private validatorsService: ValidatorsService,
     @Inject(MAT_DIALOG_DATA) public data: { noteCreditId: number, saleId: number, isWarehouse: boolean }
@@ -32,6 +35,9 @@ export class ConfirmNoteCreditComponent {
 
     // Siempre se actualiza la validez del campo
     this.confirmForm.get('comment')?.updateValueAndValidity();
+
+    const { roleId } = this.globalStateService.getUser();
+    this.RolId = roleId;
   }
 
   isValidField = ( field: string ) => {

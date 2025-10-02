@@ -31,16 +31,18 @@ import { UserService } from '../../../usuarios/services/user.service';
   templateUrl: './list-page.component.html'
 })
 export class ListPageComponent {
+  public clients: ClientDTO[] = [];
   public dataSource = new MatTableDataSource<SalesPendingPaymentDTO>();
   public displayedColumns: string[] = [];
+  public filterForm!: FormGroup;
   public isLoading: boolean = false;
   public paymentForm!: FormGroup;
-  public rol: number = 0;
-  public filterForm!: FormGroup;
-  public salesStatuses: SalesStatusDTO[] = [];
   public paymentStatuses: PaymentStatusDTO[] = [];
+  public rol: number = 0;
+  public RolId: number = 0;
+  public salesStatuses: SalesStatusDTO[] = [];
   public users: UsersDTO[] = [];
-  public clients: ClientDTO[] = [];
+
   private readonly THIRD_PARTY_METHOD = 'Pago Cuenta de Tercero';
 
   public paymentMethods = [
@@ -79,6 +81,9 @@ export class ListPageComponent {
       remainingAmount: [{ value: null, disabled: true }],
       paymentDate: [new Date(), Validators.required],
     });
+
+    const { roleId } = this.globalStateService.getUser()
+    this.RolId = roleId;
   }
 
   ngOnInit(): void {

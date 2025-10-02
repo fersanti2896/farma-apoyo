@@ -22,6 +22,7 @@ export class CreatePageComponent {
     { id: 4, name: 'Almacen' },
     { id: 5, name: 'Vendedor' },
     { id: 6, name: 'Repartidor' },
+    { id: 7, name: 'Contador' }
   ];
 
   public isEditMode: boolean = false;

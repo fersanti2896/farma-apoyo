@@ -1,12 +1,12 @@
+import { ActivatedRoute, Router } from '@angular/router';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Location } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
+import { CreateProductRequest, ProductDTO, UpdateProductRequest } from '../../../interfaces/product.interface';
 import { ProductService } from '../../services/product.service';
 import { ValidatorsService } from '../../../../shared/services';
-import { CreateProductRequest, ProductDTO, UpdateProductRequest } from '../../../interfaces/product.interface';
 
 @Component({
   selector: 'modules-products-create-page',

@@ -1,19 +1,20 @@
-import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
+import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Location } from '@angular/common';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+
 import { map, Observable, startWith } from 'rxjs';
 
-import { ShoppingService } from '../../services/shopping.service';
-import { ProveedoresService } from '../../../proveedores/services/proveedores.service';
-import { SupplierDTO } from '../../../interfaces/supplier.interface';
 import { CreateWarehouseRequest, ProductView, UpdateEntryPricesRequest } from '../../../interfaces/entrey-sumarry.interface';
+import { GlobalStateService, ValidatorsService } from '../../../../shared/services';
 import { ProductDialogComponent } from '../../components/product-dialog/product-dialog.component';
-import { ValidatorsService } from '../../../../shared/services';
 import { ProductService } from '../../../products/services/product.service';
+import { ProveedoresService } from '../../../proveedores/services/proveedores.service';
+import { ShoppingService } from '../../services/shopping.service';
+import { SupplierDTO } from '../../../interfaces/supplier.interface';
 
 @Component({
   selector: 'modules-shopping-create-page',
@@ -21,16 +22,16 @@ import { ProductService } from '../../../products/services/product.service';
   templateUrl: './create-page.component.html'
 })
 export class CreatePageComponent {
-  public form!: FormGroup;
-  public suppliers: SupplierDTO[] = [];
-  public products: ProductView[] = [];
-  public productDisplayedColumns: string[] = ['productName', 'quantity', 'unitPrice', 'lot', 'expirationDate', 'subtotal', 'actions'];
-  public isLoading: boolean = false;
-  public supplierControl = new FormControl<SupplierDTO | null>(null);
-  public filteredSuppliers!: Observable<SupplierDTO[]>;
-
-  public isEditMode = false;
   public entryIdToUpdate: number | null = null;
+  public filteredSuppliers!: Observable<SupplierDTO[]>;
+  public form!: FormGroup;
+  public isEditMode = false;
+  public isLoading: boolean = false;
+  public productDisplayedColumns: string[] = ['productName', 'quantity', 'unitPrice', 'lot', 'expirationDate', 'subtotal', 'actions'];
+  public products: ProductView[] = [];
+  public RolId: number = 0;
+  public supplierControl = new FormControl<SupplierDTO | null>(null);
+  public suppliers: SupplierDTO[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -42,7 +43,8 @@ export class CreatePageComponent {
     private snackBar: MatSnackBar,
     private router: Router,
     private validatorsService: ValidatorsService,
-    private route: ActivatedRoute 
+    private route: ActivatedRoute,
+    private globalStateService: GlobalStateService
   ) { }
 
   ngOnInit(): void {
@@ -84,6 +86,9 @@ export class CreatePageComponent {
     } else {
       this.productDisplayedColumns.push('actions');
     }
+
+    const { roleId } = this.globalStateService.getUser()
+    this.RolId = roleId;
   }
 
   loadSuppliers(): void {

@@ -101,7 +101,7 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="center">
-    <button mat-raised-button class="btn-success h-10" (click)="aplicar()" [disabled]="loading">
+    <button *ngIf="RolId != 7" mat-raised-button class="btn-success h-10" (click)="aplicar()" [disabled]="loading">
         Aplicar
     </button>
     <button mat-button class="btn-cancel ml-2 h-10" (click)="cancelar()" [disabled]="loading">

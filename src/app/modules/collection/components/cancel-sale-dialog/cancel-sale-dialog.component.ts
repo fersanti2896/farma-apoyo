@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { ValidatorsService } from '../../../../shared/services';
+import { GlobalStateService, ValidatorsService } from '../../../../shared/services';
 
 @Component({
   selector: 'app-cancel-sale-dialog',
@@ -12,9 +12,11 @@ export class CancelSaleDialogComponent {
   public cancelForm!: FormGroup;
   public saleId: number = 0;
   public type: string = '';
+  public RolId: number = 0;
 
   constructor(
     private fb: FormBuilder,
+    private globalStateService: GlobalStateService,
     private dialogRef: MatDialogRef<CancelSaleDialogComponent>,
     private validatorsService: ValidatorsService,
     @Inject(MAT_DIALOG_DATA) public data: { saleId: number, type: string }
@@ -30,6 +32,9 @@ export class CancelSaleDialogComponent {
 
     // Siempre se actualiza la validez del campo
     this.cancelForm.get('comment')?.updateValueAndValidity();
+
+    const { roleId } = this.globalStateService.getUser();
+    this.RolId = roleId
   }
 
   isValidField = ( field: string ) => {

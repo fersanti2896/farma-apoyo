@@ -8,9 +8,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
-import { StockDTO } from '../../../interfaces/stock.interface';
-import { InventoryService } from '../../services/inventory.service';
 import { GlobalStateService } from '../../../../shared/services';
+import { InventoryService } from '../../services/inventory.service';
+import { StockDTO } from '../../../interfaces/stock.interface';
 
 @Component({
   selector: 'modules-inventory-list-page',

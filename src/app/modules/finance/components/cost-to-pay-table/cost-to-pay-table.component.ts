@@ -35,7 +35,7 @@ export class CostToPayTableComponent {
 
   constructor(
     private dialog: MatDialog,
-    private snackBar: MatSnackBar,
+    private snackBar: MatSnackBar
   ) { }
 
   ngOnChanges(changes: SimpleChanges): void {

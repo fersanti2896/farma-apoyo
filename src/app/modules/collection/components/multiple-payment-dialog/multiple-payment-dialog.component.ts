@@ -3,10 +3,10 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { CollectionService } from '../../services/collection.service';
+import { GlobalStateService, ValidatorsService } from '../../../../shared/services';
 import { MultiplePaymentDialogData } from '../../../interfaces/collection.interface';
 import { ProveedoresService } from '../../../proveedores/services/proveedores.service';
 import { SupplierDTO } from '../../../interfaces/supplier.interface';
-import { ValidatorsService } from '../../../../shared/services';
 
 @Component({
   selector: 'app-multiple-payment-dialog',
@@ -14,9 +14,11 @@ import { ValidatorsService } from '../../../../shared/services';
   templateUrl: './multiple-payment-dialog.component.html'
 })
 export class MultiplePaymentDialogComponent {
-  public loading = false;
   public form!: FormGroup;
+  public loading = false;
+  public RolId: number = 0;
   public suppliers: SupplierDTO[] = [];
+
   private readonly THIRD_PARTY_METHOD = 'Pago Cuenta de Tercero';
 
   get totalSeleccionado(): number {
@@ -32,6 +34,7 @@ export class MultiplePaymentDialogComponent {
     private collectionService: CollectionService,
     private validatorsService: ValidatorsService,
     private proveedoresService: ProveedoresService,
+    private globalStateService: GlobalStateService,
     private dialogRef: MatDialogRef<MultiplePaymentDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: MultiplePaymentDialogData & {
       singleMode?: boolean; 
@@ -45,6 +48,9 @@ export class MultiplePaymentDialogComponent {
       thirdPartySupplierId: [ null ],
       comments: [ '', Validators.required ]
     });
+
+    const { roleId } = this.globalStateService.getUser()
+    this.RolId = roleId;
   }
 
   ngOnInit(): void {

@@ -238,7 +238,7 @@
         <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef> Acciones </th>
           <td mat-cell *matCellDef="let entry; let i = index">
-            <button mat-icon-button matTooltip="Aplicar Pago" class="cursor-pointer" (click)="applyPayment(i)">
+            <button *ngIf="RolId != 7" mat-icon-button matTooltip="Aplicar Pago" class="cursor-pointer" (click)="applyPayment(i)">
               <mat-icon>check_circle</mat-icon>
             </button>
             <button mat-icon-button matTooltip="Ver Detalles del Ticket" class="cursor-pointer" (click)="openDetailsTicket(entry)">

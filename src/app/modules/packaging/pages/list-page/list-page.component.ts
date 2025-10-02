@@ -138,7 +138,7 @@ export class ListPageComponent {
 
     const start = this.paginator.pageIndex * this.paginator.pageSize;
     const end = start + this.paginator.pageSize;
-    
+
     return all.slice(start, end);
   }
 
@@ -152,7 +152,7 @@ export class ListPageComponent {
       return;
     }
 
-    const payload: DetailsMultipleSalesRequest = { saleId: sales};
+    const payload: DetailsMultipleSalesRequest = { saleId: sales };
     this.isLoading = true;
 
     this.packingService.multipleDetailsSales(payload).subscribe({
