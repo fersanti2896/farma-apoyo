@@ -1,0 +1,140 @@
+<shared-loading-page *ngIf="isLoading"></shared-loading-page>
+
+<form [formGroup]="filterForm" (ngSubmit)="filterReports()" class="mb-4">
+    <div class="flex flex-col md:flex-row gap-4 w-full">
+        <div class="flex flex-row gap-4 w-full md:w-auto">
+            <mat-form-field appearance="fill" class="w-full sm:w-1/2 md:w-36">
+                <mat-label>Desde</mat-label>
+                <input matInput [matDatepicker]="picker1" formControlName="startDate" />
+                <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                <mat-datepicker #picker1></mat-datepicker>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill" class="w-full sm:w-1/2 md:w-36">
+                <mat-label>Hasta</mat-label>
+                <input matInput [matDatepicker]="picker2" formControlName="endDate" />
+                <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                <mat-datepicker #picker2></mat-datepicker>
+            </mat-form-field>
+        </div>
+
+        <div class="w-full sm:w-1/2 md:w-48 mb-5 flex items-end">
+            <button mat-raised-button class="btn-success h-10 md:w-auto" type="submit">
+                Filtrar
+            </button>
+            <button mat-raised-button class="btn-cancel h-10 ml-2 md:h-10" type="button" (click)="clearFilters()">
+                Limpiar
+            </button>
+        </div>
+    </div>
+</form>
+
+<!-- Tabla -->
+<h3 class="text-xl text-center mb-2">Ingresos vs Costos - Gastos</h3>
+<div class="mat-elevation-z8 overflow-x-auto mb-6">
+    <table mat-table [dataSource]="dataSource" matSort class="w-full">
+        <ng-container matColumnDef="metodoPago">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Método</th>
+            <td mat-cell *matCellDef="let r">{{ r.metodoPago }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="totalIngresos">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Ingresos</th>
+            <td mat-cell *matCellDef="let r">{{ r.totalIngresos | currency:'MXN' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="totalCostos">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Costos</th>
+            <td mat-cell *matCellDef="let r">{{ r.totalCostos | currency:'MXN' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="totalGastos">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Gastos</th>
+            <td mat-cell *matCellDef="let r">{{ r.totalGastos | currency:'MXN' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="utilidadBruta">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Utilidad Bruta</th>
+            <td mat-cell *matCellDef="let r">{{ r.utilidadBruta | currency:'MXN' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="utilidadNeta">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Utilidad Neta</th>
+            <td mat-cell *matCellDef="let r">{{ r.utilidadNeta | currency:'MXN' }}</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+    <mat-paginator [pageSizeOptions]="[5, 10, 25]" aria-label="Selector de página"></mat-paginator>
+</div>
+
+<!-- Gráfico -->
+<div class="w-full px-8">
+    <canvas id="reportChart" height="90"></canvas>
+</div>
+
+<!-- Reporte Ventas por Vendedor -->
+<h3 class="text-xl text-center mt-6 mb-2">Ventas por Vendedor</h3>
+<div class="mat-elevation-z8 overflow-x-auto mb-6">
+    <table mat-table [dataSource]="dataSourceVendedores" matSort class="w-full">
+        <ng-container matColumnDef="vendedor">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Vendedor</th>
+            <td mat-cell *matCellDef="let r">{{ r.vendedor }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="totalVentas">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Total Ventas</th>
+            <td mat-cell *matCellDef="let r">{{ r.totalVentas }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="totalMontoVendido">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Total Vendido</th>
+            <td mat-cell *matCellDef="let r">{{ r.totalMontoVendido | currency:'MXN' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="totalCostoProveedor">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Total Compra</th>
+            <td mat-cell *matCellDef="let r">{{ r.totalCostoProveedor | currency:'MXN' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="utilidad">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Utilidad</th>
+            <td mat-cell *matCellDef="let r">{{ r.utilidad | currency:'MXN' }}</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumnsVendedores"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumnsVendedores;"></tr>
+    </table>
+    <mat-paginator [pageSizeOptions]="[5, 10, 25]" aria-label="Selector de página"></mat-paginator>
+</div>
+
+<!-- Gráfico de Vendedores -->
+<div class="w-full px-8 mb-10">
+    <canvas id="reportChartVendedores" height="90"></canvas>
+</div>
+
+<!-- Reporte Productos Vendidos -->
+<h3 class="text-xl text-center mt-6 mb-2">Productos Más Vendidos</h3>
+<div class="mat-elevation-z8 overflow-x-auto mb-6">
+    <table mat-table [dataSource]="dataSourceProductos" matSort class="w-full">
+        <ng-container matColumnDef="productName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Producto</th>
+            <td mat-cell *matCellDef="let r">{{ r.productName }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="totalUnidadesVendidas">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Total Unidades Vendidas</th>
+            <td mat-cell *matCellDef="let r">{{ r.totalUnidadesVendidas }}</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumnsProductos"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumnsProductos;"></tr>
+    </table>
+    <mat-paginator [pageSizeOptions]="[5, 10, 25]" aria-label="Selector de página"></mat-paginator>
+</div>
+
+<!-- Gráfico de Productos -->
+<div class="w-full px-8 mb-10">
+    <canvas id="reportChartProductos" height="90"></canvas>
+</div>

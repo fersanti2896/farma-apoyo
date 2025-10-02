@@ -14,6 +14,9 @@ import { CostPaidTableComponent } from './components/cost-paid-table/cost-paid-t
 import { ConfirmPaymentEntryDialogComponent } from './components/confirm-payment-entry-dialog/confirm-payment-entry-dialog.component';
 import { CollectionModule } from '../collection/collection.module';
 import { CreateExpenseDialogComponent } from './components/create-expense-dialog/create-expense-dialog.component';
+import { ReportsPageComponent } from './pages/reports-page/reports-page.component';
+import { DashboardReportsComponent } from './components/dashboard-reports/dashboard-reports.component';
+import { ReportSalesComponent } from './components/report-sales/report-sales.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +28,10 @@ import { CreateExpenseDialogComponent } from './components/create-expense-dialog
     CostToPayTableComponent,
     CostPaidTableComponent,
     ConfirmPaymentEntryDialogComponent,
-    CreateExpenseDialogComponent
+    CreateExpenseDialogComponent,
+    ReportsPageComponent,
+    DashboardReportsComponent,
+    ReportSalesComponent
   ],
   imports: [
     CommonModule,

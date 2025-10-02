@@ -11,20 +11,20 @@ import * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
 import autoTable from 'jspdf-autotable';
 
+import { CancelSaleDialogComponent } from '../../components/cancel-sale-dialog/cancel-sale-dialog.component';
+import { CancelSaleRequest, SaleDTO, SalesPendingPaymentDTO, SalesStatusDTO } from '../../../interfaces/sale.interface';
 import { ClientDTO } from '../../../interfaces/client.interface';
 import { ClientesService } from '../../../clientes/services/clientes.service';
 import { CollectionService } from '../../services/collection.service';
 import { GlobalStateService } from '../../../../shared/services';
 import { MovementsDialogComponent } from '../../../deliveries/components/movements-dialog/movements-dialog.component';
 import { PackagingService } from '../../../packaging/services/packaging.service';
+import { PaymentsHistoryDialogComponent } from '../../components/payments-history-dialog/payments-history-dialog.component';
 import { PaymentStatusDTO, SalesPendingPaymentRequest } from '../../../interfaces/collection.interface';
-import { CancelSaleRequest, SaleDTO, SalesPendingPaymentDTO, SalesStatusDTO } from '../../../interfaces/sale.interface';
 import { SalesService } from '../../../sales/services/sales.service';
 import { TicketDialogComponent } from '../../../packaging/components/ticket-dialog/ticket-dialog.component';
 import { UsersDTO } from '../../../../auth/interfaces/auth.interface';
 import { UserService } from '../../../usuarios/services/user.service';
-import { CancelSaleDialogComponent } from '../../components/cancel-sale-dialog/cancel-sale-dialog.component';
-import { PaymentsHistoryDialogComponent } from '../../components/payments-history-dialog/payments-history-dialog.component';
 
 @Component({
   selector: 'app-historical-collection',

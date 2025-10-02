@@ -32,8 +32,7 @@ export class ExpensesExpComponent {
   public paymentMethods = [
     { value: 'Efectivo', label: 'Efectivo' },
     { value: 'Transferencia', label: 'Transferencia' },
-    { value: 'Tarjeta', label: 'Tarjeta' },
-    { value: 'Pago Cuenta de Tercero', label: 'Pago Cuenta de Tercero' }
+    { value: 'Tarjeta', label: 'Tarjeta' }
   ];
 
   public displayedColumns: string[] = ['expensePaymentId', 'expenseCategory', 'comments', 'amount', 'paymentMethod', 'paymentDate'];

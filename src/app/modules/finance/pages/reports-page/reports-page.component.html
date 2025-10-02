@@ -1,0 +1,17 @@
+
+<h2 class="text-2xl text-center md:w-full mb-6 mt-4">Finanzas - Estadísticos</h2>
+
+<mat-tab-group [(selectedIndex)]="selectedIndex" (selectedIndexChange)="onTabChange($event)">
+  <mat-tab label="Estadísticos">
+    <!-- Render perezoso: solo se instancia cuando está seleccionada -->
+    <div class="p-4" *ngIf="selectedIndex === 0">
+        <finace-dashboard-reports></finace-dashboard-reports>
+    </div>
+  </mat-tab>
+
+  <mat-tab label="Reporte Ventas">
+    <div class="p-4" *ngIf="selectedIndex === 1">
+      <finance-report-sales></finance-report-sales>
+    </div>
+  </mat-tab>
+</mat-tab-group>

@@ -102,3 +102,50 @@ export interface ExpensePaymentRequest {
     paymentMethod: string;
     comments: string;
 }
+
+export interface ReportFinanceDTO {
+    metodoPago: string;
+    totalIngresos: number;
+    totalCostos: number;
+    totalGastos: number;
+    utilidadBruta: number;
+    utilidadNeta: number;
+}
+
+export interface FinanceSalesRequest {
+    startDate: string;
+    endDate: string;
+    vendedorId?: number;
+}
+
+export interface FinanceSalesDTO {
+    folio: number;
+    fecha: string;
+    saleStatusId: number;
+    statusName: string;
+    clientId: number;
+    cliente: string;
+    userId: number;
+    vendedor: string;
+    totalVenta: number;
+    totalCompra: number;
+    utilidad: number;
+    totalNotaCredito: number;
+    totalNotaCreditoCompra: number;
+    utilidadFinal: number;
+}
+
+export interface ReportProductDTO {
+    productId: number;
+    productName: string;
+    totalUnidadesVendidas: number;
+}
+
+export interface ReportSalesVendedorDTO {
+    userId: number;
+    vendedor: string;
+    totalVentas: number;
+    totalMontoVendido: number;
+    totalCostoProveedor: number;
+    utilidad: number;
+}

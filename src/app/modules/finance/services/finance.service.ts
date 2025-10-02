@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { ApiResponse } from '../../../auth/interfaces/auth.interface';
-import { ApplyPaymentEntryRequest, CostsHistoricalRequest, DetailByEntryIdRequest, ExpenseHistoricalRequest, ExpensePaymentDTO, ExpensePaymentRequest, ExpensesCategoriesDTO, FinanceBuildRequest, FinanceMethodTotalDTO, FinanceResumeDTO, FinanceResumeRequest, NotesSuppliersDTO, PaymentsEntryDTO } from '../../interfaces/finance.interface';
+import { ApplyPaymentEntryRequest, CostsHistoricalRequest, DetailByEntryIdRequest, ExpenseHistoricalRequest, ExpensePaymentDTO, ExpensePaymentRequest, ExpensesCategoriesDTO, FinanceBuildRequest, FinanceMethodTotalDTO, FinanceResumeDTO, FinanceResumeRequest, FinanceSalesDTO, FinanceSalesRequest, NotesSuppliersDTO, PaymentsEntryDTO, ReportFinanceDTO, ReportProductDTO, ReportSalesVendedorDTO } from '../../interfaces/finance.interface';
 import { environment } from '../../../enviroments/enviroment';
 import { GlobalStateService } from '../../../shared/services';
 import { ReplyResponse } from '../../interfaces/reply.interface';
@@ -49,6 +49,22 @@ export class FinanceService {
 
   createExpense( data: ExpensePaymentRequest ): Observable<ApiResponse<ReplyResponse>> {
     return this.http.post<ApiResponse<ReplyResponse>>(`${this.api}/Finances/CreateExpensePayment`, data, { headers: this.getHeaders() });
+  }
+
+  reportFinanceHistorical( data: FinanceBuildRequest ): Observable<ApiResponse<ReportFinanceDTO[]>> {
+    return this.http.post<ApiResponse<ReportFinanceDTO[]>>(`${this.api}/Finances/ReportFinanceHistorical`, data, { headers: this.getHeaders() });
+  } 
+
+  reportSalesHistorical( data: FinanceSalesRequest ): Observable<ApiResponse<FinanceSalesDTO[]>> {
+    return this.http.post<ApiResponse<FinanceSalesDTO[]>>(`${this.api}/Finances/ReportSalesHistorical`, data, { headers: this.getHeaders() });
+  } 
+
+  reportProductHistorical( data: FinanceBuildRequest ): Observable<ApiResponse<ReportProductDTO[]>> {
+    return this.http.post<ApiResponse<ReportProductDTO[]>>(`${this.api}/Finances/ReportProductHistorical`, data, { headers: this.getHeaders() });
+  }
+
+  reporteSalesVendedorHistorical( data: FinanceBuildRequest ): Observable<ApiResponse<ReportSalesVendedorDTO[]>> {
+    return this.http.post<ApiResponse<ReportSalesVendedorDTO[]>>(`${this.api}/Finances/ReporteSalesVendedorHistorical`, data, { headers: this.getHeaders() });
   }
 
   private getHeaders(): HttpHeaders {
