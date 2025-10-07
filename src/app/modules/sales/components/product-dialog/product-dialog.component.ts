@@ -1,17 +1,18 @@
-import { Component, Inject } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Inject, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+
 import { map, Observable, startWith } from 'rxjs';
 
-import { ProductStockDTO } from '../../../interfaces/product.interface';
 import { GlobalStateService, ValidatorsService } from '../../../../shared/services';
+import { ProductStockDTO } from '../../../interfaces/product.interface';
 
 @Component({
   selector: 'app-product-dialog',
   standalone: false,
   templateUrl: './product-dialog.component.html'
 })
-export class ProductDialogComponent {
+export class ProductDialogComponent implements AfterViewInit {
   public form!: FormGroup;
   public products: ProductStockDTO[];
   public productControl = new FormControl<ProductStockDTO | null>(null, Validators.required);
@@ -20,7 +21,9 @@ export class ProductDialogComponent {
   public invalidStock: boolean = false;
   public canBypassPrice = false;
 
-  private readonly PRICE_BYPASS_USER_IDS: number[] = [ 2, 8, 26 ];
+  private readonly PRICE_BYPASS_USER_IDS: number[] = [2, 8, 26];
+
+  @ViewChild('productInput') productInput!: ElementRef<HTMLInputElement>;
 
   constructor(
     private fb: FormBuilder,
@@ -32,9 +35,9 @@ export class ProductDialogComponent {
     this.products = data;
     this.form = this.fb.group({
       productId: [null, Validators.required],
-      productName: ['', [ Validators.required ] ],
+      productName: ['', [Validators.required]],
       quantity: [null, [Validators.required, Validators.min(1)]],
-      customPrice: ['', [ Validators.required, Validators.min(0.01) ]],
+      customPrice: ['', [Validators.required, Validators.min(0.01)]],
       stockReal: [null],
       defaultPrice: [null]
     });
@@ -44,16 +47,25 @@ export class ProductDialogComponent {
     this.canBypassPrice = this.PRICE_BYPASS_USER_IDS.includes(uid);
   }
 
-  isValidField = ( field: string ) => {
-    return this.validatorsService.isValidField( this.form, field );
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.productInput.nativeElement.focus();
+      // Abre el panel de autocomplete manualmente
+      const event = new Event('focus');
+      this.productInput.nativeElement.dispatchEvent(event);
+    }, 300);
+  }
+
+  isValidField = (field: string) => {
+    return this.validatorsService.isValidField(this.form, field);
   }
 
   ngOnInit(): void {
     this.filteredProducts = this.productControl.valueChanges.pipe(
-      startWith(),
+      startWith(''),
       map(value => {
         const filterValue = typeof value === 'string'
-          ? value
+          ? value.toLowerCase()
           : value?.productName?.toLowerCase() ?? '';
 
         return this.products.filter(product =>
@@ -95,7 +107,7 @@ export class ProductDialogComponent {
     this.invalidPrice = false;
 
     // Validación de cantidad
-    if( quantity > stockReal ) {
+    if (quantity > stockReal) {
       this.invalidStock = true;
       return;
     }

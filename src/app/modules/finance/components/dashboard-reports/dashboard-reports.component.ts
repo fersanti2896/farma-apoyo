@@ -7,8 +7,12 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 
 import { Chart } from 'chart.js/auto';
+import { jsPDF } from 'jspdf';
+import * as FileSaver from 'file-saver';
+import * as XLSX from 'xlsx';
+import autoTable from 'jspdf-autotable';
 
-import { FinanceBuildRequest } from '../../../interfaces/finance.interface';
+import { FinanceBuildRequest, ReportFinanceDTO, ReportProductDTO, ReportSalesVendedorDTO } from '../../../interfaces/finance.interface';
 import { FinanceService } from '../../services/finance.service';
 
 @Component({
@@ -76,7 +80,7 @@ export class DashboardReportsComponent {
 
     this.isLoading = true;
 
-    this.financeService.reportFinanceHistorical( data ).subscribe({
+    this.financeService.reportFinanceHistorical(data).subscribe({
       next: (res) => {
         const rows = res.result || [];
 
@@ -96,6 +100,7 @@ export class DashboardReportsComponent {
     // Este es reporte de Ventas por Vendedor Compilado
     this.financeService.reporteSalesVendedorHistorical(data).subscribe({
       next: (res) => {
+        console.log(res)
         const rows = res.result || [];
         this.dataSourceVendedores.data = rows;
 
@@ -126,7 +131,6 @@ export class DashboardReportsComponent {
       },
       error: () => this.isLoading = false
     });
-
   }
 
   filterReports(): void {
@@ -257,5 +261,504 @@ export class DashboardReportsComponent {
         }
       }
     });
+  }
+
+  exportToPDFFinance(): void {
+    const doc = new jsPDF({ orientation: 'landscape' });
+    const pageWidth = doc.internal.pageSize.getWidth();
+
+    const data: ReportFinanceDTO[] = this.dataSource.data ?? [];
+
+    const currency = new Intl.NumberFormat('es-MX', {
+      style: 'currency',
+      currency: 'MXN',
+      minimumFractionDigits: 2,
+    });
+
+    const logoImg = new Image();
+    logoImg.src = 'assets/logos/inventory.png';
+
+    logoImg.onload = () => {
+      const start: Date = this.filterForm.value.startDate;
+      const end: Date = this.filterForm.value.endDate;
+
+      const fechaInicio = new Date(start).toLocaleDateString('es-MX');
+      const fechaFin = new Date(end).toLocaleDateString('es-MX');
+      const fechaGeneracion = new Date().toLocaleString('es-MX');
+
+      // Encabezado
+      doc.addImage(logoImg, 'PNG', 10, 7, 36, 30);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(16);
+      doc.text('FARMA APOYO', pageWidth / 2, 20, { align: 'center' });
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(12);
+      doc.text('Reporte de Ingresos vs Costos - Gastos', pageWidth / 2, 28, { align: 'center' });
+
+      doc.setFontSize(10);
+      doc.text(`Del ${fechaInicio} al ${fechaFin}`, pageWidth / 2, 34, { align: 'center' });
+      doc.text(`Generado el: ${fechaGeneracion}`, pageWidth / 2, 40, { align: 'center' });
+
+      // Columnas y filas
+      const columns = [
+        'Método de Pago',
+        'Ingresos',
+        'Costos',
+        'Gastos',
+        'Utilidad Bruta',
+        'Utilidad Neta'
+      ];
+
+      const rows = data.map(r => ([
+        r.metodoPago,
+        currency.format(r.totalIngresos ?? 0),
+        currency.format(r.totalCostos ?? 0),
+        currency.format(r.totalGastos ?? 0),
+        currency.format(r.utilidadBruta ?? 0),
+        currency.format(r.utilidadNeta ?? 0),
+      ]));
+
+      // Tabla principal
+      autoTable(doc, {
+        head: [columns],
+        body: rows,
+        startY: 50,
+        margin: { bottom: 20 },
+        styles: { fontSize: 9 },
+        headStyles: { halign: 'center', fillColor: [41, 128, 185] },
+        columnStyles: {
+          0: { cellWidth: 45 },
+          1: { halign: 'right', cellWidth: 35 },
+          2: { halign: 'right', cellWidth: 35 },
+          3: { halign: 'right', cellWidth: 35 },
+          4: { halign: 'right', cellWidth: 35 },
+          5: { halign: 'right', cellWidth: 40 },
+        },
+        didDrawPage: () => {
+          const str = `Página ${doc.getNumberOfPages()}`;
+          doc.setFontSize(9);
+          doc.text(str, pageWidth / 2, doc.internal.pageSize.getHeight() - 10, { align: 'center' });
+        }
+      });
+
+      try {
+        const chartCanvas = document.getElementById('reportChart') as HTMLCanvasElement;
+
+        if (chartCanvas) {
+          const chartImage = chartCanvas.toDataURL('image/png', 1.0);
+          const chartWidth = pageWidth - 40;
+          const chartHeight = 80;
+
+          const startY = (doc as any).lastAutoTable.finalY + 10;
+          doc.addImage(chartImage, 'PNG', 20, startY, chartWidth, chartHeight);
+        } else {
+          console.warn('No se encontró el canvas con id="reportChart".');
+        }
+      } catch (err) {
+        console.error('Error al agregar gráfico al PDF:', err);
+      }
+
+      const nombreArchivo = `Reporte_Finanzas_${new Date().toLocaleDateString('es-MX')}.pdf`;
+      doc.save(nombreArchivo);
+    };
+
+    logoImg.onerror = () => { (logoImg.onload as any)(); };
+  }
+
+  exportToExcelFinance(): void {
+    const date = new Date().toLocaleDateString('es-MX', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+
+    const data: ReportFinanceDTO[] = this.dataSource.data ?? [];
+
+    if (!data.length) return;
+
+    // Mapeo de filas
+    const dataToExport = data.map(r => ({
+      'Método de Pago': r.metodoPago,
+      'Ingresos': r.totalIngresos,
+      'Costos': r.totalCostos,
+      'Gastos': r.totalGastos,
+      'Utilidad Bruta': r.utilidadBruta,
+      'Utilidad Neta': r.utilidadNeta
+    }));
+
+    // Crear hoja Excel
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(dataToExport);
+
+    // 🔢 Formato de moneda MXN
+    const range = XLSX.utils.decode_range(worksheet['!ref'] || '');
+    for (let R = 1; R <= range.e.r; ++R) {
+      for (let C = 1; C <= 5; ++C) { // Columnas numéricas
+        const cell = worksheet[XLSX.utils.encode_cell({ r: R, c: C })];
+        if (cell) {
+          cell.t = 'n'; // tipo numérico
+          cell.z = '"MX$"#,##0.00'; // formato moneda
+        }
+      }
+    }
+
+    // Encabezado adicional (Fechas)
+    const start: Date = this.filterForm.value.startDate;
+    const end: Date = this.filterForm.value.endDate;
+
+    // Ajuste de anchos de columnas
+    worksheet['!cols'] = [
+      { wch: 25 }, // Método de pago
+      { wch: 15 }, // Ingresos
+      { wch: 15 }, // Costos
+      { wch: 15 }, // Gastos
+      { wch: 18 }, // Utilidad Bruta
+      { wch: 18 }  // Utilidad Neta
+    ];
+
+    // 🗂️ Crear libro y guardar
+    const sheetName = 'Finanzas';
+    const workbook: XLSX.WorkBook = { Sheets: { [sheetName]: worksheet }, SheetNames: [sheetName] };
+    const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const blobData: Blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+
+    FileSaver.saveAs(blobData, `Reporte_Finanzas_${date}.xlsx`);
+  }
+
+  exportToPDFVendedores(): void {
+    const doc = new jsPDF({ orientation: 'landscape' });
+    const pageWidth = doc.internal.pageSize.getWidth();
+
+    const data: ReportSalesVendedorDTO[] = this.dataSourceVendedores.data ?? [];
+
+    const currency = new Intl.NumberFormat('es-MX', {
+      style: 'currency',
+      currency: 'MXN',
+      minimumFractionDigits: 2,
+    });
+
+    const logoImg = new Image();
+    logoImg.src = 'assets/logos/inventory.png';
+
+    logoImg.onload = () => {
+      const start: Date = this.filterForm.value.startDate;
+      const end: Date = this.filterForm.value.endDate;
+
+      const fechaInicio = new Date(start).toLocaleDateString('es-MX');
+      const fechaFin = new Date(end).toLocaleDateString('es-MX');
+      const fechaGeneracion = new Date().toLocaleString('es-MX');
+
+      // Encabezado
+      doc.addImage(logoImg, 'PNG', 10, 7, 36, 30);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(16);
+      doc.text('FARMA APOYO', pageWidth / 2, 20, { align: 'center' });
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(12);
+      doc.text('Reporte de Ventas por Vendedor', pageWidth / 2, 28, { align: 'center' });
+
+      doc.setFontSize(10);
+      doc.text(`Del ${fechaInicio} al ${fechaFin}`, pageWidth / 2, 34, { align: 'center' });
+      doc.text(`Generado el: ${fechaGeneracion}`, pageWidth / 2, 40, { align: 'center' });
+
+      // Columnas y filas
+      const columns = [
+        'Vendedor',
+        'Total Ventas (tickets)',
+        'Monto Vendido',
+        'Costo Proveedor',
+        'Utilidad'
+      ];
+
+      const rows = data.map(r => ([
+        r.vendedor,
+        r.totalVentas,
+        currency.format(r.totalMontoVendido ?? 0),
+        currency.format(r.totalCostoProveedor ?? 0),
+        currency.format(r.utilidad ?? 0)
+      ]));
+
+      // Totales
+      const totalVentas = data.reduce((a, b) => a + (b.totalVentas ?? 0), 0);
+      const totalMonto = data.reduce((a, b) => a + (b.totalMontoVendido ?? 0), 0);
+      const totalCosto = data.reduce((a, b) => a + (b.totalCostoProveedor ?? 0), 0);
+      const totalUtilidad = data.reduce((a, b) => a + (b.utilidad ?? 0), 0);
+
+      rows.push([
+        'TOTAL GENERAL',
+        totalVentas,
+        currency.format(totalMonto),
+        currency.format(totalCosto),
+        currency.format(totalUtilidad)
+      ]);
+
+      // Tabla principal
+      autoTable(doc, {
+        head: [columns],
+        body: rows,
+        startY: 50,
+        margin: { bottom: 20 },
+        styles: { fontSize: 9 },
+        headStyles: { halign: 'center', fillColor: [41, 128, 185] },
+        columnStyles: {
+          0: { cellWidth: 55 },
+          1: { halign: 'right', cellWidth: 35 },
+          2: { halign: 'right', cellWidth: 45 },
+          3: { halign: 'right', cellWidth: 45 },
+          4: { halign: 'right', cellWidth: 45 }
+        },
+        didDrawPage: () => {
+          const str = `Página ${doc.getNumberOfPages()}`;
+          doc.setFontSize(9);
+          doc.text(str, pageWidth / 2, doc.internal.pageSize.getHeight() - 10, { align: 'center' });
+        }
+      });
+
+      // Agregar gráfico debajo
+      try {
+        const chartCanvas = document.getElementById('reportChartVendedores') as HTMLCanvasElement;
+
+        if (chartCanvas) {
+          const chartImage = chartCanvas.toDataURL('image/png', 1.0);
+          const chartWidth = pageWidth - 40;
+          const chartHeight = 80;
+
+          const startY = (doc as any).lastAutoTable.finalY + 10;
+          doc.addImage(chartImage, 'PNG', 20, startY, chartWidth, chartHeight);
+        } else {
+          console.warn('No se encontró el canvas con id="reportChartVendedores".');
+        }
+      } catch (err) {
+        console.error('Error al agregar gráfico al PDF:', err);
+      }
+
+      const nombreArchivo = `Reporte_Ventas_Vendedores_${new Date().toLocaleDateString('es-MX')}.pdf`;
+      doc.save(nombreArchivo);
+    };
+
+    logoImg.onerror = () => { (logoImg.onload as any)(); };
+  }
+
+  exportToExcelVendedores(): void {
+    const date = new Date().toLocaleDateString('es-MX', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+
+    const data: ReportSalesVendedorDTO[] = this.dataSourceVendedores.data ?? [];
+
+    if (!data.length) {
+      console.warn('⚠️ No hay datos para exportar.');
+      return;
+    }
+
+    // Calcular totales
+    const totalVentas = data.reduce((a, b) => a + (b.totalVentas ?? 0), 0);
+    const totalMonto = data.reduce((a, b) => a + (b.totalMontoVendido ?? 0), 0);
+    const totalCosto = data.reduce((a, b) => a + (b.totalCostoProveedor ?? 0), 0);
+    const totalUtilidad = data.reduce((a, b) => a + (b.utilidad ?? 0), 0);
+
+    // Mapeo de filas
+    const dataToExport = data.map(r => ({
+      'Vendedor': r.vendedor,
+      'Total Ventas (Tickets)': r.totalVentas,
+      'Monto Vendido': r.totalMontoVendido,
+      'Costo Proveedor': r.totalCostoProveedor,
+      'Utilidad': r.utilidad
+    }));
+
+    // Agregar fila de totales
+    dataToExport.push({
+      'Vendedor': 'TOTAL GENERAL',
+      'Total Ventas (Tickets)': totalVentas,
+      'Monto Vendido': totalMonto,
+      'Costo Proveedor': totalCosto,
+      'Utilidad': totalUtilidad
+    });
+
+    // Crear hoja Excel
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(dataToExport, { cellDates: true });
+
+    // 🔢 Formatear las columnas de moneda
+    const range = XLSX.utils.decode_range(worksheet['!ref'] || '');
+    for (let R = 1; R <= range.e.r; ++R) {
+      for (let C = 2; C <= 4; ++C) { // columnas de monto
+        const cell = worksheet[XLSX.utils.encode_cell({ r: R, c: C })];
+        if (cell) {
+          cell.t = 'n';
+          cell.z = '"MX$"#,##0.00';
+        }
+      }
+    }
+
+    const start: Date = this.filterForm.value.startDate;
+    const end: Date = this.filterForm.value.endDate;
+
+    // Ajustar ancho de columnas
+    worksheet['!cols'] = [
+      { wch: 30 }, // Vendedor
+      { wch: 20 }, // Total Ventas
+      { wch: 20 }, // Monto Vendido
+      { wch: 20 }, // Costo Proveedor
+      { wch: 20 }  // Utilidad
+    ];
+
+    const sheetName = 'VentasVendedores';
+    const workbook: XLSX.WorkBook = { Sheets: { [sheetName]: worksheet }, SheetNames: [sheetName] };
+
+    const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const blobData: Blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+
+    FileSaver.saveAs(blobData, `Reporte_Ventas_Vendedores_${date}.xlsx`);
+  }
+
+  exportToPDFProductos(): void {
+    const doc = new jsPDF({ orientation: 'landscape' });
+    const pageWidth = doc.internal.pageSize.getWidth();
+
+    const data: ReportProductDTO[] = this.dataSourceProductos.data ?? [];
+
+    const logoImg = new Image();
+    logoImg.src = 'assets/logos/inventory.png';
+
+    logoImg.onload = () => {
+      const start: Date = this.filterForm.value.startDate;
+      const end: Date = this.filterForm.value.endDate;
+
+      const fechaInicio = new Date(start).toLocaleDateString('es-MX');
+      const fechaFin = new Date(end).toLocaleDateString('es-MX');
+      const fechaGeneracion = new Date().toLocaleString('es-MX');
+
+      // Encabezado
+      doc.addImage(logoImg, 'PNG', 10, 7, 36, 30);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(16);
+      doc.text('FARMA APOYO', pageWidth / 2, 20, { align: 'center' });
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(12);
+      doc.text('Reporte de Productos Vendidos', pageWidth / 2, 28, { align: 'center' });
+
+      doc.setFontSize(10);
+      doc.text(`Del ${fechaInicio} al ${fechaFin}`, pageWidth / 2, 34, { align: 'center' });
+      doc.text(`Generado el: ${fechaGeneracion}`, pageWidth / 2, 40, { align: 'center' });
+
+      // Columnas
+      const columns = ['Producto', 'Unidades Vendidas'];
+
+      // Filas
+      const rows = data.map(r => ([r.productName, r.totalUnidadesVendidas.toLocaleString('es-MX')]));
+
+      // Total General
+      const totalUnidades = data.reduce((a, b) => a + (b.totalUnidadesVendidas ?? 0), 0);
+      rows.push(['TOTAL GENERAL', totalUnidades.toLocaleString('es-MX')]);
+
+      // Tabla principal
+      autoTable(doc, {
+        head: [columns],
+        body: rows,
+        startY: 50,
+        margin: { bottom: 20 },
+        styles: { fontSize: 9 },
+        headStyles: { halign: 'center', fillColor: [41, 128, 185] },
+        columnStyles: {
+          0: { cellWidth: 120 },
+          1: { halign: 'right', cellWidth: 40 },
+        },
+        didDrawPage: () => {
+          const str = `Página ${doc.getNumberOfPages()}`;
+          doc.setFontSize(9);
+          doc.text(str, pageWidth / 2, doc.internal.pageSize.getHeight() - 10, { align: 'center' });
+        },
+      });
+
+      // Agregar gráfico de productos debajo de la tabla
+      try {
+        const chartCanvas = document.getElementById('reportChartProductos') as HTMLCanvasElement;
+        if (chartCanvas) {
+          const chartImage = chartCanvas.toDataURL('image/png', 1.0);
+          const chartWidth = pageWidth - 40;
+          const chartHeight = 80;
+          const startY = (doc as any).lastAutoTable.finalY + 10;
+
+          doc.addImage(chartImage, 'PNG', 20, startY, chartWidth, chartHeight);
+        } else {
+          console.warn('No se encontró el canvas con id="reportChartProductos".');
+        }
+      } catch (err) {
+        console.error('Error al agregar gráfico al PDF:', err);
+      }
+
+      const nombreArchivo = `Reporte_Productos_Vendidos_${new Date().toLocaleDateString('es-MX')}.pdf`;
+      doc.save(nombreArchivo);
+    };
+
+    logoImg.onerror = () => { (logoImg.onload as any)(); };
+  }
+
+  exportToExcelProductos(): void {
+    const date = new Date().toLocaleDateString('es-MX', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+
+    const data: ReportProductDTO[] = this.dataSourceProductos.data ?? [];
+
+    if (!data.length) {
+      console.warn('No hay datos para exportar.');
+      return;
+    }
+
+    // Calcular total general
+    const totalUnidades = data.reduce((a, b) => a + (b.totalUnidadesVendidas ?? 0), 0);
+
+    // Mapeo de datos para Excel
+    const dataToExport = data.map(r => ({
+      'Producto': r.productName,
+      'Unidades Vendidas': r.totalUnidadesVendidas
+    }));
+
+    // Agregar fila de totales
+    dataToExport.push({
+      'Producto': 'TOTAL GENERAL',
+      'Unidades Vendidas': totalUnidades
+    });
+
+    // Crear hoja
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(dataToExport, { cellDates: true });
+
+    // Formatear columnas
+    const range = XLSX.utils.decode_range(worksheet['!ref'] || '');
+    for (let R = 1; R <= range.e.r; ++R) {
+      const cell = worksheet[XLSX.utils.encode_cell({ r: R, c: 1 })]; // columna B (Unidades)
+      if (cell) {
+        cell.t = 'n';
+        cell.z = '#,##0'; // formato numérico sin decimales
+      }
+    }
+
+    // Encabezado superior
+    const start: Date = this.filterForm.value.startDate;
+    const end: Date = this.filterForm.value.endDate;
+
+    // Ajustar ancho de columnas
+    worksheet['!cols'] = [
+      { wch: 40 }, // Producto
+      { wch: 20 }  // Unidades Vendidas
+    ];
+
+    const sheetName = 'ProductosVendidos';
+    const workbook: XLSX.WorkBook = {
+      Sheets: { [sheetName]: worksheet },
+      SheetNames: [sheetName]
+    };
+
+    const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const blobData: Blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+
+    FileSaver.saveAs(blobData, `Reporte_Productos_Vendidos_${date}.xlsx`);
   }
 }

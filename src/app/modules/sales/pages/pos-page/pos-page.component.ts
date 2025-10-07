@@ -39,13 +39,13 @@ export class PosPageComponent {
 
   constructor(
     private dialog: MatDialog,
-    private fb: FormBuilder, 
+    private fb: FormBuilder,
     private globalStateService: GlobalStateService,
     private packingService: PackagingService,
     private salesService: SalesService,
     private snackbar: MatSnackBar,
     private snackBar: MatSnackBar,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.posForm = this.fb.group({
@@ -129,7 +129,7 @@ export class PosPageComponent {
 
           setTimeout(() => {
             this.validateSaleConditions();
-          }, 300); 
+          }, 300);
         }
 
         this.isLoading = false;
@@ -137,20 +137,6 @@ export class PosPageComponent {
       error: () => this.isLoading = false,
     });
   }
-
-  // loadClientsByUser(): void {
-  //   this.isLoading = true;
-
-  //   this.salesService.getClientsByUser().subscribe({
-  //     next: (response) => {
-  //       if(response.result) 
-  //         this.clientsByUser = response.result;
-        
-  //       this.isLoading = false;
-  //     },
-  //     error: () => this.isLoading = false
-  //   });
-  // }
 
   loadClientsByUser(): void {
     this.isLoading = true;
@@ -191,7 +177,7 @@ export class PosPageComponent {
     this.posForm.get('selectedClientId')?.setValue(client.clientId);
 
     // Actualiza info visual
-    this.availableCredit  = client?.availableCredit ?? 0;
+    this.availableCredit = client?.availableCredit ?? 0;
     this.isBlocked = client?.isBlocked == 0 ? 'Activo' : 'Bloqueado';
 
     // Quita alertas y revalida
@@ -207,7 +193,7 @@ export class PosPageComponent {
     const selectedId = this.posForm.get('selectedClientId')?.value;
     const client = this.clientsByUser.find(c => c.clientId === +selectedId);
 
-    this.availableCredit  = client?.availableCredit ?? 0;
+    this.availableCredit = client?.availableCredit ?? 0;
     this.isBlocked = client?.isBlocked == 0 ? 'Activo' : 'Bloqueado'
   }
 
@@ -219,13 +205,17 @@ export class PosPageComponent {
         duration: 3000,
         panelClass: 'snack-warn'
       });
-      
+
       return;
     }
-    
+
     this.salesService.getProductStock().subscribe({
       next: (response) => {
-        const productList = response.result;
+        // const productList = response.result;
+        const productList = (response.result ?? []).sort((a, b) =>
+          a.productName.localeCompare(b.productName, 'es', { sensitivity: 'base' })
+        );
+
         const dialogRef = this.dialog.open(ProductDialogComponent, {
           width: '500px',
           data: productList
@@ -255,7 +245,7 @@ export class PosPageComponent {
               });
             }
           }
-        });  
+        });
       },
       error: () => {
         this.snackBar.open('Error al cargar productos.', 'Cerrar', { duration: 3000, panelClass: 'snack-error' });
@@ -279,7 +269,7 @@ export class PosPageComponent {
     return this.products.controls.reduce((sum, group) => {
       const { quantity, defaultPrice } = group.value;
 
-      return sum + quantity * defaultPrice; 
+      return sum + quantity * defaultPrice;
     }, 0)
   }
 

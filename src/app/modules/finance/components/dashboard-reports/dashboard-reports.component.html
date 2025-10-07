@@ -67,6 +67,17 @@
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
     <mat-paginator [pageSizeOptions]="[5, 10, 25]" aria-label="Selector de página"></mat-paginator>
+    <div class="flex justify-end items-center gap-3 px-2 mb-2 mt-2">
+        <button mat-icon-button class="btn-cancel border border-gray-300 shadow-sm hover:bg-red-50"
+            matTooltip="Exportar a PDF" (click)="exportToPDFFinance()">
+            <mat-icon color="warn">picture_as_pdf</mat-icon>
+        </button>
+
+        <button mat-icon-button class="btn-success border border-gray-300 shadow-sm hover:bg-green-50"
+            matTooltip="Exportar a Excel" (click)="exportToExcelFinance()">
+            <mat-icon color="primary">explicit</mat-icon>
+        </button>
+    </div>
 </div>
 
 <!-- Gráfico -->
@@ -107,6 +118,17 @@
         <tr mat-row *matRowDef="let row; columns: displayedColumnsVendedores;"></tr>
     </table>
     <mat-paginator [pageSizeOptions]="[5, 10, 25]" aria-label="Selector de página"></mat-paginator>
+    <div class="flex justify-end items-center gap-3 px-2 mb-2 mt-2">
+        <button mat-icon-button class="btn-cancel border border-gray-300 shadow-sm hover:bg-red-50"
+            matTooltip="Exportar a PDF" (click)="exportToPDFVendedores()">
+            <mat-icon color="warn">picture_as_pdf</mat-icon>
+        </button>
+
+        <button mat-icon-button class="btn-success border border-gray-300 shadow-sm hover:bg-green-50"
+            matTooltip="Exportar a Excel" (click)="exportToExcelVendedores()">
+            <mat-icon color="primary">explicit</mat-icon>
+        </button>
+    </div>
 </div>
 
 <!-- Gráfico de Vendedores -->
@@ -132,6 +154,17 @@
         <tr mat-row *matRowDef="let row; columns: displayedColumnsProductos;"></tr>
     </table>
     <mat-paginator [pageSizeOptions]="[5, 10, 25]" aria-label="Selector de página"></mat-paginator>
+    <div class="flex justify-end items-center gap-3 px-2 mb-2 mt-2">
+        <button mat-icon-button class="btn-cancel border border-gray-300 shadow-sm hover:bg-red-50"
+            matTooltip="Exportar a PDF" (click)="exportToPDFProductos()">
+            <mat-icon color="warn">picture_as_pdf</mat-icon>
+        </button>
+
+        <button mat-icon-button class="btn-success border border-gray-300 shadow-sm hover:bg-green-50"
+            matTooltip="Exportar a Excel" (click)="exportToExcelProductos()">
+            <mat-icon color="primary">explicit</mat-icon>
+        </button>
+    </div>
 </div>
 
 <!-- Gráfico de Productos -->
